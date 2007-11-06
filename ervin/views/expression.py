@@ -1,6 +1,6 @@
 from django.template import Context, loader
-from erwin.models import *
-import erwin.views.generic
+from ervin.models import *
+import ervin.views.generic
 from django.http import HttpResponse, HttpResponseRedirect
 
 def by_noid(request, *args, **kwargs):

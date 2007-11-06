@@ -1,11 +1,11 @@
 from django.template import Context, loader
-from erwin.models import *
+from ervin.models import *
 from django.http import HttpResponse,HttpResponseNotFound
 from django.core.exceptions import ObjectDoesNotExist
-import erwin.views.generic
-import erwin.views.person
-import erwin.views.work
-import erwin.views.expression
+import ervin.views.generic
+import ervin.views.person
+import ervin.views.work
+import ervin.views.expression
 
 def by_noid(request,*args,**kwargs):
     n = kwargs['noid']
@@ -18,9 +18,9 @@ def by_noid(request,*args,**kwargs):
                 return None
         except ObjectDoesNotExist:
             return None
-    for pair in ((Person, erwin.views.person.detail),
-                 (Work, erwin.views.work.detail),
-                 (Expression, erwin.views.expression.detail)):
+    for pair in ((Person, ervin.views.person.detail),
+                 (Work, ervin.views.work.detail),
+                 (Expression, ervin.views.expression.detail)):
         retval = try_view(pair[0], pair[1])
         if retval != None:
             return retval

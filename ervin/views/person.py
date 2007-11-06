@@ -1,6 +1,6 @@
 from django.template import Context, loader
-from erwin.models import *
-from erwin.views.generic import *
+from ervin.models import *
+from ervin.views.generic import *
 from django.http import HttpResponse
 
 def by_slug(request, *args, **kwargs):

@@ -3,8 +3,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from django.conf import settings
 
-from erwin.models import *
-from erwin.views.generic import *
+from ervin.models import *
+from ervin.views.generic import *
 
 def list_formats(request,iden):
         t = loader.get_template('unapi/format_list.xml')

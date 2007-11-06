@@ -1,5 +1,5 @@
 from django.template import Context, loader
-from erwin.models import *
+from ervin.models import *
 from django.http import HttpResponse
 import re
 
