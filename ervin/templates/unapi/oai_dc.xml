@@ -1,0 +1,13 @@
+{% load catalog %}
+<?xml version="1.0"?>
+<oai_dc:dc
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
+  <dc:title>{{ edition.title }}</dc:title>
+  {% if edition.authors.all %}
+  {% for author in edition.authors.all %}
+  <dc:creator>{{ author }}</dc:creator>
+  {% endfor %}
+  {% endif %}
+  <dc:type>website</dc:type>
+</oai_dc:dc>
