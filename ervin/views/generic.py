@@ -45,6 +45,8 @@ def author_sort(a,b):
     return cmp(a2,b2)
 
 def find_one(*args, **kwargs):
+    if type(args[0]) == tuple:
+       args = args[0]
     for klass in args:
         try: 
             return klass.objects.get(**kwargs)
