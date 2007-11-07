@@ -1,0 +1,10 @@
+{% extends "plain.html" %}
+{% load catalog %}
+{% block title %}{{expresion.work.title}}{% endblock %}
+{% block content %}
+
+<dl>
+<dt>Work title</dt><dd>{{ expression.work.title }}</dd>
+<dt>Work authors</dt><dd>{{ expression.work.authors.all|last_name_first}}</dd>
+</dl>
+{% endblock %}
