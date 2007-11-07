@@ -47,7 +47,7 @@ class Person(models.Model):
     dates = models.CharField(max_length=20,blank=True)
     noid = NoidField(settings.NOID_DIR, max_length=6)
     def get_absolute_url(self):
-	return '/person/' + self.noid
+	return '/' + self.noid
     def save(self):
         self.slug = slugify(self.surname + '-' + self.forename)
         super(Person, self).save()
@@ -134,7 +134,7 @@ class Work(models.Model):
             )
         js = ['js/tiny_mce/tiny_mce.js', 'js/textareas.js']
     def get_absolute_url(self):
-        return '/work/' + self.noid
+        return '/' + self.noid
     def save(self):
         self.slug = slugify(self.title)
         super(Work, self).save() 
@@ -170,7 +170,7 @@ class Expression(models.Model):
         else:
             return self.work.get_title()
     def get_absolute_url(self):
-        return '/expression/' + self.noid
+        return '/' + self.noid
     def __str__(self):
     	return str(self.work)
 
@@ -206,7 +206,7 @@ class OnlineEdition(models.Model):
     def __str__(self):
         return str(self.work)
     def get_absolute_url(self):
-        return '/manifestation/' + self.noid
+        return '/' + self.noid
     class Admin:
         js = ['js/tiny_mce/tiny_mce.js', 'js/textareas.js']
     
@@ -255,7 +255,7 @@ class PhysicalEdition(models.Model):
     class Admin:
         js = ['js/tiny_mce/tiny_mce.js', 'js/textareas.js']   
     def get_absolute_url(self):
-        return '/manifestation/' + self.noid
+        return '/' + self.noid
     def get_items(self):
         return None
 
