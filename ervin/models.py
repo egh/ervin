@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #Copyright (C) 2007 Erik Hetzner
 
 #This file is part of Ervin.  Ervin is free software: you can
@@ -13,7 +14,6 @@
 #You should have received a copy of the GNU General Public License
 #along with Ervin.  If not, see <http://www.gnu.org/licenses/>.
 
-# -*- coding: utf-8 -*-
 from django.db import models
 from django.template.defaultfilters import slugify
 from django.contrib.contenttypes import generic
@@ -45,7 +45,7 @@ class Person(models.Model):
     slug = models.CharField(max_length=100,editable=False)
     forename = models.CharField(max_length=200)
     dates = models.CharField(max_length=20,blank=True)
-    noid = NoidField(settings.NOID_DIR, max_length=6)
+    noid = NoidField(settings.NOID_DIR, max_length=6,primary_key=True)
     def get_absolute_url(self):
 	return '/' + self.noid
     def save(self):
