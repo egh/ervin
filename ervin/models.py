@@ -51,7 +51,8 @@ class Person(models.Model):
     def save(self):
         self.slug = slugify(self.surname + '-' + self.forename)
         super(Person, self).save()
-        person_type = ContentType.objects.get(model='Person')
+        person_type = ContentType.objects.get(model='person', 
+                                              app_label='ervin')
         try:
             s = Subject.objects.get(content_type=person_type,object_id=self.id)
         except Subject.DoesNotExist:
@@ -89,7 +90,8 @@ class Concept(models.Model):
     def save(self):
         self.slug = slugify(self.name)
         super(Concept, self).save()
-        concept_type = ContentType.objects.get(model='Concept')
+        concept_type = ContentType.objects.get(model='concept',
+                                               app_label='ervin')
         try:
             s = Subject.objects.get(content_type=concept_type,object_id=self.id)
         except Subject.DoesNotExist:
@@ -279,7 +281,8 @@ class Place(models.Model):
     def save(self):
         self.slug = slugify(self.name)
         super(Place, self).save()
-        place_type = ContentType.objects.get(model='Place')
+        place_type = ContentType.objects.get(model='place',
+                                             app_label='ervin')
         try:
             s = Subject.objects.get(content_type=place_type,object_id=self.id)
         except Subject.DoesNotExist:
@@ -300,7 +303,8 @@ class Organization(models.Model):
     def save(self):
         self.slug = slugify(self.name)
         super(Organization, self).save()
-        which_type = ContentType.objects.get(model='Organization')
+        which_type = ContentType.objects.get(model='organization',
+                                             app_label='ervin')
         try:
             s = Subject.objects.get(content_type=which_type,object_id=self.id)
         except Subject.DoesNotExist:
@@ -321,7 +325,8 @@ class Event(models.Model):
     def save(self):
         self.slug = slugify(self.name)
         super(Event, self).save()
-        which_type = ContentType.objects.get(model='Event')
+        which_type = ContentType.objects.get(model='event',
+                                             app_label='ervin')
         try:
             s = Subject.objects.get(content_type=which_type,object_id=self.id)
         except Subject.DoesNotExist:
