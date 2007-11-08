@@ -14,6 +14,7 @@
 #You should have received a copy of the GNU General Public License
 #along with Ervin.  If not, see <http://www.gnu.org/licenses/>.
 
+from string import lower
 from django.db import models
 from django.template.defaultfilters import slugify
 from django.contrib.contenttypes import generic
@@ -23,6 +24,16 @@ from django.conf import settings
 from noid import LocalMinter
 from noid import NoidField
 import re
+
+def delete_hook(item):
+    which_type = ContentType.objects.get(model=lower(type(item).__name__),
+                                         app_label='ervin')
+    try:
+        s = Subject.objects.get(content_type=which_type,
+                                object_id=item.id)
+        s.delete()
+    except:
+        pass
 
 class Subject(models.Model):
     content_type = models.ForeignKey(ContentType)
@@ -97,6 +108,9 @@ class Concept(models.Model):
         except Subject.DoesNotExist:
             s = Subject(content_type=concept_type,object_id=self.id)
         s.save()
+    def delete(self):
+        delete_hook(self)
+        super(Concept, self).delete()
     def __str__(self):
         return self.name
     name_en = "Concept"
@@ -288,6 +302,9 @@ class Place(models.Model):
         except Subject.DoesNotExist:
             s = Subject(content_type=place_type,object_id=self.id)
         s.save()
+    def delete(self):
+        delete_hook(self)
+        super(Place, self).delete()
     def __str__(self):
         return self.name
     class Admin:
@@ -310,6 +327,9 @@ class Organization(models.Model):
         except Subject.DoesNotExist:
             s = Subject(content_type=which_type,object_id=self.id)
         s.save()
+    def delete(self):
+        delete_hook(self)
+        super(Organization, self).delete()
     def __str__(self):
         return self.name
     class Admin:
@@ -332,6 +352,9 @@ class Event(models.Model):
         except Subject.DoesNotExist:
             s = Subject(content_type=which_type,object_id=self.id)
         s.save()
+    def delete(self):
+        delete_hook(self)
+        super(Event, self).delete()
     def __str__(self):
         return self.name
     class Admin:
