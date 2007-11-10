@@ -1,0 +1,10 @@
+{% extends "plain.html" %}
+{% load catalog %}
+{% block title %}{{person}}{% endblock %}
+{% block content %}
+
+<dl>
+<dt>Surname</dt> <dd>{{ person.surname }}</dd>
+<dt>Forename</dt> <dd>{{ person.forename }}</dd>
+</dl>
+{% endblock %}

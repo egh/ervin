@@ -1,0 +1,12 @@
+{% extends "plain.html" %}
+{% load catalog %}
+{% block title %}{{person}}{% endblock %}
+{% block content %}
+
+<ul>
+{% for person in persons %}
+<li><a href="{{ person.get_absolute_url }}">{{ person }}</a>
+</li>
+{% endfor %}
+</ul>
+{% endblock %}
