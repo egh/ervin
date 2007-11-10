@@ -65,9 +65,9 @@ class Person(models.Model):
         person_type = ContentType.objects.get(model='person', 
                                               app_label='ervin')
         try:
-            s = Subject.objects.get(content_type=person_type,object_id=self.id)
+            s = Subject.objects.get(content_type=person_type,object_id=self.pk)
         except Subject.DoesNotExist:
-            s = Subject(content_type=person_type,object_id=self.id)
+            s = Subject(content_type=person_type,object_id=self.pk)
         s.save()
     def __hash__(self):
         return hash(self.id)
@@ -95,7 +95,7 @@ class Section(models.Model):
 class Concept(models.Model):
     name = models.CharField(max_length=200)
     slug = models.CharField(max_length=200,editable=False)
-    noid = NoidField(settings.NOID_DIR, max_length=6)
+    noid = NoidField(settings.NOID_DIR, max_length=6,primary_key=True)
     def get_absolute_url(self):
 	return '/concept/' + self.slug
     def save(self):
@@ -106,7 +106,9 @@ class Concept(models.Model):
         try:
             s = Subject.objects.get(content_type=concept_type,object_id=self.id)
         except Subject.DoesNotExist:
-            s = Subject(content_type=concept_type,object_id=self.id)
+            s = Subject(content_type=concept_type,
+                        noid=self.noid,
+                        object_id=self.id)
         s.save()
     def delete(self):
         delete_hook(self)
@@ -118,7 +120,7 @@ class Concept(models.Model):
         pass   
     
 class Work(models.Model):
-    title = models.CharField(max_length=200,blank=True)
+    title = models.TextField(max_length=200,blank=True)
     def get_title(self):
         return self.title
     slug = models.CharField(max_length=200,blank=True,editable=False)
@@ -300,7 +302,7 @@ class Place(models.Model):
         try:
             s = Subject.objects.get(content_type=place_type,object_id=self.id)
         except Subject.DoesNotExist:
-            s = Subject(content_type=place_type,object_id=self.id)
+            s = Subject(content_type=place_type,object_id=self.id,noid=self.noid)
         s.save()
     def delete(self):
         delete_hook(self)
@@ -325,7 +327,7 @@ class Organization(models.Model):
         try:
             s = Subject.objects.get(content_type=which_type,object_id=self.id)
         except Subject.DoesNotExist:
-            s = Subject(content_type=which_type,object_id=self.id)
+            s = Subject(content_type=which_type,object_id=self.id,noid=self.noid)
         s.save()
     def delete(self):
         delete_hook(self)
@@ -350,7 +352,9 @@ class Event(models.Model):
         try:
             s = Subject.objects.get(content_type=which_type,object_id=self.id)
         except Subject.DoesNotExist:
-            s = Subject(content_type=which_type,object_id=self.id)
+            s = Subject(content_type=which_type,
+                        noid=self.noid,
+                        object_id=self.id)
         s.save()
     def delete(self):
         delete_hook(self)
