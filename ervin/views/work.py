@@ -25,5 +25,10 @@ def by_noid(request, *args, **kwargs):
 def detail(work, request, *args, **kwargs):
     if len(work.expression_set.all()) == 1:
         return HttpResponseRedirect(work.expression_set.all()[0].get_absolute_url())
-    
-
+    else:
+	t = loader.get_template('work.html')
+	c = Context({
+                'work': work
+                })
+    	return HttpResponse(t.render(c))
+        
