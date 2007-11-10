@@ -25,8 +25,7 @@ views = { Person : ervin.views.person.detail,
           Expression : ervin.views.expression.detail }
 
 def by_noid(request,*args,**kwargs):
-    n = kwargs['noid']
-    o = find_one(tuple(views.keys()), noid=n)
+    o = find_one(tuple(views.keys()), noid=kwargs['noid'])
     if views.has_key(o.__class__):
         return views[o.__class__] (o, request, *args, **kwargs)
     else:
