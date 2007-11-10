@@ -15,6 +15,9 @@
 
 from django.conf.urls.defaults import patterns
 
-urlpatterns = patterns('ervin.views',
-  (r'^(?P<noid>[a-z0-9-]{6})$', 'noid.by_noid')
-)
+urlpatterns = patterns(
+    'ervin.views',
+    (r'^(?P<noid>[a-z0-9-]{6})$', 'noid.by_noid'),
+    (r'^persons$', 'person.index'),
+    (r'^$', 'main.home')
+    )
