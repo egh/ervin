@@ -20,7 +20,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from ervin.views.generic import find_one
 import ervin.views.generic, ervin.views.person, ervin.views.work, ervin.views.expression
 
-views = { Person : ervin.views.person.detail,
+views = { Concept : 'concept.html',
+          Person : ervin.views.person.detail,
           Work : ervin.views.work.detail,
           Expression : ervin.views.expression.detail }
 
