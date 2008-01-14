@@ -20,13 +20,19 @@ from django.core.exceptions import ObjectDoesNotExist
 from ervin.views.generic import find_one
 import ervin.views.generic, ervin.views.person, ervin.views.work, ervin.views.expression
 
-views = { Person : ervin.views.person.detail,	
+views = { Person : ervin.views.person.detail,
           Work : ervin.views.work.detail,
           Expression : ervin.views.expression.detail }
 
 def by_noid(request,*args,**kwargs):
     o = find_one(tuple(views.keys()), noid=kwargs['noid'])
+    o_class = o.__class__
     if views.has_key(o.__class__):
-        return views[o.__class__] (o, request, *args, **kwargs)
+        if type(views[o_class]) == str:
+            t = loader.get_template(views[o_class])
+            c = Context({ o_class.lower(): o })
+            return HttpResponse(t.render(c))
+        else:
+            return views[o.__class__] (o, request, *args, **kwargs)
     else:
         return HttpResponseNotFound('Not found')
