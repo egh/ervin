@@ -110,9 +110,6 @@ class Work(models.Model):
                                      related_name="authored",
                                      blank=True,
                                      filter_interface=models.HORIZONTAL)
-    translators = models.ManyToManyField(Person,verbose_name="Translators",
-                                         related_name="translated",
-                                         filter_interface=models.HORIZONTAL,blank=True)
     subjects = models.ManyToManyField(Subject,filter_interface=models.HORIZONTAL,blank=True)
     description = models.TextField(blank=True)
     note = models.TextField(blank=True)
@@ -124,9 +121,7 @@ class Work(models.Model):
     class Admin: 
         fields = (
             ("Main", {'fields': ('title', 'partof','description',
-                                 'note')}),
-            ("People", {'classes': 'collapse',
-                        'fields': ('authors', 'translators')}),
+                                 'note', 'authors')}),
             ("Classification",  {'classes':'collapse',
                         'fields': ('subjects', 'sections')}),
             #("Editions", {'classes':'collapse',
@@ -151,8 +146,13 @@ class Work(models.Model):
 class Expression(models.Model):
     work = models.ForeignKey('Work',
                              to_field='noid',
-                             db_column='work_noid')
+                             db_column='work_noid',
+                             edit_inline=models.STACKED)
     title = models.TextField(max_length=200, blank=True)
+    translators = models.ManyToManyField(Person,verbose_name="Translators",
+                                         related_name="translated",
+                                         filter_interface=models.HORIZONTAL,
+                                         blank=True)
     noid = NoidField(settings.NOID_DIR,
                      max_length=6,
                      primary_key=True,
