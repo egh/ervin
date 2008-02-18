@@ -62,8 +62,7 @@ class Person(models.Model):
     def save(self):
         super(Person, self).save()
         save_hook(self)
-    def __hash__(self):
-        return hash(self.pk)
+    def __hash__(self): return hash(self.pk)
     def __str__(self):
         if self.dates:
             return self.surname + ", " + self.forename + " (" + self.dates + ")"
@@ -79,6 +78,7 @@ class Section(models.Model):
     class Admin: pass
 
 class Concept(models.Model):
+    name_en = "Concept"
     name = models.CharField(max_length=200)
     noid = NoidField(settings.NOID_DIR, max_length=6,primary_key=True)
     def get_absolute_url(self): return "/%s"%(self.noid)
@@ -89,7 +89,6 @@ class Concept(models.Model):
         delete_hook(self)
         super(Concept, self).delete()
     def __str__(self): return self.name
-    name_en = "Concept"
     class Admin: pass   
     
 class Work(models.Model):
@@ -123,8 +122,7 @@ class Work(models.Model):
             #'fields': ("catalogeditions", "onlineedition_set")}),
             )
         js = ['js/tiny_mce/tiny_mce.js', 'js/textareas.js']
-    def get_absolute_url(self):
-        return '/' + self.noid
+    def get_absolute_url(self): return "/%s"%(self.noid)
     def save(self):
         super(Work, self).save() 
         try:
@@ -158,10 +156,8 @@ class Expression(models.Model):
             return self.title
         else:
             return self.work.get_title()
-    def get_absolute_url(self):
-        return '/' + self.noid
-    def __str__(self):
-    	return str(self.work)
+    def get_absolute_url(self): return "/%s"%(self.noid)
+    def __str__(self): return str(self.work)
 
 class OnlineEdition(models.Model):
     pub_date = models.DateTimeField(blank=True)
@@ -194,8 +190,7 @@ class OnlineEdition(models.Model):
     items = property(get_items)
     def __str__(self):
         return str(self.work)
-    def get_absolute_url(self):
-        return '/' + self.noid
+    def get_absolute_url(self): return "/%s"%(self.noid)
     class Admin:
         js = ['js/tiny_mce/tiny_mce.js', 'js/textareas.js']
     
@@ -228,24 +223,19 @@ class PhysicalEdition(models.Model):
                                    to_field='noid',
                                    db_column='expression_noid')
     noid = NoidField(settings.NOID_DIR, max_length=6)
-    def get_title(self):
-        return self.work.title
-    def get_authors(self):
-        return self.expression.authors
+    def get_title(self): return self.work.title
+    def get_authors(self): return self.expression.authors
     authors = property(get_authors)
-    def get_subjects(self):
-        return self.work.subjects
+    def get_subjects(self): return self.work.subjects
     subjects = property(get_subjects)
-    def get_parts(self):
-        return self.work.parts
+    def get_parts(self): return self.work.parts
     parts = property(get_parts)
     def __str__(self):
         return self.work.title + " (" + str(self.pub_date) + ")"
     class Admin:
         js = ['js/tiny_mce/tiny_mce.js', 'js/textareas.js']   
     def get_absolute_url(self): return "/%s"%(self.noid)
-    def get_items(self):
-        return None
+    def get_items(self): return None
 
 class RemoteItem(models.Model):
     manifestation = models.ForeignKey(OnlineEdition, 
@@ -254,8 +244,7 @@ class RemoteItem(models.Model):
                                       edit_inline=models.STACKED)
     url = models.CharField(max_length=1024,core=True)
     noid = NoidField(settings.NOID_DIR, max_length=6,primary_key=True)
-    def get_absolute_url(self):
-        return self.url
+    def get_absolute_url(self): return self.url
     
 class Place(models.Model):
     name_en = "Place"
