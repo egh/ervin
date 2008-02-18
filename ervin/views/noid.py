@@ -20,10 +20,15 @@ from django.core.exceptions import ObjectDoesNotExist
 from ervin.views.generic import find_one
 import ervin.views.generic, ervin.views.person, ervin.views.work, ervin.views.expression
 
-views = { Concept : 'concept.html',
+views = { Work : ervin.views.work.detail,
+          Expression : ervin.views.expression.detail,
           Person : ervin.views.person.detail,
-          Work : ervin.views.work.detail,
-          Expression : ervin.views.expression.detail }
+
+          # group 3
+          FrbrObject : 'object.html',
+          Concept : 'concept.html',
+          Event : 'event.html',
+          Place : 'place.html' }
 
 def by_noid(request,*args,**kwargs):
     o = find_one(tuple(views.keys()), noid=kwargs['noid'])
