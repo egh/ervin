@@ -65,9 +65,9 @@ class Person(models.Model):
     def __hash__(self): return hash(self.pk)
     def __str__(self):
         if self.dates:
-            return self.surname + ", " + self.forename + " (" + self.dates + ")"
-        else:
-            return self.surname + ", " + self.forename
+            return "%s, %s (%s)"%(self.surname, self.forename, self.dates)
+        else: 
+            return "%s, %s"%(self.surname, self.forename)
     class Meta:
         ordering=['surname','forename']
     class Admin: pass
@@ -135,7 +135,7 @@ class Work(models.Model):
         if self.partof == None:
             return self.title
         else:
-            return self.title + " (in " + self.partof.title + ")"
+            return "%s (in %s)"%(self.title, self.partof.title)
 
 class Expression(models.Model):
     work = models.ForeignKey('Work',
@@ -213,12 +213,8 @@ class PhysicalEdition(models.Model):
                                        blank=True,
                                        null=True)
     available = models.BooleanField()
-    #def get_work(self):
-    #    return self.expression.work
-    #work = property(get_work)
-    work = models.ForeignKey('Work',
-                             edit_inline=models.STACKED,
-                             related_name="physicalmanifestations")
+    def get_work(self): return self.expression.work
+    work = property(get_work)
     expression = models.ForeignKey(Expression,
                                    to_field='noid',
                                    db_column='expression_noid')
@@ -231,7 +227,7 @@ class PhysicalEdition(models.Model):
     def get_parts(self): return self.work.parts
     parts = property(get_parts)
     def __str__(self):
-        return self.work.title + " (" + str(self.pub_date) + ")"
+        return "%s(%s)"%(self.work.title, str(self.pub_date))
     class Admin:
         js = ['js/tiny_mce/tiny_mce.js', 'js/textareas.js']   
     def get_absolute_url(self): return "/%s"%(self.noid)
