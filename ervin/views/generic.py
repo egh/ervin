@@ -47,8 +47,12 @@ def author_sort(a,b):
 def find_one(*args, **kwargs):
     if type(args[0]) == tuple:
        args = args[0]
+    if type(args[0]) == list:
+        args = args[0]
     for klass in args:
         try: 
             return klass.objects.get(**kwargs)
-        except:
+        except Exception, ex:
+            print ex 
             pass
+    return None
