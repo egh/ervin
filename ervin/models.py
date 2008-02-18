@@ -172,13 +172,11 @@ class Expression(models.Model):
     def __unicode__(self): return unicode(self.work)
 
 class OnlineEdition(models.Model):
-    pub_date = models.DateTimeField(blank=True)
-    pdf = models.FileField(upload_to="pamphlet_pdfs",blank=True)
-    html = models.TextField(blank=True,core=True)
+    pub_date = models.DateTimeField(blank=True,null=True)
     expression = models.ForeignKey(Expression,
                                    db_column='expression_noid',
                                    to_field='noid')
-    title = models.TextField(max_length=200, blank=True)
+    title = models.TextField("Title (leave blank if same as expression)", max_length=200, blank=True)
     noid = NoidField(settings.NOID_DIR,max_length=6)
     def get_work(self):
         return self.expression.work
@@ -207,7 +205,7 @@ class OnlineEdition(models.Model):
         js = ['js/tiny_mce/tiny_mce.js', 'js/textareas.js']
     
 class PhysicalEdition(models.Model):
-    pub_date = models.DateField(blank=True)
+    pub_date = models.DateField(blank=True, null=True)
     publisher = models.CharField(max_length=100,core=True)
     #in_series = models.ForeignKey(Work,edit_inline=False,related_name="in_series",null=True,blank=True,limit_choices_to={'type': "series"})
     series_count = models.IntegerField(blank=True)
@@ -244,15 +242,6 @@ class PhysicalEdition(models.Model):
         js = ['js/tiny_mce/tiny_mce.js', 'js/textareas.js']   
     def get_absolute_url(self): return "/%s"%(self.noid)
     def get_items(self): return None
-
-class RemoteItem(models.Model):
-    manifestation = models.ForeignKey(OnlineEdition, 
-                                      to_field='noid',
-                                      db_column='manifestation_noid',
-                                      edit_inline=models.STACKED)
-    url = models.CharField(max_length=1024,core=True)
-    noid = NoidField(settings.NOID_DIR, max_length=6,primary_key=True)
-    def get_absolute_url(self): return self.url
     
 class Place(models.Model):
     name_en = "Place"
@@ -295,3 +284,24 @@ class Event(models.Model):
         super(Event, self).delete()
     def __unicode__(self): return self.name
     class Admin: pass
+
+class RemoteContent(models.Model):
+    edition = models.ForeignKey('OnlineEdition', edit_inline=models.STACKED)
+    name = models.CharField(max_length=100,core=True)
+    url = models.CharField(max_length=1024)
+    def get_absolute_url(self): return self.url 
+
+class DbContent(models.Model): 
+    edition = models.ForeignKey('OnlineEdition', edit_inline=models.STACKED)
+    name = models.CharField(max_length=100, core=True)
+    data = models.TextField(blank=True,core=True)
+    noid = NoidField(settings.NOID_DIR, max_length=6)
+    def get_absolute_url(self): return "/%s"%(self.noid)
+
+class FileContent(models.Model):
+    class Admin: pass
+    edition = models.ForeignKey('OnlineEdition', edit_inline=models.STACKED, blank=True)
+    name = models.CharField(max_length=100,core=True)
+    filename = MyFileField(upload_to="data")
+    noid = NoidField(settings.NOID_DIR, max_length=6)
+    def get_absolute_url(self): return "/%s"%(self.noid)
