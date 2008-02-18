@@ -26,7 +26,9 @@ def list_formats(request,iden):
         c = Context({'id': iden})
         return HttpResponse(t.render(c), status=300,
                             mimetype='application/xml')
-    
+
+classes = [OnlineEdition, PhysicalEdition]
+
 def unapi(request):
     if not(request.GET.has_key('id')):
         return list_formats(request, None)
@@ -37,15 +39,11 @@ def unapi(request):
         else:
             try:
                 format = request.GET['format']
-                work = Work.objects.get(slug=iden)
-                edition = work.onlineedition_set.all()[0]
-		t = loader.get_template('unapi/%s.xml' % format)
-                c = Context({
-                    'edition':edition,
-                    'author_list':edition.work.authors.all(),
-                    'subject_list':edition.work.subjects.all(),
-		    'base_url':settings.BASE_URL
-                    })
+                o = find_one(classes, pk=request.GET['id'])
+                if o == None: return HttpResponse(status=404)
+                class_name = o.__class__.__name__.lower()
+		t = loader.get_template('unapi/%s.%s.xml' % (class_name, format))
+                c = Context({ class_name : o })
                 return HttpResponse(t.render(c),
                                     mimetype='application/xml')
             except TemplateDoesNotExist:
