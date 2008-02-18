@@ -16,7 +16,6 @@
 
 from string import lower
 from django.db import models
-from django.template.defaultfilters import slugify
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
 from django.db.models.query import QuerySet
@@ -39,13 +38,9 @@ class Subject(models.Model):
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
     content_object = generic.GenericForeignKey()
-    slug = models.CharField(max_length=100,editable=False)
     noid = models.CharField(max_length=6,editable=False)
     def get_absolute_url(self):
-	return '/' + self.content_type.name + '/' + self.slug
-    def save(self):
-        self.slug = self.content_object.slug
-        super(Subject, self).save() 
+	return "/%s"%(self.noid)
     class Admin:
         pass
     def __str__(self):
@@ -53,14 +48,12 @@ class Subject(models.Model):
 
 class Person(models.Model):
     surname = models.CharField(max_length=200)
-    slug = models.CharField(max_length=100,editable=False)
     forename = models.CharField(max_length=200)
     dates = models.CharField(max_length=20,blank=True)
     noid = NoidField(settings.NOID_DIR, max_length=6,primary_key=True)
     def get_absolute_url(self):
-	return '/' + self.noid
+	return "/%s"%(self.noid)
     def save(self):
-        self.slug = slugify(self.surname + '-' + self.forename)
         super(Person, self).save()
         person_type = ContentType.objects.get(model='person', 
                                               app_label='ervin')
@@ -83,23 +76,17 @@ class Person(models.Model):
     
 class Section(models.Model):
     name = models.CharField(max_length=100)
-    slug = models.CharField(max_length=100,editable=False)
     def __str__(self):
         return self.name
-    def save(self):
-        self.slug = slugify(self.name)
-        super(Section, self).save() 
     class Admin:
         pass
 
 class Concept(models.Model):
     name = models.CharField(max_length=200)
-    slug = models.CharField(max_length=200,editable=False)
     noid = NoidField(settings.NOID_DIR, max_length=6,primary_key=True)
     def get_absolute_url(self):
-	return '/concept/' + self.slug
+	return "/%s"%(self.noid)
     def save(self):
-        self.slug = slugify(self.name)
         super(Concept, self).save()
         concept_type = ContentType.objects.get(model='concept',
                                                app_label='ervin')
@@ -123,7 +110,6 @@ class Work(models.Model):
     title = models.TextField(max_length=200,blank=True)
     def get_title(self):
         return self.title
-    slug = models.CharField(max_length=200,blank=True,editable=False)
     authors = models.ManyToManyField(Person,verbose_name="Authors",
                                      related_name="authored",
                                      blank=True,
@@ -154,7 +140,6 @@ class Work(models.Model):
     def get_absolute_url(self):
         return '/' + self.noid
     def save(self):
-        self.slug = slugify(self.title)
         super(Work, self).save() 
         try:
             expression = Expression.objects.get(work=self)
@@ -290,12 +275,10 @@ class RemoteItem(models.Model):
 class Place(models.Model):
     name_en = "Place"
     name = models.CharField(max_length=200)
-    slug = models.CharField(max_length=200,editable=False)
     noid = NoidField(settings.NOID_DIR, max_length=6)
     def get_absolute_url(self):
-	return '/place/' + self.slug
+	return "/%s"%(self.noid)
     def save(self):
-        self.slug = slugify(self.name)
         super(Place, self).save()
         place_type = ContentType.objects.get(model='place',
                                              app_label='ervin')
@@ -315,12 +298,10 @@ class Place(models.Model):
 class Organization(models.Model):
     name_en = "Organization"
     name = models.CharField(max_length=200)
-    slug = models.CharField(max_length=200,editable=False)
     noid = NoidField(settings.NOID_DIR, max_length=6)
     def get_absolute_url(self):
-	return '/organization/' + self.slug
+        return "/%s"%(self.noid)
     def save(self):
-        self.slug = slugify(self.name)
         super(Organization, self).save()
         which_type = ContentType.objects.get(model='organization',
                                              app_label='ervin')
@@ -340,12 +321,10 @@ class Organization(models.Model):
 class Event(models.Model):
     name_en = "Event"
     name = models.CharField(max_length=200)
-    slug = models.CharField(max_length=200,editable=False)
     noid = NoidField(settings.NOID_DIR, max_length=6)
     def get_absolute_url(self):
-	return '/event/' + self.slug
+	return "/%s"%(self.noid)
     def save(self):
-        self.slug = slugify(self.name)
         super(Event, self).save()
         which_type = ContentType.objects.get(model='event',
                                              app_label='ervin')
