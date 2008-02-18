@@ -89,7 +89,6 @@ class Section(models.Model):
     class Admin: pass
 
 class Concept(models.Model):
-    name_en = "Concept"
     name = models.CharField(max_length=200)
     noid = NoidField(settings.NOID_DIR, max_length=6,primary_key=True)
     def get_absolute_url(self): return "/%s"%(self.noid)
@@ -243,7 +242,6 @@ class PhysicalEdition(models.Model):
     def get_items(self): return None
     
 class Place(models.Model):
-    name_en = "Place"
     name = models.CharField(max_length=200)
     noid = NoidField(settings.NOID_DIR, max_length=6)
     def get_absolute_url(self): return "/%s"%(self.noid)
@@ -257,7 +255,6 @@ class Place(models.Model):
     class Admin: pass
 
 class Organization(models.Model):
-    name_en = "Organization"
     name = models.CharField(max_length=200)
     noid = NoidField(settings.NOID_DIR, max_length=6)
     def get_absolute_url(self): return "/%s"%(self.noid)
@@ -271,7 +268,6 @@ class Organization(models.Model):
     class Admin: pass   
 
 class Event(models.Model):
-    name_en = "Event"
     name = models.CharField(max_length=200)
     noid = NoidField(settings.NOID_DIR, max_length=6)
     def get_absolute_url(self): return "/%s"%(self.noid)
@@ -283,6 +279,21 @@ class Event(models.Model):
         super(Event, self).delete()
     def __unicode__(self): return self.name
     class Admin: pass
+
+class FrbrObject(models.Model):
+    name = models.CharField(max_length=200)
+    noid = NoidField(settings.NOID_DIR, max_length=6)
+    def get_absolute_url(self): return "/%s"%(self.noid)
+    def save(self):
+        super(FrbrObject, self).save()
+        save_hook(self)
+    def delete(self):
+        delete_hook(self)
+        super(FrbrObject, self).delete()
+    def __unicode__(self): return self.name
+    class Admin: pass
+    class Meta:
+        verbose_name = "Object"
 
 class RemoteContent(models.Model):
     edition = models.ForeignKey('OnlineEdition', edit_inline=models.STACKED)
