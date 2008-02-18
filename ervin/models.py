@@ -289,6 +289,7 @@ class RemoteContent(models.Model):
     edition = models.ForeignKey('OnlineEdition', edit_inline=models.STACKED)
     name = models.CharField(max_length=100,core=True)
     url = models.CharField(max_length=1024)
+    def __unicode__(self): return self.name
     def get_absolute_url(self): return self.url 
 
 class DbContent(models.Model): 
@@ -296,12 +297,13 @@ class DbContent(models.Model):
     name = models.CharField(max_length=100, core=True)
     data = models.TextField(blank=True,core=True)
     noid = NoidField(settings.NOID_DIR, max_length=6)
+    def __unicode__(self): return self.name
     def get_absolute_url(self): return "/%s"%(self.noid)
 
 class FileContent(models.Model):
-    class Admin: pass
     edition = models.ForeignKey('OnlineEdition', edit_inline=models.STACKED, blank=True)
     name = models.CharField(max_length=100,core=True)
     filename = MyFileField(upload_to="data")
     noid = NoidField(settings.NOID_DIR, max_length=6)
+    def __unicode__(self): return self.name
     def get_absolute_url(self): return "/%s"%(self.noid)
