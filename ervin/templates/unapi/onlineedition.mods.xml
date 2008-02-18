@@ -5,10 +5,10 @@
       xmlns="http://www.loc.gov/mods/v3"
       xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-0.xsd">
     <titleInfo>
-      <title>{{ edition.title }}</title>
+      <title>{{ onlineedition.get_title }}</title>
     </titleInfo>
-    {% if edition.authors.all %}
-    {% for author in edition.authors.all %}
+    {% if onlineedition.authors %}
+    {% for author in onlineedition.authors.all %}
     <name type="personal">
       <namePart type="family">{{ author.surname }}</namePart>
       <namePart type="given">{{ author.forename }}</namePart>
@@ -23,12 +23,12 @@
     </physicalDescription>
     <typeOfResource>text</typeOfResource>
     <location>
-      <url>{{ base_url }}{{ edition.work.get_absolute_url }}</url>
+      <url>{{ base_url }}{{ onlineedition.work.get_absolute_url }}</url>
     </location>
     <abstract></abstract>
-    {% if edition.subjects %}
+    {% if onlineedition.subjects %}
     <subject authority="local">
-      {% for subject in edition.subjects.all %}
+      {% for subject in onlineedition.subjects.all %}
       <topic>{{ subject }}</topic>
       {% endfor %}
     </subject>

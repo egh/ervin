@@ -43,7 +43,8 @@ def unapi(request):
                 if o == None: return HttpResponse(status=404)
                 class_name = o.__class__.__name__.lower()
 		t = loader.get_template('unapi/%s.%s.xml' % (class_name, format))
-                c = Context({ class_name : o })
+                c = Context({ class_name : o,
+                              'base_url' : settings.BASE_URL })
                 return HttpResponse(t.render(c),
                                     mimetype='application/xml')
             except TemplateDoesNotExist:
