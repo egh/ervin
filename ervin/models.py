@@ -48,10 +48,8 @@ class Subject(models.Model):
     object_id = models.PositiveIntegerField()
     content_object = generic.GenericForeignKey()
     noid = models.CharField(max_length=6,editable=False)
-    def get_absolute_url(self):
-	return "/%s"%(self.noid)
-    class Admin:
-        pass
+    def get_absolute_url(self): return "/%s"%(self.noid)
+    class Admin: pass
     def __str__(self):
         return str(self.content_object)
 
@@ -60,8 +58,7 @@ class Person(models.Model):
     forename = models.CharField(max_length=200)
     dates = models.CharField(max_length=20,blank=True)
     noid = NoidField(settings.NOID_DIR, max_length=6,primary_key=True)
-    def get_absolute_url(self):
-	return "/%s"%(self.noid)
+    def get_absolute_url(self): return "/%s"%(self.noid)
     def save(self):
         super(Person, self).save()
         save_hook(self)
@@ -74,32 +71,26 @@ class Person(models.Model):
             return self.surname + ", " + self.forename
     class Meta:
         ordering=['surname','forename']
-    class Admin:
-        pass
+    class Admin: pass
     
 class Section(models.Model):
     name = models.CharField(max_length=100)
-    def __str__(self):
-        return self.name
-    class Admin:
-        pass
+    def __str__(self): return self.name
+    class Admin: pass
 
 class Concept(models.Model):
     name = models.CharField(max_length=200)
     noid = NoidField(settings.NOID_DIR, max_length=6,primary_key=True)
-    def get_absolute_url(self):
-	return "/%s"%(self.noid)
+    def get_absolute_url(self): return "/%s"%(self.noid)
     def save(self):
         super(Concept, self).save()
         save_hook(self)
     def delete(self):
         delete_hook(self)
         super(Concept, self).delete()
-    def __str__(self):
-        return self.name
+    def __str__(self): return self.name
     name_en = "Concept"
-    class Admin:
-        pass   
+    class Admin: pass   
     
 class Work(models.Model):
     title = models.TextField(max_length=200,blank=True)
@@ -252,8 +243,7 @@ class PhysicalEdition(models.Model):
         return self.work.title + " (" + str(self.pub_date) + ")"
     class Admin:
         js = ['js/tiny_mce/tiny_mce.js', 'js/textareas.js']   
-    def get_absolute_url(self):
-        return '/' + self.noid
+    def get_absolute_url(self): return "/%s"%(self.noid)
     def get_items(self):
         return None
 
@@ -271,50 +261,40 @@ class Place(models.Model):
     name_en = "Place"
     name = models.CharField(max_length=200)
     noid = NoidField(settings.NOID_DIR, max_length=6)
-    def get_absolute_url(self):
-	return "/%s"%(self.noid)
+    def get_absolute_url(self): return "/%s"%(self.noid)
     def save(self):
         super(Place, self).save()
         save_hook(self)
     def delete(self):
         delete_hook(self)
         super(Place, self).delete()
-    def __str__(self):
-        return self.name
-    class Admin:
-        pass
+    def __str__(self): return self.name
+    class Admin: pass
 
 class Organization(models.Model):
     name_en = "Organization"
     name = models.CharField(max_length=200)
     noid = NoidField(settings.NOID_DIR, max_length=6)
-    def get_absolute_url(self):
-        return "/%s"%(self.noid)
+    def get_absolute_url(self): return "/%s"%(self.noid)
     def save(self):
         super(Organization, self).save()
         save_hook(self)
     def delete(self):
         delete_hook(self)
         super(Organization, self).delete()
-    def __str__(self):
-        return self.name
-    class Admin:
-        pass   
+    def __str__(self): return self.name
+    class Admin: pass   
 
 class Event(models.Model):
     name_en = "Event"
     name = models.CharField(max_length=200)
     noid = NoidField(settings.NOID_DIR, max_length=6)
-    def get_absolute_url(self):
-	return "/%s"%(self.noid)
+    def get_absolute_url(self): return "/%s"%(self.noid)
     def save(self):
         super(Event, self).save()
         save_hook(self)
     def delete(self):
         delete_hook(self)
         super(Event, self).delete()
-    def __str__(self):
-        return self.name
-    class Admin:
-        pass
-    
+    def __str__(self): return self.name
+    class Admin: pass
