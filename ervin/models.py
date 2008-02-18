@@ -62,7 +62,6 @@ class Subject(models.Model):
     content_object = generic.GenericForeignKey()
     noid = models.CharField(max_length=6,editable=False)
     def get_absolute_url(self): return "/%s"%(self.noid)
-    class Admin: pass
     def __unicode__(self): return unicode(self.content_object)
 
 class Person(models.Model):
