@@ -34,6 +34,15 @@ def delete_hook(item):
     except:
         pass
 
+def save_hook(item):
+    t = ContentType.objects.get(model=lower(type(item).__name__),
+                                app_label='ervin')
+    try:
+        s = Subject.objects.get(content_type=t,object_id=item.pk)
+    except Subject.DoesNotExist:
+        s = Subject(content_type=t,object_id=item.pk,noid=item.noid)
+    s.save()
+
 class Subject(models.Model):
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
@@ -55,13 +64,7 @@ class Person(models.Model):
 	return "/%s"%(self.noid)
     def save(self):
         super(Person, self).save()
-        person_type = ContentType.objects.get(model='person', 
-                                              app_label='ervin')
-        try:
-            s = Subject.objects.get(content_type=person_type,object_id=self.pk)
-        except Subject.DoesNotExist:
-            s = Subject(content_type=person_type,object_id=self.pk)
-        s.save()
+        save_hook(self)
     def __hash__(self):
         return hash(self.pk)
     def __str__(self):
@@ -88,15 +91,7 @@ class Concept(models.Model):
 	return "/%s"%(self.noid)
     def save(self):
         super(Concept, self).save()
-        concept_type = ContentType.objects.get(model='concept',
-                                               app_label='ervin')
-        try:
-            s = Subject.objects.get(content_type=concept_type,object_id=self.pk)
-        except Subject.DoesNotExist:
-            s = Subject(content_type=concept_type,
-                        noid=self.noid,
-                        object_id=self.pk)
-        s.save()
+        save_hook(self)
     def delete(self):
         delete_hook(self)
         super(Concept, self).delete()
@@ -280,13 +275,7 @@ class Place(models.Model):
 	return "/%s"%(self.noid)
     def save(self):
         super(Place, self).save()
-        place_type = ContentType.objects.get(model='place',
-                                             app_label='ervin')
-        try:
-            s = Subject.objects.get(content_type=place_type,object_id=self.pk)
-        except Subject.DoesNotExist:
-            s = Subject(content_type=place_type,object_id=self.pk,noid=self.noid)
-        s.save()
+        save_hook(self)
     def delete(self):
         delete_hook(self)
         super(Place, self).delete()
@@ -303,13 +292,7 @@ class Organization(models.Model):
         return "/%s"%(self.noid)
     def save(self):
         super(Organization, self).save()
-        which_type = ContentType.objects.get(model='organization',
-                                             app_label='ervin')
-        try:
-            s = Subject.objects.get(content_type=which_type,object_id=self.pk)
-        except Subject.DoesNotExist:
-            s = Subject(content_type=which_type,object_id=self.pk,noid=self.noid)
-        s.save()
+        save_hook(self)
     def delete(self):
         delete_hook(self)
         super(Organization, self).delete()
@@ -326,15 +309,7 @@ class Event(models.Model):
 	return "/%s"%(self.noid)
     def save(self):
         super(Event, self).save()
-        which_type = ContentType.objects.get(model='event',
-                                             app_label='ervin')
-        try:
-            s = Subject.objects.get(content_type=which_type,object_id=self.pk)
-        except Subject.DoesNotExist:
-            s = Subject(content_type=which_type,
-                        noid=self.noid,
-                        object_id=self.pk)
-        s.save()
+        save_hook(self)
     def delete(self):
         delete_hook(self)
         super(Event, self).delete()
