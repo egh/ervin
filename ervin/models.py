@@ -63,8 +63,7 @@ class Subject(models.Model):
     noid = models.CharField(max_length=6,editable=False)
     def get_absolute_url(self): return "/%s"%(self.noid)
     class Admin: pass
-    def __str__(self):
-        return str(self.content_object)
+    def __unicode__(self): return unicode(self.content_object)
 
 class Person(models.Model):
     surname = models.CharField(max_length=200)
@@ -76,7 +75,7 @@ class Person(models.Model):
         super(Person, self).save()
         save_hook(self)
     def __hash__(self): return hash(self.pk)
-    def __str__(self):
+    def __unicode__(self):
         if self.dates:
             return "%s, %s (%s)"%(self.surname, self.forename, self.dates)
         else: 
@@ -87,7 +86,7 @@ class Person(models.Model):
     
 class Section(models.Model):
     name = models.CharField(max_length=100)
-    def __str__(self): return self.name
+    def __unicode__(self): return self.name
     class Admin: pass
 
 class Concept(models.Model):
@@ -101,7 +100,7 @@ class Concept(models.Model):
     def delete(self):
         delete_hook(self)
         super(Concept, self).delete()
-    def __str__(self): return self.name
+    def __unicode__(self): return self.name
     class Admin: pass   
     
 class Work(models.Model):
@@ -144,7 +143,7 @@ class Work(models.Model):
             e = Expression(work=self)
             e.save()
 
-    def __str__(self):
+    def __unicode__(self):
         if self.partof == None:
             return self.title
         else:
@@ -170,7 +169,7 @@ class Expression(models.Model):
         else:
             return self.work.get_title()
     def get_absolute_url(self): return "/%s"%(self.noid)
-    def __str__(self): return str(self.work)
+    def __unicode__(self): return unicode(self.work)
 
 class OnlineEdition(models.Model):
     pub_date = models.DateTimeField(blank=True)
@@ -201,8 +200,8 @@ class OnlineEdition(models.Model):
     def get_items(self):
         return list(self.remoteitem_set.all())
     items = property(get_items)
-    def __str__(self):
-        return str(self.work)
+    def __unicode__(self):
+        return unicode(self.work)
     def get_absolute_url(self): return "/%s"%(self.noid)
     class Admin:
         js = ['js/tiny_mce/tiny_mce.js', 'js/textareas.js']
@@ -239,8 +238,8 @@ class PhysicalEdition(models.Model):
     subjects = property(get_subjects)
     def get_parts(self): return self.work.parts
     parts = property(get_parts)
-    def __str__(self):
-        return "%s(%s)"%(self.work.title, str(self.pub_date))
+    def __unicode__(self):
+        return "%s(%s)"%(self.work.title, unicode(self.pub_date))
     class Admin:
         js = ['js/tiny_mce/tiny_mce.js', 'js/textareas.js']   
     def get_absolute_url(self): return "/%s"%(self.noid)
@@ -266,7 +265,7 @@ class Place(models.Model):
     def delete(self):
         delete_hook(self)
         super(Place, self).delete()
-    def __str__(self): return self.name
+    def __unicode__(self): return self.name
     class Admin: pass
 
 class Organization(models.Model):
@@ -280,7 +279,7 @@ class Organization(models.Model):
     def delete(self):
         delete_hook(self)
         super(Organization, self).delete()
-    def __str__(self): return self.name
+    def __unicode__(self): return self.name
     class Admin: pass   
 
 class Event(models.Model):
@@ -294,5 +293,5 @@ class Event(models.Model):
     def delete(self):
         delete_hook(self)
         super(Event, self).delete()
-    def __str__(self): return self.name
+    def __unicode__(self): return self.name
     class Admin: pass
