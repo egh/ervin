@@ -24,6 +24,19 @@ from noid import LocalMinter
 from noid import NoidField
 import re
 
+class MyFileField(models.FileField):
+    def get_internal_type(self):
+        return "FileField"    
+
+    def contribute_to_class(self, cls, name):
+        def _make_filename(filename, data):
+            (basename, ext) = os.path.splitext(filename)
+            m = md5.new(data)
+            return "%s%s"%(m.hexdigest(), ext)
+
+        super(MyFileField, self).contribute_to_class(cls, name)
+        setattr(cls, 'save_%s_file' % self.name, lambda instance, filename, raw_contents, save=True: instance._save_FIELD_file(self, _make_filename(filename, raw_contents), raw_contents, save))
+
 def delete_hook(item):
     which_type = ContentType.objects.get(model=lower(type(item).__name__),
                                          app_label='ervin')
