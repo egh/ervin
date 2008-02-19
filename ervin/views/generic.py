@@ -56,3 +56,6 @@ def find_one(*args, **kwargs):
             print ex 
             pass
     return None
+
+def find_all(klass):
+    return klass.objects.all()
