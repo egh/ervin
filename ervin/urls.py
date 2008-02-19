@@ -19,6 +19,7 @@ urlpatterns = patterns(
     'ervin.views',
     (r'^places$', 'generic.list', {'class' : ervin.models.Place }),
     (r'^persons$', 'person.index'),
+    (r'^works$', 'generic.list', {'class' : ervin.models.Work }),
     (r'^unapi$', 'unapi.unapi'),
     (r'^(?P<noid>[a-z0-9-]{6})$', 'generic.by_noid'),
     (r'^$', 'main.home')

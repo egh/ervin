@@ -64,14 +64,15 @@ def find_all(klass):
 views = { Work : ervin.views.work.detail,
           Expression : ervin.views.expression.detail,
           Person : ervin.views.person.detail,
-
+          OnlineEdition : 'onlineedition.html',
           # group 3
           FrbrObject : 'object.html',
           Concept : 'concept.html',
           Event : 'event.html',
           Place : 'place.html' }
 
-list_views = { Place : 'place_list.html' }
+list_views = { Work : 'work_list.html',
+               Place : 'place_list.html' }
 
 def by_noid(request,*args,**kwargs):
     o = find_one(tuple(views.keys()), noid=kwargs['noid'])
