@@ -17,12 +17,12 @@ from django.conf.urls.defaults import patterns
 import ervin.models
 urlpatterns = patterns(
     'ervin.views',
-    (r'^concepts$', 'generic.listview', {'class' : ervin.models.Concept }),
-    (r'^events$', 'generic.listview', {'class' : ervin.models.Event }),
-    (r'^places$', 'generic.listview', {'class' : ervin.models.Place }),
-    (r'^objects$', 'generic.listview', {'class' : ervin.models.FrbrObject }),
+    (r'^concepts$', 'generic.list_view', {'class' : ervin.models.Concept }),
+    (r'^events$', 'generic.list_view', {'class' : ervin.models.Event }),
+    (r'^places$', 'generic.list_view', {'class' : ervin.models.Place }),
+    (r'^objects$', 'generic.list_view', {'class' : ervin.models.FrbrObject }),
     (r'^persons$', 'person.index'),
-    (r'^works$', 'generic.listview', {'class' : ervin.models.Work }),
+    (r'^works$', 'generic.list_view', {'class' : ervin.models.Work }),
     (r'^unapi$', 'unapi.unapi'),
     (r'^(?P<noid>[a-z0-9-]{6})$', 'generic.by_noid'),
     (r'^$', 'main.home')
