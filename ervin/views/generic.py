@@ -15,8 +15,9 @@
 
 from django.template import Context, loader
 from ervin.models import *
-from django.http import HttpResponse
-import re
+from django.http import HttpResponse,HttpResponseNotFound
+from django.core.exceptions import ObjectDoesNotExist
+import re, ervin.views.person, ervin.views.work, ervin.views.expression
 
 def get_sections():
     sections = list(Section.objects.all())
@@ -59,3 +60,37 @@ def find_one(*args, **kwargs):
 
 def find_all(klass):
     return klass.objects.all()
+
+views = { Work : ervin.views.work.detail,
+          Expression : ervin.views.expression.detail,
+          Person : ervin.views.person.detail,
+
+          # group 3
+          FrbrObject : 'object.html',
+          Concept : 'concept.html',
+          Event : 'event.html',
+          Place : 'place.html' }
+
+list_views = { Place : 'place_list.html' }
+
+def by_noid(request,*args,**kwargs):
+    o = find_one(tuple(views.keys()), noid=kwargs['noid'])
+    o_class = o.__class__
+    if views.has_key(o.__class__):
+        if type(views[o_class]) == str:
+            t = loader.get_template(views[o_class])
+            c = Context({ o_class.__name__.lower(): o })
+            return HttpResponse(t.render(c))
+        else:
+            return views[o.__class__] (o, request, *args, **kwargs)
+    else:
+        return HttpResponseNotFound('Not found')
+
+def list(*args, **kwargs):
+    klass = kwargs['class']
+    if list_views.has_key(klass):
+        list = find_all(klass)
+        t = loader.get_template(list_views[klass])
+        c = Context({ "%s_list"%(klass.__name__.lower()): list })
+        return HttpResponse(t.render(c))
+        
