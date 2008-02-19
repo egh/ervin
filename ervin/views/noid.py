@@ -17,7 +17,7 @@ from django.template import Context, loader
 from ervin.models import *
 from django.http import HttpResponse,HttpResponseNotFound
 from django.core.exceptions import ObjectDoesNotExist
-from ervin.views.generic import find_one
+from ervin.views.generic import find_one, find_all
 import ervin.views.generic, ervin.views.person, ervin.views.work, ervin.views.expression
 
 views = { Work : ervin.views.work.detail,
@@ -29,6 +29,8 @@ views = { Work : ervin.views.work.detail,
           Concept : 'concept.html',
           Event : 'event.html',
           Place : 'place.html' }
+
+list_views = { Place : 'place_list.html' }
 
 def by_noid(request,*args,**kwargs):
     o = find_one(tuple(views.keys()), noid=kwargs['noid'])
@@ -42,3 +44,12 @@ def by_noid(request,*args,**kwargs):
             return views[o.__class__] (o, request, *args, **kwargs)
     else:
         return HttpResponseNotFound('Not found')
+
+def list(*args, **kwargs):
+    klass = kwargs['class']
+    if list_views.has_key(klass):
+        list = find_all(klass)
+        t = loader.get_template(list_views[klass])
+        c = Context({ "%s_list"%(klass.__name__.lower()): list })
+        return HttpResponse(t.render(c))
+        
