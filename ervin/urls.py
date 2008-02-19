@@ -14,11 +14,12 @@
 #along with Ervin.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.conf.urls.defaults import patterns
-
+import ervin.models
 urlpatterns = patterns(
     'ervin.views',
-    (r'^(?P<noid>[a-z0-9-]{6})$', 'noid.by_noid'),
+    (r'^places$', 'noid.list', {'class' : ervin.models.Place }),
     (r'^persons$', 'person.index'),
     (r'^unapi$', 'unapi.unapi'),
+    (r'^(?P<noid>[a-z0-9-]{6})$', 'noid.by_noid'),
     (r'^$', 'main.home')
     )
