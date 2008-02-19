@@ -1,0 +1,10 @@
+{% extends "plain.html" %}
+{% load catalog %}
+{% block title %}Places{% endblock %}
+{% block content %}
+<ul>
+{% for place in place_list %}
+  <li><a href="{{ place.get_absolute_url }}">{{ place }}</a></li>
+{% endfor %}
+</ul>
+{% endblock %}
