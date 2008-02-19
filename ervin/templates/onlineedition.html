@@ -1,0 +1,8 @@
+{% extends "plain.html" %}
+{% load catalog %}
+{% block title %}Online edition: {{ onlineedition.get_title }}{% endblock %}
+{% block content %}
+<p>
+  <abbr class="unapi-id" title="{{ onlineedition.pk }}"/>
+</p>
+{% endblock %}
