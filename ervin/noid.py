@@ -18,7 +18,7 @@ from os import popen
 from django.db import models
 import re
 
-class Minter():
+class Minter(object):
     def __init__(self, location, at_once=1):
         self.location = location
         self.at_once = at_once
