@@ -87,11 +87,11 @@ def by_noid(request,*args,**kwargs):
     else:
         return HttpResponseNotFound('Not found')
 
-def list(*args, **kwargs):
+def list_view(*args, **kwargs):
     klass = kwargs['class']
     if list_views.has_key(klass):
-        list = find_all(klass)
+        l = find_all(klass)
         t = loader.get_template(list_views[klass])
-        c = Context({ "%s_list"%(klass.__name__.lower()): list })
+        c = Context({ "%s_list"%(klass.__name__.lower()): l })
         return HttpResponse(t.render(c))
         
