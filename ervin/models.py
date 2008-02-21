@@ -161,6 +161,9 @@ class Expression(models.Model):
     def get_authors(self):
         return self.work.authors
     authors = property(get_authors)
+    def get_subjects(self):
+        return self.work.subjects
+    subjects = property(get_subjects)
     def get_title(self):
         if self.title != None and self.title != '':
             return self.title
