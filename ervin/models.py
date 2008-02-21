@@ -315,11 +315,21 @@ class DbContent(models.Model):
     def __unicode__(self): return self.name
     def get_absolute_url(self): return "/%s"%(self.noid)
 
+ext_map = { '.pdf' : 'application/pdf' }
+
 class FileContent(models.Model):
     edition = models.ForeignKey('OnlineEdition', edit_inline=models.STACKED, related_name='content_file')
     name = models.CharField(max_length=100,core=True)
     filename = MyFileField(upload_to="data")
-    type = models.CharField(max_length=100,editable=False)
+    mimetype = models.CharField(max_length=100,editable=False)
     noid = NoidField(settings.NOID_DIR, max_length=6)
     def __unicode__(self): return self.name
     def get_absolute_url(self): return "/%s"%(self.noid)
+    def save(self):
+        (basename, ext) = os.path.splitext(self.filename)
+        if ext_map.has_key(ext):
+            self.mimetype = ext_map[ext]
+        else: self.mimetype = None
+        super(FileContent, self).save()
+        
+    
