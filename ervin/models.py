@@ -22,7 +22,7 @@ from django.db.models.query import QuerySet
 from django.conf import settings
 from noid import LocalMinter
 from noid import NoidField
-import re
+import re, os, md5
 
 class MyFileField(models.FileField):
     def get_internal_type(self):
@@ -31,7 +31,9 @@ class MyFileField(models.FileField):
     def contribute_to_class(self, cls, name):
         def _make_filename(filename, data):
             (basename, ext) = os.path.splitext(filename)
-            m = md5.new(data)
+            m = md5.new()
+            for d in data['content']:
+                m.update(d)
             return "%s%s"%(m.hexdigest(), ext)
 
         super(MyFileField, self).contribute_to_class(cls, name)
@@ -299,14 +301,14 @@ class FrbrObject(models.Model):
         verbose_name = "Object"
 
 class RemoteContent(models.Model):
-    edition = models.ForeignKey('OnlineEdition', edit_inline=models.STACKED)
+    edition = models.ForeignKey('OnlineEdition', edit_inline=models.STACKED, related_name='content_remote')
     name = models.CharField(max_length=100,core=True)
     url = models.CharField(max_length=1024)
     def __unicode__(self): return self.name
     def get_absolute_url(self): return self.url 
 
 class DbContent(models.Model): 
-    edition = models.ForeignKey('OnlineEdition', edit_inline=models.STACKED)
+    edition = models.ForeignKey('OnlineEdition', edit_inline=models.STACKED, related_name='content_db')
     name = models.CharField(max_length=100, core=True)
     data = models.TextField(blank=True,core=True)
     noid = NoidField(settings.NOID_DIR, max_length=6)
@@ -314,9 +316,10 @@ class DbContent(models.Model):
     def get_absolute_url(self): return "/%s"%(self.noid)
 
 class FileContent(models.Model):
-    edition = models.ForeignKey('OnlineEdition', edit_inline=models.STACKED, blank=True)
+    edition = models.ForeignKey('OnlineEdition', edit_inline=models.STACKED, related_name='content_file')
     name = models.CharField(max_length=100,core=True)
     filename = MyFileField(upload_to="data")
+    type = models.CharField(max_length=100,editable=False)
     noid = NoidField(settings.NOID_DIR, max_length=6)
     def __unicode__(self): return self.name
     def get_absolute_url(self): return "/%s"%(self.noid)
