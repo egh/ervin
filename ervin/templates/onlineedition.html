@@ -26,4 +26,22 @@
 </dd>
 {% endif %}
 </dl>
+
+{{ data }}
+
+{% if contents %}
+<dt>
+{% for name,versions in contents.items %}
+<dt>{{ name }}</dt>
+<dd>
+{% for v in versions %}
+{% ifequal v.mimetype 'application/pdf' %}
+<p><a href="{{v.get_absolute_url}}">View PDF</a></p>
+{% endifequal %}
+{% endfor %}
+
+</dd>
+</dt>
+{% endfor %}
+{% endif %}
 {% endblock %}

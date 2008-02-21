@@ -17,7 +17,7 @@ from django.template import Context, loader
 from ervin.models import *
 from django.http import HttpResponse,HttpResponseNotFound
 from django.core.exceptions import ObjectDoesNotExist
-import re, ervin.views.person, ervin.views.work, ervin.views.expression
+import re, ervin.views.person, ervin.views.work, ervin.views.expression, ervin.views.onlineedition
 
 def get_sections():
     sections = list(Section.objects.all())
@@ -64,7 +64,7 @@ def find_all(klass):
 views = { Work : ervin.views.work.detail,
           Expression : ervin.views.expression.detail,
           Person : ervin.views.person.detail,
-          OnlineEdition : 'onlineedition.html',
+          OnlineEdition : ervin.views.onlineedition.detail,
           # group 3
           FrbrObject : 'object.html',
           Concept : 'concept.html',
