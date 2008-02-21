@@ -2,7 +2,28 @@
 {% load catalog %}
 {% block title %}Online edition: {{ onlineedition.get_title }}{% endblock %}
 {% block content %}
-<p>
-  <abbr class="unapi-id" title="{{ onlineedition.pk }}"/>
-</p>
+<abbr class="unapi-id" title="{{ onlineedition.pk }}"/>
+<dl>
+<dt>Title:</dt> <dd>{{ onlineedition.get_title }}</dd>
+
+{% if onlineedition.authors %}
+<dt>Authors:</dt> <dd>
+  <ul>
+  {% for person in onlineedition.authors.all %}
+    <li>{{ person }}</li>
+  {% endfor %}
+  </ul>
+</dd>
+{% endif %}
+
+{% if onlineedition.subjects %}
+<dt>Subjects:</dt> <dd>
+  <ul>
+  {% for subject in onlineedition.subjects.all %}
+    <li>{{ subject }}</li>
+  {% endfor %}
+  </ul>
+</dd>
+{% endif %}
+</dl>
 {% endblock %}
