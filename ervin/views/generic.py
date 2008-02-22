@@ -61,6 +61,13 @@ def find_one(*args, **kwargs):
 def find_all(klass):
     return klass.objects.all()
 
+def showfile(f,*args,**kwargs):
+    response = HttpResponse(mimetype=f.mimetype)
+    response['Content-Disposition'] = "inline; filename=%s%s"%(f.noid,f.get_ext())
+    response['Content-Length'] = os.path.getsize(f.filename)
+    response.write(open(f.filename).read())
+    return response
+
 views = { Work : ervin.views.work.detail,
           Expression : ervin.views.expression.detail,
           Person : ervin.views.person.detail,
@@ -69,8 +76,10 @@ views = { Work : ervin.views.work.detail,
           FrbrObject : 'object.html',
           Concept : 'concept.html',
           Event : 'event.html',
-          Place : 'place.html' }
-
+          Place : 'place.html',
+          #content
+          FileContent : showfile }
+          
 list_views = { Work : 'work_list.html',
                Place : 'place_list.html' }
 
