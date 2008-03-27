@@ -1,0 +1,12 @@
+{% extends "plain.html" %}
+{% load catalog %}
+{% block title %}Objects{% endblock %}
+{% block content %}
+
+<ul>
+{% for object in frbrobject_list %}
+<li><a href="{{ object.get_absolute_url }}">{{ object }}</a>
+</li>
+{% endfor %}
+</ul>
+{% endblock %}
