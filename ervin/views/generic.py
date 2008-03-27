@@ -68,21 +68,33 @@ def showfile(f,*args,**kwargs):
     response.write(open(f.filename).read())
     return response
 
-views = { Work : ervin.views.work.detail,
-          Expression : ervin.views.expression.detail,
-          Person : ervin.views.person.detail,
-          OnlineEdition : ervin.views.onlineedition.detail,
-          # group 3
-          FrbrObject : 'object.html',
-          Concept : 'concept.html',
-          Event : 'event.html',
-          Place : 'place.html',
-          #content
-          FileContent : showfile }
+views = {
+    #group 1
+    Work : ervin.views.work.detail,
+    Expression : ervin.views.expression.detail,
+    OnlineEdition : ervin.views.onlineedition.detail,
+    
+    # group 2
+    Person : ervin.views.person.detail,
+    #Organization : ervin.views.organization.detail,
+    
+    # group 3
+    FrbrObject : 'object.html',
+    Concept : 'concept.html',
+    Event : 'event.html',
+    Place : 'place.html',
+    
+    #content
+    FileContent : showfile }
           
-list_views = { Person : 'person_list.html',
-               Work : 'work_list.html',
+list_views = { Work : 'work_list.html',
                
+               Person : 'person_list.html',
+               Organization : 'person_list.html',
+               
+               Concept : 'concept_list.html',
+               Event : 'event_list.html',
+               FrbrObject : 'object_list.html',
                Place : 'place_list.html' }
                
 def by_noid(request,*args,**kwargs):
