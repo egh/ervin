@@ -29,9 +29,7 @@ def by_noid(request, *args, **kwargs):
 def detail(person, request, *args,**kwargs):
    s = Subject.objects.get(noid=person.noid)
    docs_about = list(Work.objects.filter(subjects=s))
-   docs_about.sort(title_sort)
    docs_by = list(Work.objects.filter(authors=person))
-   docs_by.sort(title_sort)
 
    # subjects_set = dict()
 #    for w in docs_by:
@@ -45,8 +43,7 @@ def detail(person, request, *args,**kwargs):
    
    t = loader.get_template('person.html')
    c = Context({
-	'sections': get_sections(),
-        #'collaborators': collaborators,
+         #'collaborators': collaborators,
         #'subjects': subjects,
         'person': person,
         'docs_by': docs_by,
