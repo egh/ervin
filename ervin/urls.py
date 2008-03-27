@@ -21,7 +21,7 @@ urlpatterns = patterns(
     (r'^events$', 'generic.list_view', {'class' : ervin.models.Event }),
     (r'^places$', 'generic.list_view', {'class' : ervin.models.Place }),
     (r'^objects$', 'generic.list_view', {'class' : ervin.models.FrbrObject }),
-    (r'^persons$', 'person.index'),
+    (r'^persons$', 'generic.list_view', {'class' : ervin.models.Person }),
     (r'^works$', 'generic.list_view', {'class' : ervin.models.Work }),
     (r'^unapi$', 'unapi.unapi'),
     (r'^(?P<noid>[a-z0-9-]{6})$', 'generic.by_noid'),

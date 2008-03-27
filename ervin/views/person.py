@@ -53,13 +53,3 @@ def detail(person, request, *args,**kwargs):
         'docs_about': docs_about
         })
    return HttpResponse(t.render(c))
-
-def index(request):
-    persons = list(Person.objects.all())
-    persons.sort(lambda a,b: cmp(a.slug,b.slug))
-    t = loader.get_template('person_list.html')
-    c = Context({
-        'persons': persons,
-        'sections': get_sections(),
-        })
-    return HttpResponse(t.render(c))

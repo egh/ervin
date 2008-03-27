@@ -80,9 +80,11 @@ views = { Work : ervin.views.work.detail,
           #content
           FileContent : showfile }
           
-list_views = { Work : 'work_list.html',
+list_views = { Person : 'person_list.html',
+               Work : 'work_list.html',
+               
                Place : 'place_list.html' }
-
+               
 def by_noid(request,*args,**kwargs):
     o = find_one(tuple(views.keys()), noid=kwargs['noid'])
     o_class = o.__class__
