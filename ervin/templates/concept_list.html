@@ -1,0 +1,12 @@
+{% extends "plain.html" %}
+{% load catalog %}
+{% block title %}Concepts{% endblock %}
+{% block content %}
+
+<ul>
+{% for concept in concept_list %}
+<li><a href="{{ concept.get_absolute_url }}">{{ concept }}</a>
+</li>
+{% endfor %}
+</ul>
+{% endblock %}
