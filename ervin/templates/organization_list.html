@@ -1,0 +1,12 @@
+{% extends "plain.html" %}
+{% load catalog %}
+{% block title %}Organizations{% endblock %}
+{% block content %}
+
+<ul>
+{% for organization in organization_list %}
+<li><a href="{{ organization.get_absolute_url }}">{{ organization }}</a>
+</li>
+{% endfor %}
+</ul>
+{% endblock %}

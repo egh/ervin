@@ -22,6 +22,7 @@ urlpatterns = patterns(
     (r'^places$', 'generic.list_view', {'class' : ervin.models.Place }),
     (r'^objects$', 'generic.list_view', {'class' : ervin.models.FrbrObject }),
     (r'^persons$', 'generic.list_view', {'class' : ervin.models.Person }),
+    (r'^organizations$', 'generic.list_view', {'class' : ervin.models.Organization }),
     (r'^works$', 'generic.list_view', {'class' : ervin.models.Work }),
     (r'^unapi$', 'unapi.unapi'),
     (r'^(?P<noid>[a-z0-9-]{6})$', 'generic.by_noid'),

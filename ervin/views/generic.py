@@ -76,7 +76,7 @@ views = {
     
     # group 2
     Person : ervin.views.person.detail,
-    #Organization : ervin.views.organization.detail,
+    Organization : 'organization.html',
     
     # group 3
     FrbrObject : 'object.html',
@@ -90,7 +90,7 @@ views = {
 list_views = { Work : 'work_list.html',
                
                Person : 'person_list.html',
-               Organization : 'person_list.html',
+               Organization : 'organization_list.html',
                
                Concept : 'concept_list.html',
                Event : 'event_list.html',
