@@ -19,6 +19,22 @@ from django.http import HttpResponse,HttpResponseNotFound
 from django.core.exceptions import ObjectDoesNotExist
 import re, ervin.views.person, ervin.views.work, ervin.views.expression, ervin.views.onlineedition
 
+def make_columns(data, col_count):
+    l = len(data)
+    r = l % col_count
+    col_size = []
+    cols = []
+    for i in range(col_count):
+        if (i > (r - 1)): col_size.append(l/col_count)
+        else: col_size.append(l/col_count + 1)
+    start = 0
+    for i in range((col_count)):
+        if i == col_count - 1: finish = l
+        else: finish = (start + col_size[i])
+        cols.append(data[start:finish])
+        start = finish
+    return cols
+
 def get_sections():
     sections = list(Section.objects.all())
     sections.sort(lambda a,b: cmp(a.slug,b.slug))
@@ -116,5 +132,15 @@ def list_view(*args, **kwargs):
         l = find_all(klass)
         t = loader.get_template(list_views[klass])
         c = Context({ "%s_list"%(klass.__name__.lower()): l })
+        return HttpResponse(t.render(c))
+        
+def col_list_view(*args, **kwargs):
+    klass = kwargs['class']
+    if list_views.has_key(klass):
+        t = loader.get_template(list_views[klass])
+        l = list(find_all(klass))
+        l.sort(lambda a,b: cmp(str(a),str(b)))
+        cols = make_columns(l, 4)
+        c = Context({ "%s_cols"%(klass.__name__.lower()): cols })
         return HttpResponse(t.render(c))
         
