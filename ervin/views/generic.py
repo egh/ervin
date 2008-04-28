@@ -129,18 +129,11 @@ def by_noid(request,*args,**kwargs):
 def list_view(*args, **kwargs):
     klass = kwargs['class']
     if list_views.has_key(klass):
-        l = find_all(klass)
-        t = loader.get_template(list_views[klass])
-        c = Context({ "%s_list"%(klass.__name__.lower()): l })
-        return HttpResponse(t.render(c))
-        
-def col_list_view(*args, **kwargs):
-    klass = kwargs['class']
-    if list_views.has_key(klass):
-        t = loader.get_template(list_views[klass])
         l = list(find_all(klass))
+        t = loader.get_template(list_views[klass])
+        c = None
         l.sort(lambda a,b: cmp(str(a),str(b)))
         cols = make_columns(l, 4)
-        c = Context({ "%s_cols"%(klass.__name__.lower()): cols })
+        c = Context({ "%s_cols"%(klass.__name__.lower()): cols,
+                      "%s_list"%(klass.__name__.lower()): l } )
         return HttpResponse(t.render(c))
-        
