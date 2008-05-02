@@ -62,7 +62,7 @@ class Subject(models.Model):
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
     content_object = generic.GenericForeignKey()
-    noid = models.CharField(max_length=6,editable=False)
+    noid = models.CharField(max_length=6,editable=False,primary_key=True)
     def get_absolute_url(self): return "/%s"%(self.noid)
     def __unicode__(self): return unicode(self.content_object)
 
@@ -70,7 +70,7 @@ class Person(models.Model):
     surname = models.CharField(max_length=200)
     forename = models.CharField(max_length=200)
     dates = models.CharField(max_length=20,blank=True)
-    noid = NoidField(settings.NOID_DIR, max_length=6,primary_key=True)
+    noid = NoidField(settings.NOID_DIR, max_length=6, primary_key=True)
     def get_absolute_url(self): return "/%s"%(self.noid)
     def save(self):
         super(Person, self).save()
@@ -231,7 +231,7 @@ class PhysicalEdition(models.Model):
     expression = models.ForeignKey(Expression,
                                    to_field='noid',
                                    db_column='expression_noid')
-    noid = NoidField(settings.NOID_DIR, max_length=6)
+    noid = NoidField(settings.NOID_DIR, max_length=6, primary_key=True)
     def get_title(self): return self.work.title
     def get_authors(self): return self.expression.authors
     authors = property(get_authors)
@@ -248,7 +248,7 @@ class PhysicalEdition(models.Model):
     
 class Place(models.Model):
     name = models.CharField(max_length=200)
-    noid = NoidField(settings.NOID_DIR, max_length=6)
+    noid = NoidField(settings.NOID_DIR, max_length=6, primary_key=True)
     def get_absolute_url(self): return "/%s"%(self.noid)
     def save(self):
         super(Place, self).save()
@@ -261,7 +261,7 @@ class Place(models.Model):
 
 class Organization(models.Model):
     name = models.CharField(max_length=200)
-    noid = NoidField(settings.NOID_DIR, max_length=6)
+    noid = NoidField(settings.NOID_DIR, max_length=6, primary_key=True)
     def get_absolute_url(self): return "/%s"%(self.noid)
     def save(self):
         super(Organization, self).save()
@@ -274,7 +274,7 @@ class Organization(models.Model):
 
 class Event(models.Model):
     name = models.CharField(max_length=200)
-    noid = NoidField(settings.NOID_DIR, max_length=6)
+    noid = NoidField(settings.NOID_DIR, max_length=6, primary_key=True)
     def get_absolute_url(self): return "/%s"%(self.noid)
     def save(self):
         super(Event, self).save()
@@ -287,7 +287,7 @@ class Event(models.Model):
 
 class FrbrObject(models.Model):
     name = models.CharField(max_length=200)
-    noid = NoidField(settings.NOID_DIR, max_length=6)
+    noid = NoidField(settings.NOID_DIR, max_length=6, primary_key=True)
     def get_absolute_url(self): return "/%s"%(self.noid)
     def save(self):
         super(FrbrObject, self).save()
@@ -323,7 +323,7 @@ class FileContent(models.Model):
     name = models.CharField(max_length=100,core=True)
     filename = MyFileField(upload_to="data")
     mimetype = models.CharField(max_length=100,editable=False)
-    noid = NoidField(settings.NOID_DIR, max_length=6)
+    noid = NoidField(settings.NOID_DIR, max_length=6, primary_key=True)
     def get_ext(self):
         if mime2ext_map.has_key(self.mimetype):
             return mime2ext_map[self.mimetype]
