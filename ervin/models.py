@@ -301,17 +301,33 @@ class FrbrObject(models.Model):
         verbose_name = "Object"
 
 class RemoteContent(models.Model):
-    edition = models.ForeignKey('OnlineEdition', edit_inline=models.STACKED, related_name='content_remote')
-    name = models.CharField(max_length=100,core=True)
+    edition = models.ForeignKey('OnlineEdition', 
+                                db_column='edition_noid',
+                                to_field='noid',
+                                edit_inline=models.STACKED,
+                                related_name='content_remote')
+    name = models.CharField(max_length=100,
+                            core=True)
+    noid = NoidField(settings.NOID_DIR, 
+                     max_length=6,
+                     primary_key=True)
     url = models.CharField(max_length=1024)
     def __unicode__(self): return self.name
     def get_absolute_url(self): return self.url 
 
 class DbContent(models.Model): 
-    edition = models.ForeignKey('OnlineEdition', edit_inline=models.STACKED, related_name='content_db')
-    name = models.CharField(max_length=100, core=True)
-    data = models.TextField(blank=True,core=True)
-    noid = NoidField(settings.NOID_DIR, max_length=6)
+    edition = models.ForeignKey('OnlineEdition', 
+                                db_column='edition_noid',
+                                to_field='noid',
+                                edit_inline=models.STACKED,
+                                related_name='content_db')
+    name = models.CharField(max_length=100, 
+                            core=True)
+    data = models.TextField(blank=True,
+                            core=True)
+    noid = NoidField(settings.NOID_DIR, 
+                     primary_key=True,
+                     max_length=6)
     def __unicode__(self): return self.name
     def get_absolute_url(self): return "/%s"%(self.noid)
 
