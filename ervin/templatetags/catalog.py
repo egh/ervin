@@ -49,11 +49,11 @@ def last_name_first (value):
         
 register.filter(last_name_first)
 
-def name_list(people,arg):
+def name_list(people):
     if (len(people) > 0):
-        return arg + join_with_final(",", " and ",
-                                     [p.forename + " " +
-                                      p.surname for p in people])
+        return join_with_final(",", " and ",
+                               [p.forename + " " +
+                                p.surname for p in people])
     else:
         return ""
 register.filter(name_list)
