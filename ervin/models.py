@@ -120,6 +120,7 @@ class Work(models.Model):
     note = models.TextField(blank=True)
     partof = models.ForeignKey("self",blank=True,null=True,related_name="parts",db_column='partof_noid',to_field='noid')
     sections = models.ManyToManyField(Section,blank=True)
+    date = models.CharField(max_length=128,blank=True,null=True)
     noid = NoidField(settings.NOID_DIR, max_length=6,primary_key=True)
     class Meta:
         ordering=['title']
