@@ -181,7 +181,7 @@ class Expression(models.Model):
     def __unicode__(self): return unicode(self.work)
 
 class OnlineEdition(models.Model):
-    pub_date = models.DateTimeField(blank=True,null=True)
+    date = models.CharField(max_length=128,blank=True,null=True)
     expression = models.ForeignKey(Expression,
                                    db_column='expression_noid',
                                    to_field='noid')
@@ -215,7 +215,7 @@ class OnlineEdition(models.Model):
 admin.site.register(OnlineEdition)
     
 class PhysicalEdition(models.Model):
-    pub_date = models.DateField(blank=True, null=True)
+    date = models.CharField(max_length=128,blank=True, null=True)
     publisher = models.CharField(max_length=100,core=True)
     #in_series = models.ForeignKey(Work,edit_inline=False,related_name="in_series",null=True,blank=True,limit_choices_to={'type': "series"})
     series_count = models.IntegerField(blank=True)
@@ -247,7 +247,7 @@ class PhysicalEdition(models.Model):
     def get_parts(self): return self.work.parts
     parts = property(get_parts)
     def __unicode__(self):
-        return "%s(%s)"%(self.work.title, unicode(self.pub_date))
+        return "%s(%s)"%(self.work.title, unicode(self.date))
     class Admin:
         js = ['js/tiny_mce/tiny_mce.js', 'js/textareas.js']   
     def get_absolute_url(self): return "/%s"%(self.noid)
