@@ -22,6 +22,7 @@ from django.db.models.query import QuerySet
 from django.conf import settings
 from noid import LocalMinter
 from noid import NoidField
+from django.contrib import admin
 import re, os, md5
 
 class MyFileField(models.FileField):
@@ -83,6 +84,8 @@ class Person(models.Model):
     class Meta:
         ordering=['surname','forename']
     class Admin: pass
+
+admin.site.register(Person)
     
 class Section(models.Model):
     name = models.CharField(max_length=100)
@@ -101,20 +104,22 @@ class Concept(models.Model):
         super(Concept, self).delete()
     def __unicode__(self): return self.name
     class Admin: pass   
+
+admin.site.register(Concept)
     
 class Work(models.Model):
     title = models.TextField(max_length=200,blank=True)
     def get_title(self):
         return self.title
+    filter_horizontal = ('authors', 'subjects')
     authors = models.ManyToManyField(Person,verbose_name="Authors",
                                      related_name="authored",
-                                     blank=True,
-                                     filter_interface=models.HORIZONTAL)
-    subjects = models.ManyToManyField(Subject,filter_interface=models.HORIZONTAL,blank=True)
+                                     blank=True)
+    subjects = models.ManyToManyField(Subject,blank=True)
     description = models.TextField(blank=True)
     note = models.TextField(blank=True)
     partof = models.ForeignKey("self",blank=True,null=True,related_name="parts",db_column='partof_noid',to_field='noid')
-    sections = models.ManyToManyField(Section,filter_interface=models.HORIZONTAL,blank=True)
+    sections = models.ManyToManyField(Section,blank=True)
     noid = NoidField(settings.NOID_DIR, max_length=6,primary_key=True)
     class Meta:
         ordering=['title']
@@ -143,15 +148,17 @@ class Work(models.Model):
         else:
             return "%s (in %s)"%(self.title, self.partof.title)
 
+admin.site.register(Work)
+
 class Expression(models.Model):
-    work = models.ForeignKey('Work',
+    work = models.ForeignKey(Work,
                              to_field='noid',
                              db_column='work_noid',
                              edit_inline=models.STACKED)
     title = models.TextField(max_length=200, blank=True)
+    filter_horizontal = ('translators')
     translators = models.ManyToManyField(Person,verbose_name="Translators",
                                          related_name="translated",
-                                         filter_interface=models.HORIZONTAL,
                                          blank=True)
     noid = NoidField(settings.NOID_DIR,
                      max_length=6,
@@ -200,11 +207,12 @@ class OnlineEdition(models.Model):
     def get_items(self):
         return list(self.remoteitem_set.all())
     items = property(get_items)
-    def __unicode__(self):
-        return unicode(self.work)
+    def __unicode__(self): return unicode(self.work)
     def get_absolute_url(self): return "/%s"%(self.noid)
     class Admin:
         js = ['js/tiny_mce/tiny_mce.js', 'js/textareas.js']
+
+admin.site.register(OnlineEdition)
     
 class PhysicalEdition(models.Model):
     pub_date = models.DateField(blank=True, null=True)
@@ -257,6 +265,8 @@ class Place(models.Model):
         super(Place, self).delete()
     def __unicode__(self): return self.name
     class Admin: pass
+
+admin.site.register(PhysicalEdition)
 
 class Organization(models.Model):
     name = models.CharField(max_length=200)
@@ -334,10 +344,7 @@ ext2mime_map = { '.pdf' : 'application/pdf' }
 mime2ext_map = dict([(d[1],d[0]) for d in ext2mime_map.items()])
 
 class FileContent(models.Model):
-    edition = models.ForeignKey('OnlineEdition', 
-                                db_column='edition_noid',
-                                edit_inline=models.STACKED, 
-                                related_name='content_file')
+    edition = models.ForeignKey('OnlineEdition', db_column='edition_noid',edit_inline=models.STACKED, related_name='content_file')
     name = models.CharField(max_length=100,core=True)
     filename = MyFileField(upload_to="data")
     mimetype = models.CharField(max_length=100,editable=False)
