@@ -60,10 +60,9 @@ def save_hook(item):
 
 class Subject(models.Model):
     content_type = models.ForeignKey(ContentType)
-    object_id = models.PositiveIntegerField()
+    object_id = models.CharField(max_length=6,primary_key=True)
     content_object = generic.GenericForeignKey()
-    noid = models.CharField(max_length=6,editable=False,primary_key=True)
-    def get_absolute_url(self): return "/%s"%(self.noid)
+    def get_absolute_url(self): return "/%s"%(self.object_id)
     def __unicode__(self): return unicode(self.content_object)
 
 class Person(models.Model):
@@ -114,7 +113,7 @@ class Work(models.Model):
     subjects = models.ManyToManyField(Subject,filter_interface=models.HORIZONTAL,blank=True)
     description = models.TextField(blank=True)
     note = models.TextField(blank=True)
-    partof = models.ForeignKey("self",blank=True,null=True,related_name="parts")
+    partof = models.ForeignKey("self",blank=True,null=True,related_name="parts",db_column='partof_noid',to_field='noid')
     sections = models.ManyToManyField(Section,filter_interface=models.HORIZONTAL,blank=True)
     noid = NoidField(settings.NOID_DIR, max_length=6,primary_key=True)
     class Meta:
@@ -335,7 +334,10 @@ ext2mime_map = { '.pdf' : 'application/pdf' }
 mime2ext_map = dict([(d[1],d[0]) for d in ext2mime_map.items()])
 
 class FileContent(models.Model):
-    edition = models.ForeignKey('OnlineEdition', edit_inline=models.STACKED, related_name='content_file')
+    edition = models.ForeignKey('OnlineEdition', 
+                                db_column='edition_noid',
+                                edit_inline=models.STACKED, 
+                                related_name='content_file')
     name = models.CharField(max_length=100,core=True)
     filename = MyFileField(upload_to="data")
     mimetype = models.CharField(max_length=100,editable=False)
