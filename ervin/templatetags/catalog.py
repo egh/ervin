@@ -86,6 +86,7 @@ def inverted_name_first_list (persons):
     """
     Prints name list with first name inverted
     """
+    names = []
     for (i, person) in enumerate(persons):
         if (i == 0): names.append(inverted_name(person))
         else: names.append(name_linked(p))
