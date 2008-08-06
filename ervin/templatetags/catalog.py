@@ -14,10 +14,31 @@
 #along with Ervin.  If not, see <http://www.gnu.org/licenses/>.
 
 from django import template
+from django.template.defaultfilters import stringfilter
 from django.db.models.query import QuerySet
-import re
+import re, django
+try:
+    from functools import wraps
+except ImportError:
+    from django.utils.functional import wraps  # Python 2.3, 2.4 fallback.
 
 register = template.Library()
+
+def listfilter(func):
+    def _dec(*args, **kwargs):
+        if type(args[0]) != list and type(args[0]) != QuerySet:
+            args[0] = [args[0]]
+        return func(*args, **kwargs)
+    _dec._decorated_function = getattr(func, '_decorated_function', func)
+    return wraps(func)(_dec)
+
+def testemptylist(func):
+    def _dec(*args, **kwargs):
+        if len(args[0]) == 0: return ""
+        else: return func(*args, **kwargs)
+    _dec._decorated_function = getattr(func, '_decorated_function', func)
+    return wraps(func)(_dec)
+
 def join_with_final(join_string, final_join_string, join_list):
     n = 0
     s = ""
@@ -30,64 +51,104 @@ def join_with_final(join_string, final_join_string, join_list):
             s = s + final_join_string
     return s
 
-def last_name_first (value):
-    """
-    Prints name list with first name first.
-    """
-    if type(value) != list and type(value) != QuerySet:
-        return last_name_first([value])
-    elif type(value) == list or type(value) == QuerySet:
-        if len(value) == 0:
-            return ""
-        names = ["<a href=\"" + value[0].get_absolute_url() + "\">" +
-                 value[0].surname + ", " + value[0].forename + "</a>"]
-        if (len(value) > 1):
-            names = names + ["<a href=\"" + p.get_absolute_url() + "\">" +
-                             p.forename + " " + p.surname + "</a>"
-                             for p in value[1:]]
-        return join_with_final(", ", " and ", names)
-        
-register.filter(last_name_first)
+@register.filter
+def inverted_name (person):
+    return "%s, %s"%(person.surname, person.forename)
 
+@register.filter
+def inverted_name_linked (person):
+    return "<a href=\"%s\">%s, %s</a>"%(person.get_absolute_url(), person.surname, person.forename)
+
+@register.filter
+@listfilter
+@testemptylist
+def inverted_name_first_list_linked (persons, arg=""):
+    """
+    Prints name list with first name inverted (linked names).
+    """
+    ignore = None
+    if (re.compile("[a-z0-9]+").match(arg)):
+        ignore = arg
+    names = []
+    for (i, person) in enumerate(persons):
+        if (i == 0):
+            if (person.noid == ignore): names.append (inverted_name (person))
+            else: names.append (inverted_name_linked (person))
+        else:
+            if (person.noid == ignore): names.append (name (person))
+            else: names.append (name_linked (person))
+    return join_with_final(", ", " and ", names)
+
+@register.filter
+@listfilter
+@testemptylist
+def inverted_name_first_list (persons):
+    """
+    Prints name list with first name inverted
+    """
+    for (i, person) in enumerate(persons):
+        if (i == 0): names.append(inverted_name(person))
+        else: names.append(name_linked(p))
+    return join_with_final(", ", " and ", names)
+
+@register.filter
+def name_linked(person):
+    return "<a href=\"%s\">%s %s</a>"%(person.get_absolute_url(), person.forename, person.surname)
+
+@register.filter
+def name(person):
+    return "%s %s"%(person.forename, person.surname)
+
+@register.filter
+@listfilter
+@testemptylist
 def name_list(people):
-    if (len(people) > 0):
-        return join_with_final(",", " and ",
-                               [p.forename + " " +
-                                p.surname for p in people])
-    else:
-        return ""
-register.filter(name_list)
+    return join_with_final(",", " and ",
+                           [name (p) for p in people])
 
+@register.filter
+@listfilter
+@testemptylist
+def name_list_linked(persons,arg=""):
+    ignore = None
+    if (re.compile("[a-z0-9]+").match(arg)):
+        ignore = arg
+    names = []
+    for person in persons:
+        if (arg != None) and (arg == person.noid): names.append(name (person))
+        else: names.append(name_linked (person))
+    return django.utils.safestring.mark_safe(join_with_final(",", " and ", names))
+
+FINAL_PERIOD_RE = re.compile(".*\\.(</a>)?$")
+
+@register.filter
+@stringfilter
 def with_final_period(value):
-    import re
-    my_re = re.compile(".*\\.(</a>)?$")
-    if (value != None and value != "" and not(my_re.match(value))):
-        return value + "."
+    if (value != "" and not(FINAL_PERIOD_RE.match(value))):
+        return django.utils.safestring.mark_safe("%s."%(value))
     else:
         return value
-register.filter(with_final_period)
 
+@register.filter
 def fix_isbn(value):
     import re
     return (re.compile("-")).sub("",value)
-register.filter(fix_isbn)
 
+@register.filter
 def publication_info(ed):
   try:	
     publisher = ed.publisher
     ret_val = ""
     if publisher != "":
-      ret_val = ret_val + publisher + ", "
-    return ret_val + str(ed.pub_date.year) + ". "
+      ret_val = "%s%s, "%(ret_val, publisher)
+    return "%s%s. "%(ret_val, str(ed.pub_date.year))
   except AttributeError:
     return ""
 
-register.filter(publication_info)
-
+@register.filter
 def smartypants(value):
     try:
         import smartypants
         return smartypants.smartyPants(value)
     except:
         return value
-register.filter(smartypants)
