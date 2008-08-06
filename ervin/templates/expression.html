@@ -5,6 +5,6 @@
 
 <dl>
 <dt>Work title</dt><dd>{{ expression.work.title }}</dd>
-<dt>Work authors</dt><dd>{{ expression.work.authors.all|last_name_first}}</dd>
+<dt>Work authors</dt><dd>{{ expression.work.authors.all|inverted_name_first_list}}</dd>
 </dl>
 {% endblock %}
