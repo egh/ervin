@@ -118,8 +118,10 @@ def by_noid(request,*args,**kwargs):
     o_class = o.__class__
     if views.has_key(o.__class__):
         if type(views[o_class]) == str:
+            works = Work.objects.filter(subjects=Subject.objects.get (object_id=o.noid)).order_by('sort')
             t = loader.get_template(views[o_class])
-            c = Context({ o_class.__name__.lower(): o })
+            c = Context({ o_class.__name__.lower() : o,
+                          'works' : works })
             return HttpResponse(t.render(c))
         else:
             return views[o.__class__] (o, request, *args, **kwargs)
