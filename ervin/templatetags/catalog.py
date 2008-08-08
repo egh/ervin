@@ -154,7 +154,7 @@ def smartypants(value):
     except:
         return value
 
-SORT_STOP_RE = re.compile("^(the|a|an) ")
+SORT_STOP_RE = re.compile("^(the|a|an|de) ")
 @register.filter
 def sort_friendly(value):
     return re.sub(SORT_STOP_RE, "", value.lower())
