@@ -23,7 +23,7 @@ from django.conf import settings
 from noid import LocalMinter
 from noid import NoidField
 from django.contrib import admin
-import re, os, md5
+import re, os, md5, ervin.templatetags.catalog
 
 class FreeformDateField(models.CharField):
     def get_internal_type(self):
