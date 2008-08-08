@@ -89,7 +89,8 @@ views = {
     Work : ervin.views.work.detail,
     Expression : ervin.views.expression.detail,
     OnlineEdition : ervin.views.onlineedition.detail,
-    
+    #PhysicalEdition : ervin.views.physicaledition.detail,
+
     # group 2
     Person : ervin.views.person.detail,
     Organization : 'organization.html',
