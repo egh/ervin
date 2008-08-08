@@ -25,6 +25,19 @@ from noid import NoidField
 from django.contrib import admin
 import re, os, md5
 
+class FreeformDateField(models.CharField):
+    def get_internal_type(self):
+        return models.CharField.__name__
+    
+    def pre_save(self, model_instance, add):
+        value = super(FreeformDateField, self).pre_save(model_instance, add)
+        model_instance.__dict__[self.attname + "_sort"] = self.__canonicalize_date__(value)
+        return value
+    
+    def __canonicalize_date__(self, value):
+        stripped = value.replace("[","").replace("]","").replace("?","")
+        return stripped
+
 class MyFileField(models.FileField):
     def get_internal_type(self):
         return "FileField"    
