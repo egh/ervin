@@ -27,26 +27,25 @@ def by_noid(request, *args, **kwargs):
    return detail(person, request, *args, **kwargs)
 
 def detail(person, request, *args,**kwargs):
-   s = Subject.objects.get(noid=person.noid)
-   docs_about = list(Work.objects.filter(subjects=s))
-   docs_by = list(Work.objects.filter(authors=person))
+   s = person.get_subject ()
+   docs_about = list (Work.objects.filter (subjects=s))
+   docs_by = list (Work.objects.filter (authors=person))
 
-   # subjects_set = dict()
-#    for w in docs_by:
-#       for s in w.subjects.all():
-#          subjects_set[s] = s
-#    for w in docs_about:
-#       for s in w.subjects.all():
-#          subjects_set[s] = s
-#    subjects = subjects_set.values()
-#    subjects.sort()
+   subjects_set = dict()
+   for w in docs_by:
+      for s in w.subjects.all():
+         subjects_set[s] = s
+   for w in docs_about:
+      for s in w.subjects.all():
+         subjects_set[s] = s
+   subjects = subjects_set.values()
+   subjects.sort(key=unicode)
    
    t = loader.get_template('person.html')
    c = Context({
-         #'collaborators': collaborators,
-        #'subjects': subjects,
-        'person': person,
-        'docs_by': docs_by,
-        'docs_about': docs_about
-        })
+         'subjects' : subjects,
+         'person': person,
+         'docs_by': docs_by,
+         'docs_about': docs_about
+         })
    return HttpResponse(t.render(c))
