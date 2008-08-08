@@ -149,7 +149,7 @@ class Work(models.Model, SubjectMixin):
     date_sort = models.CharField(max_length=128,blank=True,null=True)
     sort = models.CharField(max_length=128,editable=False)
     class Meta:
-        ordering=['title']
+        ordering=['sort']
     class Admin: 
         fields = (
             ("Main", {'fields': ('title', 'partof','description',
