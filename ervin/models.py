@@ -53,24 +53,35 @@ class MyFileField(models.FileField):
         super(MyFileField, self).contribute_to_class(cls, name)
         setattr(cls, 'save_%s_file' % self.name, lambda instance, filename, raw_contents, save=True: instance._save_FIELD_file(self, _make_filename(filename, raw_contents), raw_contents, save))
 
-def delete_hook(item):
-    which_type = ContentType.objects.get(model=lower(type(item).__name__),
-                                         app_label='ervin')
-    try:
-        s = Subject.objects.get(content_type=which_type,
-                                object_id=item.id)
-        s.delete()
-    except:
-        pass
+class SubjectMixin(object):
+    def get_subject(self):
+        s = None
+        try: s = Subject.objects.get (object_id=self.noid)
+        except Subject.DoesNotExist: s = create_subject (self)
+        return s
 
-def save_hook(item):
-    t = ContentType.objects.get(model=lower(type(item).__name__),
-                                app_label='ervin')
-    try:
-        s = Subject.objects.get(content_type=t,object_id=item.pk)
-    except Subject.DoesNotExist:
-        s = Subject(content_type=t,object_id=item.pk,noid=item.noid)
-    s.save()
+    def delete_hook(self):
+        which_type = ContentType.objects.get(model=lower(type(self).__name__),
+                                             app_label='ervin')
+        try:
+            s = Subject.objects.get(content_type=which_type,
+                                    object_id=self.pk)
+            s.delete()
+        except:
+            pass
+
+    def create_subject(self):
+        t = ContentType.objects.get(model=lower(type(self).__name__),
+                                    app_label='ervin')
+        s = Subject(content_type=t,object_id=self.pk)
+        s.save()
+        return s
+
+    def save_hook(self):
+        try:
+            Subject.objects.get(object_id=self.pk)
+        except Subject.DoesNotExist:
+            create_subject(item)
 
 class Subject(models.Model):
     content_type = models.ForeignKey(ContentType)
@@ -79,7 +90,7 @@ class Subject(models.Model):
     def get_absolute_url(self): return "/%s"%(self.object_id)
     def __unicode__(self): return unicode(self.content_object)
 
-class Person(models.Model):
+class Person(models.Model, SubjectMixin):
     surname = models.CharField(max_length=200)
     forename = models.CharField(max_length=200)
     dates = models.CharField(max_length=20,blank=True)
@@ -105,7 +116,7 @@ class Section(models.Model):
     def __unicode__(self): return self.name
     class Admin: pass
 
-class Concept(models.Model):
+class Concept(models.Model, SubjectMixin):
     name = models.CharField(max_length=200)
     noid = NoidField(settings.NOID_DIR, max_length=6,primary_key=True)
     def get_absolute_url(self): return "/%s"%(self.noid)
@@ -120,7 +131,7 @@ class Concept(models.Model):
 
 admin.site.register(Concept)
     
-class Work(models.Model):
+class Work(models.Model, SubjectMixin):
     title = models.TextField(max_length=200,blank=True)
     def get_title(self):
         return self.title
@@ -267,7 +278,7 @@ class PhysicalEdition(models.Model):
     def get_absolute_url(self): return "/%s"%(self.noid)
     def get_items(self): return None
     
-class Place(models.Model):
+class Place(models.Model, SubjectMixin):
     name = models.CharField(max_length=200)
     noid = NoidField(settings.NOID_DIR, max_length=6, primary_key=True)
     def get_absolute_url(self): return "/%s"%(self.noid)
@@ -282,7 +293,7 @@ class Place(models.Model):
 
 admin.site.register(PhysicalEdition)
 
-class Organization(models.Model):
+class Organization(models.Model, SubjectMixin):
     name = models.CharField(max_length=200)
     noid = NoidField(settings.NOID_DIR, max_length=6, primary_key=True)
     def get_absolute_url(self): return "/%s"%(self.noid)
@@ -295,7 +306,7 @@ class Organization(models.Model):
     def __unicode__(self): return self.name
     class Admin: pass   
 
-class Event(models.Model):
+class Event(models.Model, SubjectMixin):
     name = models.CharField(max_length=200)
     noid = NoidField(settings.NOID_DIR, max_length=6, primary_key=True)
     def get_absolute_url(self): return "/%s"%(self.noid)
@@ -308,7 +319,7 @@ class Event(models.Model):
     def __unicode__(self): return self.name
     class Admin: pass
 
-class FrbrObject(models.Model):
+class FrbrObject(models.Model, SubjectMixin):
     name = models.CharField(max_length=200)
     noid = NoidField(settings.NOID_DIR, max_length=6, primary_key=True)
     def get_absolute_url(self): return "/%s"%(self.noid)
