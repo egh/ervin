@@ -162,9 +162,14 @@ class Work(models.Model, SubjectMixin):
         js = ['js/tiny_mce/tiny_mce.js', 'js/textareas.js']
     def get_absolute_url(self): return "/%s"%(self.noid)
     def save(self):
+        key = None
+        title_key = ervin.templatetags.catalog.sort_friendly(self.title)
         if len(self.authors.all()) > 0:
-            self.sort = ervin.templatetags.catalog.inverted_name(self.authors.order_by('surname','forename').all()[0])[:128].lower()
-        else: self.sort = self.title[:128].lower()
+            first_author_key = ervin.templatetags.catalog.sort_friendly(ervin.templatetags.catalog.inverted_name(self.authors.order_by('surname','forename').all()[0]))
+            key = "%s%s"%(first_author_key,title_key)
+        else: key = title_key
+        self.sort = key[:128].lower()
+
         super(Work, self).save() 
         try:
             expression = Expression.objects.get(work=self)
