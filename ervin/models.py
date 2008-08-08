@@ -87,10 +87,16 @@ class Subject(models.Model):
     content_type = models.ForeignKey(ContentType)
     object_id = models.CharField(max_length=6,primary_key=True)
     content_object = generic.GenericForeignKey()
+    sort = models.CharField(max_length=128)
     def get_absolute_url(self): return "/%s"%(self.object_id)
     def __unicode__(self): return unicode(self.content_object)
     def __cmp__(self, other):
       return cmp(unicode(self).lower(), unicode(other).lower())
+    class Meta:
+        ordering = ['sort']
+    def save(self):
+        self.sort = ervin.templatetags.catalog.sort_friendly(unicode(self))[:128]
+        super(Subject, self).save()
 
 class Person(models.Model, SubjectMixin):
     surname = models.CharField(max_length=200)
