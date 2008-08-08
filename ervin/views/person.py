@@ -39,7 +39,7 @@ def detail(person, request, *args,**kwargs):
       for s in w.subjects.all():
          subjects_set[s] = s
    subjects = subjects_set.values()
-   subjects.sort(key=unicode)
+   subjects.sort()
    
    t = loader.get_template('person.html')
    c = Context({

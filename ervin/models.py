@@ -89,6 +89,8 @@ class Subject(models.Model):
     content_object = generic.GenericForeignKey()
     def get_absolute_url(self): return "/%s"%(self.object_id)
     def __unicode__(self): return unicode(self.content_object)
+    def __cmp__(self, other):
+      return cmp(unicode(self).lower(), unicode(other).lower())
 
 class Person(models.Model, SubjectMixin):
     surname = models.CharField(max_length=200)
