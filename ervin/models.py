@@ -144,8 +144,9 @@ class Work(models.Model, SubjectMixin):
     note = models.TextField(blank=True)
     partof = models.ForeignKey("self",blank=True,null=True,related_name="parts",db_column='partof_noid',to_field='noid')
     sections = models.ManyToManyField(Section,blank=True)
-    date = models.CharField(max_length=128,blank=True,null=True)
     noid = NoidField(settings.NOID_DIR, max_length=6,primary_key=True)
+    date = FreeformDateField(max_length=128,blank=True,null=True)
+    date_sort = models.CharField(max_length=128,blank=True,null=True)
     class Meta:
         ordering=['title']
     class Admin: 
@@ -206,7 +207,8 @@ class Expression(models.Model):
     def __unicode__(self): return unicode(self.work)
 
 class OnlineEdition(models.Model):
-    date = models.CharField(max_length=128,blank=True,null=True)
+    date = FreeformDateField(max_length=128,blank=True,null=True)
+    date_sort = models.CharField(max_length=128,blank=True,null=True)
     expression = models.ForeignKey(Expression,
                                    db_column='expression_noid',
                                    to_field='noid')
@@ -240,7 +242,8 @@ class OnlineEdition(models.Model):
 admin.site.register(OnlineEdition)
     
 class PhysicalEdition(models.Model):
-    date = models.CharField(max_length=128,blank=True, null=True)
+    date = FreeformDateField(max_length=128,blank=True, null=True)
+    date_sort = models.CharField(max_length=128,blank=True,null=True)
     publisher = models.CharField(max_length=100,core=True)
     #in_series = models.ForeignKey(Work,edit_inline=False,related_name="in_series",null=True,blank=True,limit_choices_to={'type': "series"})
     series_count = models.IntegerField(blank=True)
