@@ -106,6 +106,7 @@ views = {
           
 list_views = { Work : 'work_list.html',
                OnlineEdition : 'onlineedition_list.html',
+               PhysicalEdition : 'physicaledition_list.html',
                
                Person : 'person_list.html',
                Organization : 'organization_list.html',

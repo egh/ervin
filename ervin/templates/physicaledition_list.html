@@ -1,0 +1,10 @@
+{% extends "plain.html" %}
+{% load catalog %}
+{% block title %}Physical Editions{% endblock %}
+{% block content %}
+<ul>
+{% for ed in physicaledition_list %}
+  <li><a href="{{ ed.get_absolute_url }}">{{ ed }}</a></li>
+{% endfor %}
+</ul>
+{% endblock %}

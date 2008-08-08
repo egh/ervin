@@ -26,6 +26,7 @@ urlpatterns = patterns(
     (r'^organizations$', 'generic.list_view', {'class' : ervin.models.Organization }),
     (r'^works$', 'generic.list_view', {'class' : ervin.models.Work }),
     (r'^onlineeditions$', 'generic.list_view', {'class' : ervin.models.OnlineEdition }),
+    (r'^physicaleditions$', 'generic.list_view', {'class' : ervin.models.PhysicalEdition }),
 
     (r'^unapi$', 'unapi.unapi'),
     (r'^(?P<noid>[a-z0-9-]{6})$', 'generic.by_noid'),
