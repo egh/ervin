@@ -20,5 +20,6 @@ from django.http import HttpResponse
 
 def home(request, *args, **kwargs):
     t = loader.get_template('home.html')
-    c = Context({})
+    recent_online_editions = OnlineEdition.objects.order_by('-date_sort').all()[0:5]
+    c = Context({'recent_online_editions': recent_online_editions})
     return HttpResponse(t.render(c))
