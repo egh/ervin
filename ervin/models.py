@@ -147,6 +147,7 @@ class Work(models.Model, SubjectMixin):
     noid = NoidField(settings.NOID_DIR, max_length=6,primary_key=True)
     date = FreeformDateField(max_length=128,blank=True,null=True)
     date_sort = models.CharField(max_length=128,blank=True,null=True)
+    sort = models.CharField(max_length=128,editable=False)
     class Meta:
         ordering=['title']
     class Admin: 
@@ -161,13 +162,16 @@ class Work(models.Model, SubjectMixin):
         js = ['js/tiny_mce/tiny_mce.js', 'js/textareas.js']
     def get_absolute_url(self): return "/%s"%(self.noid)
     def save(self):
+        if len(self.authors.all()) > 0:
+            self.sort = ervin.templatetags.catalog.inverted_name(self.authors.order_by('surname','forename').all()[0])[:128].lower()
+        else: self.sort = self.title[:128].lower()
         super(Work, self).save() 
         try:
             expression = Expression.objects.get(work=self)
         except Expression.DoesNotExist:
             e = Expression(work=self)
             e.save()
-
+        
     def __unicode__(self):
         if self.partof == None:
             return self.title
