@@ -1,0 +1,10 @@
+{% extends "plain.html" %}
+{% load catalog %}
+{% block title %}Online Editions{% endblock %}
+{% block content %}
+<ul>
+{% for ed in onlineedition_list %}
+  <li><a href="{{ ed.get_absolute_url }}">{{ ed }}</a></li>
+{% endfor %}
+</ul>
+{% endblock %}
