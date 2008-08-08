@@ -180,7 +180,7 @@ class Work(models.Model, SubjectMixin):
 
 admin.site.register(Work)
 
-class Expression(models.Model):
+class Expression(models.Model, SubjectMixin):
     work = models.ForeignKey(Work,
                              to_field='noid',
                              db_column='work_noid',
@@ -210,7 +210,7 @@ class Expression(models.Model):
     def get_absolute_url(self): return "/%s"%(self.noid)
     def __unicode__(self): return unicode(self.work)
 
-class OnlineEdition(models.Model):
+class OnlineEdition(models.Model, SubjectMixin):
     date = FreeformDateField(max_length=128,blank=True,null=True)
     date_sort = models.CharField(max_length=128,blank=True,null=True)
     expression = models.ForeignKey(Expression,
@@ -243,9 +243,11 @@ class OnlineEdition(models.Model):
     class Admin:
         js = ['js/tiny_mce/tiny_mce.js', 'js/textareas.js']
 
+
+
 admin.site.register(OnlineEdition)
     
-class PhysicalEdition(models.Model):
+class PhysicalEdition(models.Model, SubjectMixin):
     date = FreeformDateField(max_length=128,blank=True, null=True)
     date_sort = models.CharField(max_length=128,blank=True,null=True)
     publisher = models.CharField(max_length=100,core=True)
