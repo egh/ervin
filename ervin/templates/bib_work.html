@@ -1,0 +1,10 @@
+{% load catalog %}
+{% if person %}
+  {{ doc.authors.all|inverted_name_first_list_linked:person.noid|with_final_period }}
+{% else %}
+  {{ doc.authors.all|inverted_name_first_list_linked|with_final_period }}
+{% endif %}
+<a href="{{doc.get_absolute_url}}"><em>{{work.title}}</em></a>.
+{% if work.publisher %}
+  {{ work.publisher }}
+{% endif %}
