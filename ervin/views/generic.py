@@ -124,7 +124,7 @@ def by_noid(request,*args,**kwargs):
             works = Work.objects.filter(subjects=Subject.objects.get (object_id=o.noid)).order_by('sort')
             t = loader.get_template(views[o_class])
             c = Context({ o_class.__name__.lower() : o,
-                          'works' : works })
+                          'work_list' : works })
             return HttpResponse(t.render(c))
         else:
             return views[o.__class__] (o, request, *args, **kwargs)
