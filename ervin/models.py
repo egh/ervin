@@ -195,8 +195,6 @@ admin.site.register(Work)
 
 class Expression(models.Model, SubjectMixin):
     work = models.ForeignKey(Work,
-                             to_field='noid',
-                             db_column='work_noid',
                              edit_inline=models.STACKED)
     title = models.TextField(max_length=200, blank=True)
     filter_horizontal = ('translators')
