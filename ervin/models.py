@@ -229,6 +229,7 @@ class OnlineEdition(models.Model, SubjectMixin):
                                    to_field='noid')
     title = models.TextField("Title (leave blank if same as expression)", max_length=200, blank=True)
     noid = NoidField(settings.NOID_DIR,max_length=6, primary_key=True)
+    numbering = models.TextField("", max_length=128, blank=True)
     def get_work(self):
         return self.expression.work
     work = property(get_work)
@@ -278,6 +279,7 @@ class PhysicalEdition(models.Model, SubjectMixin):
                                        blank=True,
                                        null=True)
     available = models.BooleanField()
+    numbering = models.TextField("", max_length=128, blank=True)
     def get_work(self): return self.expression.work
     work = property(get_work)
     expression = models.ForeignKey(Expression,
