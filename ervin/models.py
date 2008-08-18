@@ -154,7 +154,7 @@ class Work(models.Model, SubjectMixin):
     sections = models.ManyToManyField(Section,blank=True)
     noid = NoidField(settings.NOID_DIR, max_length=6,primary_key=True)
     date = FreeformDateField(max_length=128,blank=True,null=True)
-    date_sort = models.CharField(max_length=128,blank=True,null=True)
+    date_sort = models.CharField(max_length=128,blank=True,null=True,editable=False)
     sort = models.CharField(max_length=128,editable=False)
     class Meta:
         ordering=['sort']
@@ -223,13 +223,13 @@ class Expression(models.Model, SubjectMixin):
 
 class OnlineEdition(models.Model, SubjectMixin):
     date = FreeformDateField(max_length=128,blank=True,null=True)
-    date_sort = models.CharField(max_length=128,blank=True,null=True)
+    date_sort = models.CharField(max_length=128,blank=True,null=True,editable=False)
     expression = models.ForeignKey(Expression,
                                    db_column='expression_noid',
                                    to_field='noid')
     title = models.TextField("Title (leave blank if same as expression)", max_length=200, blank=True)
     noid = NoidField(settings.NOID_DIR,max_length=6, primary_key=True)
-    numbering = models.TextField("", max_length=128, blank=True)
+    numbering = models.CharField("Numbering", max_length=128, blank=True)
     def get_work(self):
         return self.expression.work
     work = property(get_work)
@@ -261,7 +261,7 @@ admin.site.register(OnlineEdition)
     
 class PhysicalEdition(models.Model, SubjectMixin):
     date = FreeformDateField(max_length=128,blank=True, null=True)
-    date_sort = models.CharField(max_length=128,blank=True,null=True)
+    date_sort = models.CharField(max_length=128,blank=True,null=True,editable=False)
     publisher = models.CharField(max_length=100,core=True)
     #in_series = models.ForeignKey(Work,edit_inline=False,related_name="in_series",null=True,blank=True,limit_choices_to={'type': "series"})
     series_count = models.IntegerField(blank=True)
@@ -279,7 +279,7 @@ class PhysicalEdition(models.Model, SubjectMixin):
                                        blank=True,
                                        null=True)
     available = models.BooleanField()
-    numbering = models.TextField("", max_length=128, blank=True)
+    numbering = models.CharField("Numbering", max_length=128, blank=True)
     def get_work(self): return self.expression.work
     work = property(get_work)
     expression = models.ForeignKey(Expression,
