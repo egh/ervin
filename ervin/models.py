@@ -228,8 +228,8 @@ class OnlineEdition(models.Model, SubjectMixin):
                                    db_column='expression_noid',
                                    to_field='noid')
     title = models.TextField("Title (leave blank if same as expression)", max_length=200, blank=True)
-    noid = NoidField(settings.NOID_DIR,max_length=6, primary_key=True)
     numbering = models.CharField("Numbering", max_length=128, blank=True)
+    noid = NoidField(settings.NOID_DIR,max_length=6, primary_key=True)
     def get_work(self):
         return self.expression.work
     work = property(get_work)
