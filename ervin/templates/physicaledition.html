@@ -1,0 +1,30 @@
+{% extends "plain.html" %}
+{% load catalog %}
+{% block title %}Physical edition: {{ physicaledition.get_title }}{% endblock %}
+{% block content %}
+<abbr class="unapi-id" title="{{ physicaledition.pk }}"/>
+<dl>
+<dt>Title:</dt> <dd>{{ physicaledition.get_title }}</dd>
+
+{% if physicaledition.authors %}
+<dt>Authors:</dt> <dd>
+  <ul>
+  {% for person in physicaledition.authors.all %}
+    <li>{{ person }}</li>
+  {% endfor %}
+  </ul>
+</dd>
+{% endif %}
+
+{% if physicaledition.subjects %}
+<dt>Subjects:</dt> <dd>
+  <ul>
+  {% for subject in physicaledition.subjects.all %}
+    <li>{{ subject }}</li>
+  {% endfor %}
+  </ul>
+</dd>
+{% endif %}
+</dl>
+
+{% endblock %}

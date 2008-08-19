@@ -17,7 +17,7 @@ from django.template import Context, loader
 from ervin.models import *
 from django.http import HttpResponse,HttpResponseNotFound
 from django.core.exceptions import ObjectDoesNotExist
-import re, ervin.views.person, ervin.views.work, ervin.views.expression, ervin.views.onlineedition
+import re, ervin.views.person, ervin.views.work, ervin.views.expression, ervin.views.onlineedition, ervin.views.physicaledition
 
 def make_columns(data, col_count):
     l = len(data)
@@ -89,7 +89,7 @@ views = {
     Work : ervin.views.work.detail,
     Expression : ervin.views.expression.detail,
     OnlineEdition : ervin.views.onlineedition.detail,
-    #PhysicalEdition : ervin.views.physicaledition.detail,
+    PhysicalEdition : ervin.views.physicaledition.detail,
 
     # group 2
     Person : ervin.views.person.detail,
@@ -121,7 +121,8 @@ def by_noid(request,*args,**kwargs):
     o_class = o.__class__
     if views.has_key(o.__class__):
         if type(views[o_class]) == str:
-            works = Work.objects.filter(subjects=Subject.objects.get (object_id=o.noid)).order_by('sort')
+            subject = Subject.objects.get (object_id=o.noid)
+            works = Work.objects.filter(subjects=subject).order_by('sort')
             t = loader.get_template(views[o_class])
             c = Context({ o_class.__name__.lower() : o,
                           'work_list' : works })
