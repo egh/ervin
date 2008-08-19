@@ -1,4 +1,4 @@
-{% load catalog %}
+{% load ervin %}
 {% if person %}
   {{ work.authors.all|inverted_name_first_list_linked:person.noid|with_final_period }}
 {% else %}
