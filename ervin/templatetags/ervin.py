@@ -104,7 +104,7 @@ def name(person):
 @listfilter
 @testemptylist
 def name_list(people):
-    return join_with_final(",", " and ",
+    return join_with_final(", ", " and ",
                            [name (p) for p in people])
 
 @register.filter
@@ -118,7 +118,7 @@ def name_list_linked(persons,arg=""):
     for person in persons:
         if (arg != None) and (arg == person.noid): names.append(name (person))
         else: names.append(name_linked (person))
-    return django.utils.safestring.mark_safe(join_with_final(",", " and ", names))
+    return django.utils.safestring.mark_safe(join_with_final(", ", " and ", names))
 
 FINAL_PERIOD_RE = re.compile(".*\\.(</a>)?$")
 
