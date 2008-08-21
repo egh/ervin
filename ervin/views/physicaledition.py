@@ -24,3 +24,8 @@ def detail(ed, request, *args,**kwargs):
     c = Context({ 'physicaledition' : ed})
     return HttpResponse(t.render(c))
     
+def available(*args,**kwargs):
+    physicaledition_list = PhysicalEdition.objects.filter(available=True)
+    t = loader.get_template('physicaledition_list.html')
+    c = Context({ 'physicaledition_list' : physicaledition_list})
+    return HttpResponse(t.render(c))
