@@ -1,0 +1,4 @@
+{% load ervin %}
+{{ edition.authors.all|name_list_linked|with_final_period }}&#x2000;<a href="{{edition.work.get_absolute_url}}"><em>{{edition.get_title}}</em></a>. 
+<abbr class="unapi-id" title="{{ edition.work.slug }}"/>
+
