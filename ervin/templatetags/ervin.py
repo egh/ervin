@@ -130,6 +130,16 @@ def with_final_period(value):
     else:
         return value
 
+TERMINAL_RE = re.compile("(</a>)$")
+
+@register.filter
+@stringfilter
+def with_terminal(value, arg):
+    if (value != "" and not(TERMINAL_RE.sub("",value).endswith(arg))):
+        return django.utils.safestring.mark_safe("%s%s"%(value,arg))
+    else:
+        return value
+    
 @register.filter
 def fix_isbn(value):
     import re
