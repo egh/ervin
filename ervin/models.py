@@ -23,7 +23,7 @@ from django.conf import settings
 from noid import LocalMinter
 from noid import NoidField
 from django.contrib import admin
-import re, os, md5, ervin.templatetags.catalog
+import re, os, md5, ervin.templatetags.ervin
 
 class FreeformDateField(models.CharField):
     def get_internal_type(self):
@@ -60,7 +60,7 @@ class SubjectMixin(object):
         except Subject.DoesNotExist: s = create_subject (self)
         return s
 
-    def delete_hook(self):
+    def subject_delete_hook(self):
         which_type = ContentType.objects.get(model=lower(type(self).__name__),
                                              app_label='ervin')
         try:
@@ -77,11 +77,22 @@ class SubjectMixin(object):
         s.save()
         return s
 
-    def save_hook(self):
+    def subject_save_hook(self):
         try:
             Subject.objects.get(object_id=self.pk)
         except Subject.DoesNotExist:
             create_subject(item)
+
+class BibSortMixin(object):
+    def sort_save_hook(self):
+        key = None
+        title_key = ervin.templatetags.ervin.sort_friendly(self.get_title())
+        authors = self.get_authors().order_by('surname','forename').all()
+        if len(authors) > 0:
+            first_author_key = ervin.templatetags.ervin.sort_friendly(ervin.templatetags.ervin.inverted_name(authors[0]))
+            key = "%s%s"%(first_author_key,title_key)
+        else: key = title_key
+        self.sort = key[:128].lower()
 
 class Subject(models.Model):
     content_type = models.ForeignKey(ContentType)
@@ -95,7 +106,7 @@ class Subject(models.Model):
     class Meta:
         ordering = ['sort']
     def save(self):
-        self.sort = ervin.templatetags.catalog.sort_friendly(unicode(self))[:128]
+        self.sort = ervin.templatetags.ervin.sort_friendly(unicode(self))[:128]
         super(Subject, self).save()
 
 class Person(models.Model, SubjectMixin):
@@ -105,8 +116,8 @@ class Person(models.Model, SubjectMixin):
     noid = NoidField(settings.NOID_DIR, max_length=6, primary_key=True)
     def get_absolute_url(self): return "/%s"%(self.noid)
     def save(self):
+        self.subject_save_hook()
         super(Person, self).save()
-        save_hook(self)
     def __hash__(self): return hash(self.pk)
     def __unicode__(self):
         if self.dates:
@@ -129,10 +140,10 @@ class Concept(models.Model, SubjectMixin):
     noid = NoidField(settings.NOID_DIR, max_length=6,primary_key=True)
     def get_absolute_url(self): return "/%s"%(self.noid)
     def save(self):
+        self.subject_save_hook()
         super(Concept, self).save()
-        save_hook(self)
     def delete(self):
-        delete_hook(self)
+        self.subject_delete_hook()
         super(Concept, self).delete()
     def __unicode__(self): return self.name
     class Admin: pass   
@@ -170,14 +181,7 @@ class Work(models.Model, SubjectMixin):
         js = ['js/tiny_mce/tiny_mce.js', 'js/textareas.js']
     def get_absolute_url(self): return "/%s"%(self.noid)
     def save(self):
-        key = None
-        title_key = ervin.templatetags.catalog.sort_friendly(self.title)
-        if len(self.authors.all()) > 0:
-            first_author_key = ervin.templatetags.catalog.sort_friendly(ervin.templatetags.catalog.inverted_name(self.authors.order_by('surname','forename').all()[0]))
-            key = "%s%s"%(first_author_key,title_key)
-        else: key = title_key
-        self.sort = key[:128].lower()
-
+        self.sort_save_hook()
         super(Work, self).save() 
         try:
             expression = Expression.objects.get(work=self)
@@ -193,7 +197,7 @@ class Work(models.Model, SubjectMixin):
 
 admin.site.register(Work)
 
-class Expression(models.Model, SubjectMixin):
+class Expression(models.Model, SubjectMixin,BibSortMixin):
     work = models.ForeignKey(Work,
                              edit_inline=models.STACKED)
     title = models.TextField(max_length=200, blank=True)
@@ -205,6 +209,7 @@ class Expression(models.Model, SubjectMixin):
                      max_length=6,
                      primary_key=True,
                      core=True)
+    sort = models.CharField(max_length=128,editable=False)
     def get_manifestations(self):
         return list(self.onlineedition_set.all()) + list(self.physicaledition_set.all())    
     def get_authors(self):
@@ -220,16 +225,23 @@ class Expression(models.Model, SubjectMixin):
             return self.work.get_title()
     def get_absolute_url(self): return "/%s"%(self.noid)
     def __unicode__(self): return unicode(self.work)
+    def save(self):
+        self.sort_save_hook()
+        super(Expression, self).save() 
+    class Meta:
+        ordering=['sort']
 
-class OnlineEdition(models.Model, SubjectMixin):
-    date = FreeformDateField(max_length=128,blank=True,null=True)
-    date_sort = models.CharField(max_length=128,blank=True,null=True,editable=False)
+class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
+    html = models.TextField(blank=True)
+    date = models.DateTimeField(null=True)
     expression = models.ForeignKey(Expression,
                                    db_column='expression_noid',
                                    to_field='noid')
     title = models.TextField("Title (leave blank if same as expression)", max_length=200, blank=True)
-    numbering = models.CharField("Numbering", max_length=128, blank=True)
+    #numbering = models.CharField("Numbering", max_length=128, blank=True)
     noid = NoidField(settings.NOID_DIR,max_length=6, primary_key=True)
+    sort = models.CharField(max_length=128,editable=False)
+
     def get_work(self):
         return self.expression.work
     work = property(get_work)
@@ -252,19 +264,21 @@ class OnlineEdition(models.Model, SubjectMixin):
     items = property(get_items)
     def __unicode__(self): return unicode(self.work)
     def get_absolute_url(self): return "/%s"%(self.noid)
+    def save(self):
+        self.sort_save_hook()
+        super(OnlineEdition, self).save() 
     class Admin:
         js = ['js/tiny_mce/tiny_mce.js', 'js/textareas.js']
-
-
+    class Meta:
+        ordering = ['sort']
 
 admin.site.register(OnlineEdition)
     
-class PhysicalEdition(models.Model, SubjectMixin):
+class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
     date = FreeformDateField(max_length=128,blank=True, null=True)
     date_sort = models.CharField(max_length=128,blank=True,null=True,editable=False)
     publisher = models.CharField(max_length=100,core=True)
     #in_series = models.ForeignKey(Work,edit_inline=False,related_name="in_series",null=True,blank=True,limit_choices_to={'type': "series"})
-    series_count = models.IntegerField(blank=True)
     isbn10 = models.CharField("ISBN-10",max_length=13,blank=True)
     isbn13 = models.CharField("ISBN-13",max_length=16,blank=True)
     description = models.CharField("Physical description",max_length=100,blank=True,null=True)
@@ -280,6 +294,7 @@ class PhysicalEdition(models.Model, SubjectMixin):
                                        null=True)
     available = models.BooleanField()
     numbering = models.CharField("Numbering", max_length=128, blank=True)
+    sort = models.CharField(max_length=128,editable=False)
     def get_work(self): return self.expression.work
     work = property(get_work)
     expression = models.ForeignKey(Expression,
@@ -299,16 +314,21 @@ class PhysicalEdition(models.Model, SubjectMixin):
         js = ['js/tiny_mce/tiny_mce.js', 'js/textareas.js']   
     def get_absolute_url(self): return "/%s"%(self.noid)
     def get_items(self): return None
+    def save(self):
+        self.sort_save_hook()
+        super(PhysicalEdition, self).save() 
+    class Meta:
+        ordering = ['sort']
     
 class Place(models.Model, SubjectMixin):
     name = models.CharField(max_length=200)
     noid = NoidField(settings.NOID_DIR, max_length=6, primary_key=True)
     def get_absolute_url(self): return "/%s"%(self.noid)
     def save(self):
+        self.subject_save_hook()
         super(Place, self).save()
-        save_hook(self)
     def delete(self):
-        delete_hook(self)
+        self.subject_delete_hook()
         super(Place, self).delete()
     def __unicode__(self): return self.name
     class Admin: pass
@@ -320,10 +340,10 @@ class Organization(models.Model, SubjectMixin):
     noid = NoidField(settings.NOID_DIR, max_length=6, primary_key=True)
     def get_absolute_url(self): return "/%s"%(self.noid)
     def save(self):
+        self.subject_save_hook()
         super(Organization, self).save()
-        save_hook(self)
     def delete(self):
-        delete_hook(self)
+        self.subject_delete_hook()
         super(Organization, self).delete()
     def __unicode__(self): return self.name
     class Admin: pass   
@@ -333,10 +353,10 @@ class Event(models.Model, SubjectMixin):
     noid = NoidField(settings.NOID_DIR, max_length=6, primary_key=True)
     def get_absolute_url(self): return "/%s"%(self.noid)
     def save(self):
+        self.subject_save_hook()
         super(Event, self).save()
-        save_hook(self)
     def delete(self):
-        delete_hook(self)
+        self.subject_delete_hook()
         super(Event, self).delete()
     def __unicode__(self): return self.name
     class Admin: pass
@@ -346,10 +366,10 @@ class FrbrObject(models.Model, SubjectMixin):
     noid = NoidField(settings.NOID_DIR, max_length=6, primary_key=True)
     def get_absolute_url(self): return "/%s"%(self.noid)
     def save(self):
+        self.subject_save_hook()
         super(FrbrObject, self).save()
-        save_hook(self)
     def delete(self):
-        delete_hook(self)
+        self.subject_delete_hook()
         super(FrbrObject, self).delete()
     def __unicode__(self): return self.name
     class Admin: pass
