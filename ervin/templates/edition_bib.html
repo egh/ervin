@@ -1,11 +1,11 @@
 {% load ervin %}
 
 {{ edition.authors.all|inverted_name_first_list_linked|with_terminal:"." }}
-{% if edition.text_online %}
+{# if edition.text_online #}
   <a href="{{edition.get_absolute_url}}"><cite>{{edition.get_title}}</cite></a>.
-{% else %}
-  <cite>{{ edition.get_title }}</cite>.
-{% endif %}
+{# else #}
+{#  <cite>{{ edition.get_title }}</cite>. #}
+{# endif #}
 <abbr class="unapi-id" title="{{ edition.work.slug }}"/>
 {{ edition.publisher|with_terminal:":" }}
 {{ edition.date|with_terminal:"." }}
