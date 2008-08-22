@@ -144,7 +144,11 @@ class Concept(models.Model, SubjectMixin):
     class Admin: pass   
 
 admin.site.register(Concept)
-    
+
+WORK_FORMS = (('series', 'Serial'),
+              ('article', 'Article'),
+              ('monograph', 'Monograph'))
+
 class Work(models.Model, SubjectMixin):
     title = models.TextField(max_length=200,blank=True)
     def get_title(self):
@@ -161,6 +165,7 @@ class Work(models.Model, SubjectMixin):
     date = FreeformDateField(max_length=128,blank=True,null=True)
     date_sort = models.CharField(max_length=128,blank=True,null=True,editable=False)
     sort = models.CharField(max_length=128,editable=False)
+    form = models.CharField(max_length=128, choices=WORK_FORMS)
     class Meta:
         ordering=['sort']
     class Admin: 
