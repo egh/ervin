@@ -1,14 +1,18 @@
 {% load ervin %}
+{# variables #}
+{#  edition #}
+{#  edition_nolink : true if we should not link the edition #}
 
 {{ edition.authors.all|inverted_name_first_list_linked|with_terminal:"." }}
-{# if edition.text_online #}
+{% if edition_nolink %}
+  <cite>{{ edition.get_title }}</cite>.
+{% else %}
   <a href="{{edition.get_absolute_url}}"><cite>{{edition.get_title}}</cite></a>.
-{# else #}
-{#  <cite>{{ edition.get_title }}</cite>. #}
-{# endif #}
+{% endif %}
 <abbr class="unapi-id" title="{{ edition.work.slug }}"/>
 {{ edition.publisher|with_terminal:":" }}
 {{ edition.date|with_terminal:"." }}
 {{ edition.description|with_terminal:"." }}
 {{ edition|publication_info }}
  
+{% load ervin %}
