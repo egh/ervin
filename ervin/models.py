@@ -130,11 +130,6 @@ class Person(models.Model, SubjectMixin):
 
 admin.site.register(Person)
     
-class Section(models.Model):
-    name = models.CharField(max_length=100)
-    def __unicode__(self): return self.name
-    class Admin: pass
-
 class Concept(models.Model, SubjectMixin):
     name = models.CharField(max_length=200)
     noid = NoidField(settings.NOID_DIR, max_length=6,primary_key=True)
@@ -162,7 +157,6 @@ class Work(models.Model, SubjectMixin):
     description = models.TextField(blank=True)
     note = models.TextField(blank=True)
     part_of = models.ForeignKey("self",blank=True,null=True,related_name="parts")
-    sections = models.ManyToManyField(Section,blank=True)
     noid = NoidField(settings.NOID_DIR, max_length=6,primary_key=True)
     date = FreeformDateField(max_length=128,blank=True,null=True)
     date_sort = models.CharField(max_length=128,blank=True,null=True,editable=False)
