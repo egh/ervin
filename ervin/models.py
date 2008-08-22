@@ -14,15 +14,11 @@
 #You should have received a copy of the GNU General Public License
 #along with Ervin.  If not, see <http://www.gnu.org/licenses/>.
 
-from string import lower
 from django.db import models
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
-from django.db.models.query import QuerySet
 from django.conf import settings
-from noid import LocalMinter
-from noid import NoidField
-from django.contrib import admin
+from noid import LocalMinter, NoidField
 import re, os, md5, ervin.templatetags.ervin
 
 class FreeformDateField(models.CharField):
@@ -61,7 +57,7 @@ class SubjectMixin(object):
         return s
 
     def subject_delete_hook(self):
-        which_type = ContentType.objects.get(model=lower(type(self).__name__),
+        which_type = ContentType.objects.get(model=type(self).__name__.lower(),
                                              app_label='ervin')
         try:
             s = Subject.objects.get(content_type=which_type,
@@ -71,7 +67,7 @@ class SubjectMixin(object):
             pass
 
     def create_subject(self):
-        t = ContentType.objects.get(model=lower(type(self).__name__),
+        t = ContentType.objects.get(model=type(self).__name__.lower(),
                                     app_label='ervin')
         s = Subject(content_type=t,object_id=self.pk)
         s.save()
@@ -126,9 +122,6 @@ class Person(models.Model, SubjectMixin):
             return "%s, %s"%(self.surname, self.forename)
     class Meta:
         ordering=['surname','forename']
-    class Admin: pass
-
-admin.site.register(Person)
     
 class Concept(models.Model, SubjectMixin):
     name = models.CharField(max_length=200)
@@ -141,9 +134,6 @@ class Concept(models.Model, SubjectMixin):
         self.subject_delete_hook()
         super(Concept, self).delete()
     def __unicode__(self): return self.name
-    class Admin: pass   
-
-admin.site.register(Concept)
 
 WORK_FORMS = (('series', 'Serial'),
               ('article', 'Article'),
@@ -168,16 +158,6 @@ class Work(models.Model, SubjectMixin):
     form = models.CharField(max_length=128, choices=WORK_FORMS)
     class Meta:
         ordering=['sort']
-    class Admin: 
-        fields = (
-            ("Main", {'fields': ('title', 'part_of','description',
-                                 'note', 'authors')}),
-            ("Classification",  {'classes':'collapse',
-                        'fields': ('subjects', 'sections')}),
-            #("Editions", {'classes':'collapse',
-            #'fields': ("catalogeditions", "onlineedition_set")}),
-            )
-        js = ['js/tiny_mce/tiny_mce.js', 'js/textareas.js']
     def get_absolute_url(self): return "/%s"%(self.noid)
     def save(self):
         self.sort_save_hook()
@@ -193,11 +173,6 @@ class Work(models.Model, SubjectMixin):
             return self.title
         else:
             return "%s (in %s)"%(self.title, self.part_of.title)
-
-class WorkAdmin(admin.ModelAdmin):
-    filter_horizontal=('subjects','authors')
-
-admin.site.register(Work, WorkAdmin)
 
 class Expression(models.Model, SubjectMixin,BibSortMixin):
     work = models.ForeignKey(Work,
@@ -269,12 +244,8 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
     def save(self):
         self.sort_save_hook()
         super(OnlineEdition, self).save() 
-    class Admin:
-        js = ['js/tiny_mce/tiny_mce.js', 'js/textareas.js']
     class Meta:
         ordering = ['sort']
-
-admin.site.register(OnlineEdition)
     
 class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
     date = FreeformDateField(max_length=128,blank=True, null=True)
@@ -312,8 +283,6 @@ class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
     parts = property(get_parts)
     def __unicode__(self):
         return "%s(%s)"%(self.work.title, unicode(self.date))
-    class Admin:
-        js = ['js/tiny_mce/tiny_mce.js', 'js/textareas.js']   
     def get_absolute_url(self): return "/%s"%(self.noid)
     def get_items(self): return None
     def save(self):
@@ -333,9 +302,6 @@ class Place(models.Model, SubjectMixin):
         self.subject_delete_hook()
         super(Place, self).delete()
     def __unicode__(self): return self.name
-    class Admin: pass
-
-admin.site.register(PhysicalEdition)
 
 class Organization(models.Model, SubjectMixin):
     name = models.CharField(max_length=200)
@@ -348,7 +314,6 @@ class Organization(models.Model, SubjectMixin):
         self.subject_delete_hook()
         super(Organization, self).delete()
     def __unicode__(self): return self.name
-    class Admin: pass   
 
 class Event(models.Model, SubjectMixin):
     name = models.CharField(max_length=200)
@@ -361,7 +326,6 @@ class Event(models.Model, SubjectMixin):
         self.subject_delete_hook()
         super(Event, self).delete()
     def __unicode__(self): return self.name
-    class Admin: pass
 
 class FrbrObject(models.Model, SubjectMixin):
     name = models.CharField(max_length=200)
@@ -374,7 +338,6 @@ class FrbrObject(models.Model, SubjectMixin):
         self.subject_delete_hook()
         super(FrbrObject, self).delete()
     def __unicode__(self): return self.name
-    class Admin: pass
     class Meta:
         verbose_name = "Object"
 
