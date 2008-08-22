@@ -195,7 +195,10 @@ class Work(models.Model, SubjectMixin):
         else:
             return "%s (in %s)"%(self.title, self.part_of.title)
 
-admin.site.register(Work)
+class WorkAdmin(admin.ModelAdmin):
+    filter_horizontal=('subjects','authors')
+
+admin.site.register(Work, WorkAdmin)
 
 class Expression(models.Model, SubjectMixin,BibSortMixin):
     work = models.ForeignKey(Work,
