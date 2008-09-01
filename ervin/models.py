@@ -31,8 +31,9 @@ class FreeformDateField(models.CharField):
         return value
     
     def __canonicalize_date__(self, value):
-        stripped = value.replace("[","").replace("]","").replace("?","")
-        return stripped
+        if value != None:
+            stripped = value.replace("[","").replace("]","").replace("?","")
+            return stripped
 
 class MyFileField(models.FileField):
     def get_internal_type(self):
@@ -139,7 +140,7 @@ WORK_FORMS = (('series', 'Serial'),
               ('article', 'Article'),
               ('monograph', 'Monograph'))
 
-class Work(models.Model, SubjectMixin):
+class Work(models.Model, SubjectMixin, BibSortMixin):
     title = models.TextField(max_length=200,blank=True)
     def get_title(self):
         return self.title
@@ -156,6 +157,8 @@ class Work(models.Model, SubjectMixin):
     date_sort = models.CharField(max_length=128,blank=True,null=True,editable=False)
     sort = models.CharField(max_length=128,editable=False)
     form = models.CharField(max_length=128, choices=WORK_FORMS)
+    def get_authors(self):
+        return self.authors
     class Meta:
         ordering=['sort']
     def get_absolute_url(self): return "/%s"%(self.noid)
