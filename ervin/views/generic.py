@@ -139,8 +139,6 @@ def list_view(*args, **kwargs):
     if list_views.has_key(klass):
         l = list(find_all(klass))
         t = loader.get_template(list_views[klass])
-        c = None
-        l.sort(lambda a,b: cmp(str(a),str(b)))
         cols = make_columns(l, column_count)
         c = Context({ "%s_cols"%(klass.__name__.lower()): cols,
                       "%s_list"%(klass.__name__.lower()): l } )
