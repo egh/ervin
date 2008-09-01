@@ -175,8 +175,7 @@ class Work(models.Model, SubjectMixin):
             return "%s (in %s)"%(self.title, self.part_of.title)
 
 class Expression(models.Model, SubjectMixin,BibSortMixin):
-    work = models.ForeignKey(Work,
-                             edit_inline=models.STACKED)
+    work = models.ForeignKey(Work)
     title = models.TextField(max_length=200, blank=True)
     filter_horizontal = ('translators')
     translators = models.ManyToManyField(Person,verbose_name="Translators",
@@ -184,8 +183,7 @@ class Expression(models.Model, SubjectMixin,BibSortMixin):
                                          blank=True)
     noid = NoidField(settings.NOID_DIR,
                      max_length=6,
-                     primary_key=True,
-                     core=True)
+                     primary_key=True)
     sort = models.CharField(max_length=128,editable=False)
     def get_manifestations(self):
         return list(self.onlineedition_set.all()) + list(self.physicaledition_set.all())    
@@ -250,7 +248,7 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
 class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
     date = FreeformDateField(max_length=128,blank=True, null=True)
     date_sort = models.CharField(max_length=128,blank=True,null=True,editable=False)
-    publisher = models.CharField(max_length=100,core=True)
+    publisher = models.CharField(max_length=100)
     #in_series = models.ForeignKey(Work,edit_inline=False,related_name="in_series",null=True,blank=True,limit_choices_to={'type': "series"})
     isbn10 = models.CharField("ISBN-10",max_length=13,blank=True)
     isbn13 = models.CharField("ISBN-13",max_length=16,blank=True)
@@ -345,10 +343,8 @@ class RemoteContent(models.Model):
     edition = models.ForeignKey('OnlineEdition', 
                                 db_column='edition_noid',
                                 to_field='noid',
-                                edit_inline=models.STACKED,
                                 related_name='content_remote')
-    name = models.CharField(max_length=100,
-                            core=True)
+    name = models.CharField(max_length=100)
     noid = NoidField(settings.NOID_DIR, 
                      max_length=6,
                      primary_key=True)
@@ -360,12 +356,9 @@ class DbContent(models.Model):
     edition = models.ForeignKey('OnlineEdition', 
                                 db_column='edition_noid',
                                 to_field='noid',
-                                edit_inline=models.STACKED,
                                 related_name='content_db')
-    name = models.CharField(max_length=100, 
-                            core=True)
-    data = models.TextField(blank=True,
-                            core=True)
+    name = models.CharField(max_length=100)
+    data = models.TextField(blank=True)
     noid = NoidField(settings.NOID_DIR, 
                      primary_key=True,
                      max_length=6)
@@ -376,8 +369,8 @@ ext2mime_map = { '.pdf' : 'application/pdf' }
 mime2ext_map = dict([(d[1],d[0]) for d in ext2mime_map.items()])
 
 class FileContent(models.Model):
-    edition = models.ForeignKey('OnlineEdition', db_column='edition_noid',edit_inline=models.STACKED, related_name='content_file')
-    name = models.CharField(max_length=100,core=True)
+    edition = models.ForeignKey('OnlineEdition', db_column='edition_noid', related_name='content_file')
+    name = models.CharField(max_length=100)
     filename = MyFileField(upload_to="data")
     mimetype = models.CharField(max_length=100,editable=False)
     noid = NoidField(settings.NOID_DIR, max_length=6, primary_key=True)

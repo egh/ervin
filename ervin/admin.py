@@ -17,8 +17,21 @@
 from django.contrib import admin
 from ervin.models import *
 
+class ExpressionInlineAdmin(admin.StackedInline):
+    model=Expression
+
+class RemoteContentInlineAdmine(admin.StackedInline):
+    model=RemoteContent
+
+class DbContentInlineAdmine(admin.StackedInline):
+    model=DbContent
+
+class FileContentInlineAdmine(admin.StackedInline):
+    model=FileContent
+
 class WorkAdmin(admin.ModelAdmin):
     filter_horizontal=('subjects','authors')
+    inlines=[ExpressionInlineAdmin]
 
 admin.site.register(Work, WorkAdmin)
 admin.site.register(Person)
