@@ -165,6 +165,14 @@ def smartypants(value):
         return value
 
 SORT_STOP_RE = re.compile("^(the|a|an|de) ")
+INT_RE = re.compile("^[0-9]+$")
+ALL_INT_RE = re.compile("[0-9]+")
+
 @register.filter
 def sort_friendly(value):
-    return re.sub(SORT_STOP_RE, "", value.lower())
+    def pad_ints(s):
+        if (ALL_INT_RE.match(s)):
+           return "%09i"%(int(s))
+        else: return s
+    padded_value = "".join([ pad_ints(c) for c in re.split("([0-9]+)", value) ])
+    return re.sub(SORT_STOP_RE, "", padded_value.lower())
