@@ -135,6 +135,8 @@ class Concept(models.Model, SubjectMixin):
         self.subject_delete_hook()
         super(Concept, self).delete()
     def __unicode__(self): return self.name
+    class Meta:
+        ordering=['name']
 
 WORK_FORMS = (('series', 'Serial'),
               ('article', 'Article'),
@@ -303,6 +305,8 @@ class Place(models.Model, SubjectMixin):
         self.subject_delete_hook()
         super(Place, self).delete()
     def __unicode__(self): return self.name
+    class Meta:
+        ordering=['name']
 
 class Organization(models.Model, SubjectMixin):
     name = models.CharField(max_length=200)
@@ -315,6 +319,8 @@ class Organization(models.Model, SubjectMixin):
         self.subject_delete_hook()
         super(Organization, self).delete()
     def __unicode__(self): return self.name
+    class Meta:
+        ordering=['name']
 
 class Event(models.Model, SubjectMixin):
     name = models.CharField(max_length=200)
@@ -327,6 +333,8 @@ class Event(models.Model, SubjectMixin):
         self.subject_delete_hook()
         super(Event, self).delete()
     def __unicode__(self): return self.name
+    class Meta:
+        ordering=['name']
 
 class FrbrObject(models.Model, SubjectMixin):
     name = models.CharField(max_length=200)
@@ -341,6 +349,7 @@ class FrbrObject(models.Model, SubjectMixin):
     def __unicode__(self): return self.name
     class Meta:
         verbose_name = "Object"
+        ordering=['name']
 
 class RemoteContent(models.Model):
     edition = models.ForeignKey('OnlineEdition', 
