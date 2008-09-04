@@ -3,7 +3,7 @@
 <oai_dc:dc
     xmlns:dc="http://purl.org/dc/elements/1.1/"
     xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
-  <dc:title>{{ onlineedition.get_title }}</dc:title>
+  <dc:title>{{ onlineedition.title }}</dc:title>
   {% if onlineedition.authors.all %}
   {% for author in onlineedition.authors.all %}
   <dc:creator>{{ author }}</dc:creator>

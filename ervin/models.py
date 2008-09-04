@@ -83,7 +83,7 @@ class SubjectMixin(object):
 class BibSortMixin(object):
     def sort_save_hook(self):
         key = None
-        title_key = ervin.templatetags.ervin.sort_friendly(self.get_title())
+        title_key = ervin.templatetags.ervin.sort_friendly(self.title)
         authors = self.get_authors().order_by('surname','forename').all()
         if len(authors) > 0:
             first_author_key = ervin.templatetags.ervin.sort_friendly(ervin.templatetags.ervin.inverted_name(authors[0]))
@@ -182,7 +182,7 @@ class Work(models.Model, SubjectMixin, BibSortMixin):
 
 class Expression(models.Model, SubjectMixin,BibSortMixin):
     work = models.ForeignKey(Work)
-    title = models.TextField(max_length=200, blank=True)
+    expression_title = models.TextField(max_length=200, blank=True, db_column='title')
     filter_horizontal = ('translators')
     translators = models.ManyToManyField(Person,verbose_name="Translators",
                                          related_name="translated",
@@ -200,10 +200,11 @@ class Expression(models.Model, SubjectMixin,BibSortMixin):
         return self.work.subjects
     subjects = property(get_subjects)
     def get_title(self):
-        if self.title != None and self.title != '':
-            return self.title
+        if self.expression_title != None and self.expression_title != '':
+            return self.expression_title
         else:
             return self.work.title
+    title = property(get_title)
     def get_absolute_url(self): return "/%s"%(self.noid)
     def __unicode__(self): return unicode(self.work)
     def save(self):
@@ -218,7 +219,7 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
     expression = models.ForeignKey(Expression,
                                    db_column='expression_noid',
                                    to_field='noid')
-    title = models.TextField("Title (leave blank if same as expression)", max_length=200, blank=True)
+    edition_title = models.TextField("Title (leave blank if same as expression)", max_length=200, blank=True,db_column='title')
     #numbering = models.CharField("Numbering", max_length=128, blank=True)
     noid = NoidField(settings.NOID_DIR,max_length=6, primary_key=True)
     sort = models.CharField(max_length=128,editable=False)
@@ -227,10 +228,11 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
         return self.expression.work
     work = property(get_work)
     def get_title(self):
-        if self.title != None and self.title != '':
-            return self.title
+        if self.edition_title != None and self.edition_title != '':
+            return self.edition_title
         else:
-            return self.expression.get_title()
+            return self.expression.title
+    title = property(get_title)
     def get_authors(self):
         return self.expression.authors
     authors = property(get_authors)
@@ -252,6 +254,7 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
         ordering = ['sort']
     
 class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
+    edition_title = models.TextField("Title (leave blank if same as expression)", max_length=200, blank=True,db_column='title')
     date = FreeformDateField(max_length=128,blank=True, null=True)
     date_sort = models.CharField(max_length=128,blank=True,null=True,editable=False)
     publisher = models.CharField(max_length=100)
@@ -278,7 +281,12 @@ class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
                                    to_field='noid',
                                    db_column='expression_noid')
     noid = NoidField(settings.NOID_DIR, max_length=6, primary_key=True)
-    def get_title(self): return self.work.title
+    def get_title(self):
+        if self.edition_title != None and self.edition_title != '':
+            return self.edition_title
+        else:
+            return self.expression.title
+    title = property(get_title)
     def get_authors(self): return self.expression.authors
     authors = property(get_authors)
     def get_subjects(self): return self.work.subjects

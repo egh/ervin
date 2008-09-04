@@ -1,10 +1,10 @@
 {% extends "plain.html" %}
 {% load ervin %}
-{% block title %}Physical edition: {{ physicaledition.get_title }}{% endblock %}
+{% block title %}Physical edition: {{ physicaledition.title }}{% endblock %}
 {% block content %}
 <abbr class="unapi-id" title="{{ physicaledition.pk }}"/>
 <dl>
-<dt>Title:</dt> <dd>{{ physicaledition.get_title }}</dd>
+<dt>Title:</dt> <dd>{{ physicaledition.title }}</dd>
 
 {% if physicaledition.authors %}
 <dt>Authors:</dt> <dd>

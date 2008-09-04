@@ -1,10 +1,10 @@
 {% extends "plain.html" %}
 {% load ervin %}
-{% block title %}Online edition: {{ onlineedition.get_title }}{% endblock %}
+{% block title %}Online edition: {{ onlineedition.title }}{% endblock %}
 {% block content %}
 <abbr class="unapi-id" title="{{ onlineedition.pk }}"/>
 <dl>
-<dt>Title:</dt> <dd>{{ onlineedition.get_title }}</dd>
+<dt>Title:</dt> <dd>{{ onlineedition.title }}</dd>
 
 {% if onlineedition.authors %}
 <dt>Authors:</dt> <dd>

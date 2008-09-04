@@ -5,7 +5,7 @@
       xmlns="http://www.loc.gov/mods/v3"
       xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-0.xsd">
     <titleInfo>
-      <title>{{ onlineedition.get_title }}</title>
+      <title>{{ onlineedition.title }}</title>
     </titleInfo>
     {% if onlineedition.authors %}
     {% for author in onlineedition.authors.all %}
