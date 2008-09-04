@@ -146,17 +146,6 @@ def fix_isbn(value):
     return (re.compile("-")).sub("",value)
 
 @register.filter
-def publication_info(ed):
-  try:	
-    publisher = ed.publisher
-    ret_val = ""
-    if publisher != "":
-      ret_val = "%s%s, "%(ret_val, publisher)
-    return "%s%s. "%(ret_val, str(ed.pub_date.year))
-  except AttributeError:
-    return ""
-
-@register.filter
 def smartypants(value):
     try:
         import smartypants
