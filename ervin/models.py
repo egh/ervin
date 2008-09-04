@@ -143,9 +143,10 @@ WORK_FORMS = (('series', 'Serial'),
               ('monograph', 'Monograph'))
 
 class Work(models.Model, SubjectMixin, BibSortMixin):
-    title = models.TextField(max_length=200,blank=True)
+    work_title = models.TextField(max_length=200,blank=True,db_column='title')
     def get_title(self):
-        return self.title
+        return self.work_title
+    title = property(get_title)
     filter_horizontal = ('authors', 'subjects')
     authors = models.ManyToManyField(Person,verbose_name="Authors",
                                      related_name="authored",
@@ -202,7 +203,7 @@ class Expression(models.Model, SubjectMixin,BibSortMixin):
         if self.title != None and self.title != '':
             return self.title
         else:
-            return self.work.get_title()
+            return self.work.title
     def get_absolute_url(self): return "/%s"%(self.noid)
     def __unicode__(self): return unicode(self.work)
     def save(self):
@@ -285,7 +286,7 @@ class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
     def get_parts(self): return self.work.parts
     parts = property(get_parts)
     def __unicode__(self):
-        return "%s(%s)"%(self.work.title, unicode(self.date))
+        return "%s(%s)"%(self.get_title(), unicode(self.date))
     def get_absolute_url(self): return "/%s"%(self.noid)
     def get_items(self): return None
     def save(self):
