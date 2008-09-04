@@ -100,11 +100,11 @@ class Subject(models.Model):
     def __unicode__(self): return unicode(self.content_object)
     def __cmp__(self, other):
       return cmp(unicode(self).lower(), unicode(other).lower())
-    class Meta:
-        ordering = ['sort']
     def save(self):
         self.sort = ervin.templatetags.ervin.sort_friendly(unicode(self))[:128]
         super(Subject, self).save()
+    class Meta:
+        ordering = ['sort']
 
 class Person(models.Model, SubjectMixin):
     surname = models.CharField(max_length=200)
@@ -162,8 +162,6 @@ class Work(models.Model, SubjectMixin, BibSortMixin):
     form = models.CharField(max_length=128, choices=WORK_FORMS)
     def get_authors(self):
         return self.authors
-    class Meta:
-        ordering=['sort']
     def get_absolute_url(self): return "/%s"%(self.noid)
     def save(self):
         self.sort_save_hook()
@@ -179,6 +177,8 @@ class Work(models.Model, SubjectMixin, BibSortMixin):
             return self.title
         else:
             return "%s (in %s)"%(self.title, self.part_of.title)
+    class Meta:
+        ordering=['sort']
 
 class Expression(models.Model, SubjectMixin,BibSortMixin):
     work = models.ForeignKey(Work)
