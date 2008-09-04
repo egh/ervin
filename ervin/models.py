@@ -173,8 +173,6 @@ class Work(models.Model, SubjectMixin, BibSortMixin):
     sort = models.CharField(max_length=128,editable=False)
     form = models.CharField(max_length=128, choices=WORK_FORMS)
 
-    title = property(get_title)
-
     def get_title(self):
         return self.work_title
 
@@ -198,6 +196,8 @@ class Work(models.Model, SubjectMixin, BibSortMixin):
         else:
             return "%s (in %s)"%(self.title, self.part_of.title)
 
+    title = property(get_title)
+
     class Meta:
         ordering=['sort']
 
@@ -212,10 +212,6 @@ class Expression(models.Model, SubjectMixin,BibSortMixin):
                      max_length=6,
                      primary_key=True)
     sort = models.CharField(max_length=128,editable=False)
-
-    authors = property(get_authors)
-    subjects = property(get_subjects)
-    title = property(get_title)
 
     def get_manifestations(self):
         return list(self.onlineedition_set.all()) + list(self.physicaledition_set.all())    
@@ -240,6 +236,10 @@ class Expression(models.Model, SubjectMixin,BibSortMixin):
         self.sort_save_hook()
         super(Expression, self).save() 
 
+    authors = property(get_authors)
+    subjects = property(get_subjects)
+    title = property(get_title)
+
     class Meta:
         ordering=['sort']
 
@@ -253,13 +253,6 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
     #numbering = models.CharField("Numbering", max_length=128, blank=True)
     noid = NoidField(settings.NOID_DIR,max_length=6, primary_key=True)
     sort = models.CharField(max_length=128,editable=False)
-
-    authors = property(get_authors)
-    items = property(get_items)
-    parts = property(get_parts)
-    subjects = property(get_subjects)
-    title = property(get_title)
-    work = property(get_work)
 
     def get_work(self):
         return self.expression.work
@@ -289,6 +282,13 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
     def save(self):
         self.sort_save_hook()
         super(OnlineEdition, self).save() 
+
+    authors = property(get_authors)
+    items = property(get_items)
+    parts = property(get_parts)
+    subjects = property(get_subjects)
+    title = property(get_title)
+    work = property(get_work)
 
     class Meta:
         ordering = ['sort']
@@ -320,12 +320,6 @@ class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
                                    db_column='expression_noid')
     noid = NoidField(settings.NOID_DIR, max_length=6, primary_key=True)
 
-    authors = property(get_authors)
-    parts = property(get_parts)
-    subjects = property(get_subjects)
-    title = property(get_title)
-    work = property(get_work)
-
     def get_work(self): return self.expression.work
 
     def get_title(self):
@@ -350,6 +344,12 @@ class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
     def save(self):
         self.sort_save_hook()
         super(PhysicalEdition, self).save() 
+
+    authors = property(get_authors)
+    parts = property(get_parts)
+    subjects = property(get_subjects)
+    title = property(get_title)
+    work = property(get_work)
 
     class Meta:
         ordering = ['sort']
