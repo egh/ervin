@@ -96,13 +96,18 @@ class Subject(models.Model):
     object_id = models.CharField(max_length=6,primary_key=True)
     content_object = generic.GenericForeignKey()
     sort = models.CharField(max_length=128)
+
     def get_absolute_url(self): return "/%s"%(self.object_id)
+
     def __unicode__(self): return unicode(self.content_object)
+
     def __cmp__(self, other):
       return cmp(unicode(self).lower(), unicode(other).lower())
+
     def save(self):
         self.sort = ervin.templatetags.ervin.sort_friendly(unicode(self))[:128]
         super(Subject, self).save()
+
     class Meta:
         ordering = ['sort']
 
@@ -111,30 +116,40 @@ class Person(models.Model, SubjectMixin):
     forename = models.CharField(max_length=200)
     dates = models.CharField(max_length=20,blank=True)
     noid = NoidField(settings.NOID_DIR, max_length=6, primary_key=True)
+
     def get_absolute_url(self): return "/%s"%(self.noid)
+
     def save(self):
         self.subject_save_hook()
         super(Person, self).save()
+
     def __hash__(self): return hash(self.pk)
+
     def __unicode__(self):
         if self.dates:
             return "%s, %s (%s)"%(self.surname, self.forename, self.dates)
         else: 
             return "%s, %s"%(self.surname, self.forename)
+
     class Meta:
         ordering=['surname','forename']
     
 class Concept(models.Model, SubjectMixin):
     name = models.CharField(max_length=200)
     noid = NoidField(settings.NOID_DIR, max_length=6,primary_key=True)
+
     def get_absolute_url(self): return "/%s"%(self.noid)
+
     def save(self):
         self.subject_save_hook()
         super(Concept, self).save()
+
     def delete(self):
         self.subject_delete_hook()
         super(Concept, self).delete()
+
     def __unicode__(self): return self.name
+
     class Meta:
         ordering=['name']
 
@@ -144,9 +159,6 @@ WORK_FORMS = (('series', 'Serial'),
 
 class Work(models.Model, SubjectMixin, BibSortMixin):
     work_title = models.TextField(max_length=200,blank=True,db_column='title')
-    def get_title(self):
-        return self.work_title
-    title = property(get_title)
     filter_horizontal = ('authors', 'subjects')
     authors = models.ManyToManyField(Person,verbose_name="Authors",
                                      related_name="authored",
@@ -160,9 +172,17 @@ class Work(models.Model, SubjectMixin, BibSortMixin):
     date_sort = models.CharField(max_length=128,blank=True,null=True,editable=False)
     sort = models.CharField(max_length=128,editable=False)
     form = models.CharField(max_length=128, choices=WORK_FORMS)
+
+    title = property(get_title)
+
+    def get_title(self):
+        return self.work_title
+
     def get_authors(self):
         return self.authors
+
     def get_absolute_url(self): return "/%s"%(self.noid)
+
     def save(self):
         self.sort_save_hook()
         super(Work, self).save() 
@@ -177,6 +197,7 @@ class Work(models.Model, SubjectMixin, BibSortMixin):
             return self.title
         else:
             return "%s (in %s)"%(self.title, self.part_of.title)
+
     class Meta:
         ordering=['sort']
 
@@ -191,25 +212,34 @@ class Expression(models.Model, SubjectMixin,BibSortMixin):
                      max_length=6,
                      primary_key=True)
     sort = models.CharField(max_length=128,editable=False)
+
+    authors = property(get_authors)
+    subjects = property(get_subjects)
+    title = property(get_title)
+
     def get_manifestations(self):
         return list(self.onlineedition_set.all()) + list(self.physicaledition_set.all())    
+
     def get_authors(self):
         return self.work.authors
-    authors = property(get_authors)
+
     def get_subjects(self):
         return self.work.subjects
-    subjects = property(get_subjects)
+
     def get_title(self):
         if self.expression_title != None and self.expression_title != '':
             return self.expression_title
         else:
             return self.work.title
-    title = property(get_title)
+
     def get_absolute_url(self): return "/%s"%(self.noid)
+
     def __unicode__(self): return unicode(self.work)
+
     def save(self):
         self.sort_save_hook()
         super(Expression, self).save() 
+
     class Meta:
         ordering=['sort']
 
@@ -224,32 +254,42 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
     noid = NoidField(settings.NOID_DIR,max_length=6, primary_key=True)
     sort = models.CharField(max_length=128,editable=False)
 
+    authors = property(get_authors)
+    items = property(get_items)
+    parts = property(get_parts)
+    subjects = property(get_subjects)
+    title = property(get_title)
+    work = property(get_work)
+
     def get_work(self):
         return self.expression.work
-    work = property(get_work)
+
     def get_title(self):
         if self.edition_title != None and self.edition_title != '':
             return self.edition_title
         else:
             return self.expression.title
-    title = property(get_title)
+
     def get_authors(self):
         return self.expression.authors
-    authors = property(get_authors)
+
     def get_subjects(self):
         return self.expression.subjects
-    subjects = property(get_subjects)
+
     def get_parts(self):
         return self.work.parts
-    parts = property(get_parts)
+
     def get_items(self):
         return list(self.remoteitem_set.all())
-    items = property(get_items)
+
     def __unicode__(self): return unicode(self.work)
+
     def get_absolute_url(self): return "/%s"%(self.noid)
+
     def save(self):
         self.sort_save_hook()
         super(OnlineEdition, self).save() 
+
     class Meta:
         ordering = ['sort']
     
@@ -275,87 +315,118 @@ class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
     available = models.BooleanField()
     numbering = models.CharField("Numbering", max_length=128, blank=True)
     sort = models.CharField(max_length=128,editable=False)
-    def get_work(self): return self.expression.work
-    work = property(get_work)
     expression = models.ForeignKey(Expression,
                                    to_field='noid',
                                    db_column='expression_noid')
     noid = NoidField(settings.NOID_DIR, max_length=6, primary_key=True)
+
+    authors = property(get_authors)
+    parts = property(get_parts)
+    subjects = property(get_subjects)
+    title = property(get_title)
+    work = property(get_work)
+
+    def get_work(self): return self.expression.work
+
     def get_title(self):
         if self.edition_title != None and self.edition_title != '':
             return self.edition_title
         else:
             return self.expression.title
-    title = property(get_title)
+
     def get_authors(self): return self.expression.authors
-    authors = property(get_authors)
+
     def get_subjects(self): return self.work.subjects
-    subjects = property(get_subjects)
+
     def get_parts(self): return self.work.parts
-    parts = property(get_parts)
+
     def __unicode__(self):
         return "%s(%s)"%(self.get_title(), unicode(self.date))
+
     def get_absolute_url(self): return "/%s"%(self.noid)
+
     def get_items(self): return None
+
     def save(self):
         self.sort_save_hook()
         super(PhysicalEdition, self).save() 
+
     class Meta:
         ordering = ['sort']
     
 class Place(models.Model, SubjectMixin):
     name = models.CharField(max_length=200)
     noid = NoidField(settings.NOID_DIR, max_length=6, primary_key=True)
+
     def get_absolute_url(self): return "/%s"%(self.noid)
+
     def save(self):
         self.subject_save_hook()
         super(Place, self).save()
+
     def delete(self):
         self.subject_delete_hook()
         super(Place, self).delete()
+
     def __unicode__(self): return self.name
+
     class Meta:
         ordering=['name']
 
 class Organization(models.Model, SubjectMixin):
     name = models.CharField(max_length=200)
     noid = NoidField(settings.NOID_DIR, max_length=6, primary_key=True)
+
     def get_absolute_url(self): return "/%s"%(self.noid)
+
     def save(self):
         self.subject_save_hook()
         super(Organization, self).save()
+
     def delete(self):
         self.subject_delete_hook()
         super(Organization, self).delete()
+
     def __unicode__(self): return self.name
+
     class Meta:
         ordering=['name']
 
 class Event(models.Model, SubjectMixin):
     name = models.CharField(max_length=200)
     noid = NoidField(settings.NOID_DIR, max_length=6, primary_key=True)
+
     def get_absolute_url(self): return "/%s"%(self.noid)
+
     def save(self):
         self.subject_save_hook()
         super(Event, self).save()
+
     def delete(self):
         self.subject_delete_hook()
         super(Event, self).delete()
+
     def __unicode__(self): return self.name
+
     class Meta:
         ordering=['name']
 
 class FrbrObject(models.Model, SubjectMixin):
     name = models.CharField(max_length=200)
     noid = NoidField(settings.NOID_DIR, max_length=6, primary_key=True)
+
     def get_absolute_url(self): return "/%s"%(self.noid)
+
     def save(self):
         self.subject_save_hook()
         super(FrbrObject, self).save()
+
     def delete(self):
         self.subject_delete_hook()
         super(FrbrObject, self).delete()
+
     def __unicode__(self): return self.name
+
     class Meta:
         verbose_name = "Object"
         ordering=['name']
@@ -370,7 +441,9 @@ class RemoteContent(models.Model):
                      max_length=6,
                      primary_key=True)
     url = models.CharField(max_length=1024)
+
     def __unicode__(self): return self.name
+
     def get_absolute_url(self): return self.url 
 
 class DbContent(models.Model): 
@@ -383,7 +456,9 @@ class DbContent(models.Model):
     noid = NoidField(settings.NOID_DIR, 
                      primary_key=True,
                      max_length=6)
+
     def __unicode__(self): return self.name
+
     def get_absolute_url(self): return "/%s"%(self.noid)
 
 ext2mime_map = { '.pdf' : 'application/pdf' }
@@ -395,16 +470,21 @@ class FileContent(models.Model):
     filename = MyFileField(upload_to="data")
     mimetype = models.CharField(max_length=100,editable=False)
     noid = NoidField(settings.NOID_DIR, max_length=6, primary_key=True)
+
     def get_ext(self):
         if mime2ext_map.has_key(self.mimetype):
             return mime2ext_map[self.mimetype]
         else: return None
+
     def get_mimetype_from_ext(self, ext):
         if ext2mime_map.has_key(ext):
             return ext2mime_map[ext]
         else: return None
+
     def __unicode__(self): return self.name
+
     def get_absolute_url(self): return "/%s"%(self.noid)
+
     def save(self):
         (basename, ext) = os.path.splitext(self.filename)
         self.mimetype = self.get_mimetype_from_ext(ext)
