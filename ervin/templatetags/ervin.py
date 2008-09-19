@@ -165,3 +165,11 @@ def sort_friendly(value):
         else: return s
     padded_value = "".join([ pad_ints(c) for c in re.split("([0-9]+)", value) ])
     return re.sub(SORT_STOP_RE, "", padded_value.lower())
+
+@register.filter
+def freeformdate(value):
+    from django.utils.dateformat import format
+    if (type(value) == str or type(value) == unicode):
+        return value
+    else:
+        return format(value, "j F Y")
