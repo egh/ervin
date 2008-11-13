@@ -7,11 +7,10 @@
 {% if edition_nolink %}
   <cite>{{ edition.title }}</cite>.
 {% else %}
-  <a href="{{edition.get_absolute_url}}"><cite>{{edition.title}}</cite></a>.
+  <a href="{{ edition.get_absolute_url }}"><cite>{{ edition.title }}</cite></a>.
 {% endif %}
 <abbr class="unapi-id" title="{{ edition.work.slug }}"/>
 {{ edition.publisher|with_terminal:":" }}
-
-{{ edition.date|freeformdate|with_terminal:"." }}
-{{ edition.description|with_terminal:"." }}
+{{ edition.date | freeformdate | with_terminal:"." }}
+{{ edition.description | with_terminal:"." }}
 
