@@ -16,7 +16,7 @@
 from django import template
 from django.template.defaultfilters import stringfilter
 from django.db.models.query import QuerySet
-import re, django
+import re, django, datetime
 try:
     from functools import wraps
 except ImportError:
@@ -171,5 +171,7 @@ def freeformdate(value):
     from django.utils.dateformat import format
     if (type(value) == str or type(value) == unicode):
         return value
-    else:
+    elif type(value) == datetime.datetime:
         return format(value, "j F Y")
+    else: return ""
+        
