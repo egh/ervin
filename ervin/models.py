@@ -53,7 +53,7 @@ class MyFileField(models.FileField):
 class SubjectMixin(object):
     def get_subject(self):
         s = None
-        try: s = Subject.objects.get (object_id=self.noid)
+        try: s = Subject.objects.get (object_id=self.pk)
         except Subject.DoesNotExist: s = self.create_subject ()
         return s
 
@@ -117,7 +117,7 @@ class Person(models.Model, SubjectMixin):
     dates = models.CharField(max_length=20,blank=True)
     noid = NoidField(settings.NOID_DIR, max_length=6, primary_key=True)
 
-    def get_absolute_url(self): return "/%s"%(self.noid)
+    def get_absolute_url(self): return "/%s"%(self.pk)
 
     def save(self):
         self.subject_save_hook()
@@ -138,7 +138,7 @@ class Concept(models.Model, SubjectMixin):
     name = models.CharField(max_length=200)
     noid = NoidField(settings.NOID_DIR, max_length=6,primary_key=True)
 
-    def get_absolute_url(self): return "/%s"%(self.noid)
+    def get_absolute_url(self): return "/%s"%(self.pk)
 
     def save(self):
         self.subject_save_hook()
@@ -179,7 +179,7 @@ class Work(models.Model, SubjectMixin, BibSortMixin):
     def get_authors(self):
         return self.authors
 
-    def get_absolute_url(self): return "/%s"%(self.noid)
+    def get_absolute_url(self): return "/%s"%(self.pk)
 
     def save(self):
         self.sort_save_hook()
@@ -228,7 +228,7 @@ class Expression(models.Model, SubjectMixin,BibSortMixin):
         else:
             return self.work.title
 
-    def get_absolute_url(self): return "/%s"%(self.noid)
+    def get_absolute_url(self): return "/%s"%(self.pk)
 
     def __unicode__(self): return unicode(self.work)
 
@@ -277,7 +277,7 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
 
     def __unicode__(self): return unicode(self.work)
 
-    def get_absolute_url(self): return "/%s"%(self.noid)
+    def get_absolute_url(self): return "/%s"%(self.pk)
 
     def save(self):
         self.sort_save_hook()
@@ -340,7 +340,7 @@ class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
     def __unicode__(self):
         return "%s(%s)"%(self.get_title(), unicode(self.date))
 
-    def get_absolute_url(self): return "/%s"%(self.noid)
+    def get_absolute_url(self): return "/%s"%(self.pk)
 
     def get_items(self): return None
 
@@ -362,7 +362,7 @@ class Place(models.Model, SubjectMixin):
     name = models.CharField(max_length=200)
     noid = NoidField(settings.NOID_DIR, max_length=6, primary_key=True)
 
-    def get_absolute_url(self): return "/%s"%(self.noid)
+    def get_absolute_url(self): return "/%s"%(self.pk)
 
     def save(self):
         self.subject_save_hook()
@@ -381,7 +381,7 @@ class Organization(models.Model, SubjectMixin):
     name = models.CharField(max_length=200)
     noid = NoidField(settings.NOID_DIR, max_length=6, primary_key=True)
 
-    def get_absolute_url(self): return "/%s"%(self.noid)
+    def get_absolute_url(self): return "/%s"%(self.pk)
 
     def save(self):
         self.subject_save_hook()
@@ -400,7 +400,7 @@ class Event(models.Model, SubjectMixin):
     name = models.CharField(max_length=200)
     noid = NoidField(settings.NOID_DIR, max_length=6, primary_key=True)
 
-    def get_absolute_url(self): return "/%s"%(self.noid)
+    def get_absolute_url(self): return "/%s"%(self.pk)
 
     def save(self):
         self.subject_save_hook()
@@ -419,7 +419,7 @@ class FrbrObject(models.Model, SubjectMixin):
     name = models.CharField(max_length=200)
     noid = NoidField(settings.NOID_DIR, max_length=6, primary_key=True)
 
-    def get_absolute_url(self): return "/%s"%(self.noid)
+    def get_absolute_url(self): return "/%s"%(self.pk)
 
     def save(self):
         self.subject_save_hook()
@@ -464,7 +464,7 @@ class DbContent(models.Model):
 
     def __unicode__(self): return self.name
 
-    def get_absolute_url(self): return "/%s"%(self.noid)
+    def get_absolute_url(self): return "/%s"%(self.pk)
 
 ext2mime_map = { '.pdf' : 'application/pdf' }
 mime2ext_map = dict([(d[1],d[0]) for d in ext2mime_map.items()])
@@ -488,7 +488,7 @@ class FileContent(models.Model):
 
     def __unicode__(self): return self.name
 
-    def get_absolute_url(self): return "/%s"%(self.noid)
+    def get_absolute_url(self): return "/%s"%(self.pk)
 
     def save(self):
         (basename, ext) = os.path.splitext(self.filename)
