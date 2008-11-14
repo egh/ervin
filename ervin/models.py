@@ -19,7 +19,7 @@ from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
 from noid import LocalMinter, NoidField
-import re, os, md5, ervin.templatetags.ervin
+import re, os, md5, ervin.templatetags.ervin, isbn
 
 class FreeformDateField(models.CharField):
     def get_internal_type(self):
@@ -54,7 +54,7 @@ class SubjectMixin(object):
     def get_subject(self):
         s = None
         try: s = Subject.objects.get (object_id=self.noid)
-        except Subject.DoesNotExist: s = create_subject (self)
+        except Subject.DoesNotExist: s = self.create_subject ()
         return s
 
     def subject_delete_hook(self):
@@ -300,6 +300,9 @@ class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
     publisher = models.CharField(max_length=100)
     #in_series = models.ForeignKey(Work,edit_inline=False,related_name="in_series",null=True,blank=True,limit_choices_to={'type': "series"})
     isbn10 = models.CharField("ISBN-10",max_length=13,blank=True)
+    def get_isbn10(self): 
+        if isbn.isValid(self.isbn13): return isbn.toI10(self.isbn13)
+        else: return None
     isbn13 = models.CharField("ISBN-13",max_length=16,blank=True)
     description = models.CharField("Physical description",max_length=100,blank=True,null=True)
     price_dollars = models.DecimalField('Price ($)',
@@ -350,7 +353,8 @@ class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
     subjects = property(get_subjects)
     title = property(get_title)
     work = property(get_work)
-
+    #isbn10 = property(get_isbn10)
+    
     class Meta:
         ordering = ['sort']
     
@@ -453,6 +457,7 @@ class DbContent(models.Model):
                                 related_name='content_db')
     name = models.CharField(max_length=100)
     data = models.TextField(blank=True)
+    mimetype = models.CharField(max_length=100,editable=False)
     noid = NoidField(settings.NOID_DIR, 
                      primary_key=True,
                      max_length=6)
@@ -489,5 +494,4 @@ class FileContent(models.Model):
         (basename, ext) = os.path.splitext(self.filename)
         self.mimetype = self.get_mimetype_from_ext(ext)
         super(FileContent, self).save()
-        
-    
+   
