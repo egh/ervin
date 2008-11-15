@@ -72,10 +72,10 @@ def inverted_name_first_list_linked (persons, arg=""):
     names = []
     for (i, person) in enumerate(persons):
         if (i == 0):
-            if (person.noid == ignore): names.append (inverted_name (person))
+            if (person.pk == ignore): names.append (inverted_name (person))
             else: names.append (inverted_name_linked (person))
         else:
-            if (person.noid == ignore): names.append (name (person))
+            if (person.pk == ignore): names.append (name (person))
             else: names.append (name_linked (person))
     return join_with_final(", ", " and ", names)
 
@@ -116,7 +116,7 @@ def name_list_linked(persons,arg=""):
         ignore = arg
     names = []
     for person in persons:
-        if (arg != None) and (arg == person.noid): names.append(name (person))
+        if (arg != None) and (arg == person.pk): names.append(name (person))
         else: names.append(name_linked (person))
     return django.utils.safestring.mark_safe(join_with_final(", ", " and ", names))
 
