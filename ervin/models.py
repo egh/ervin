@@ -242,7 +242,6 @@ class Expression(models.Model, SubjectMixin,BibSortMixin):
         ordering=['sort']
 
 class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
-    html = models.TextField(blank=True)
     date = models.DateTimeField(null=True)
     expression = models.ForeignKey(Expression)
     edition_title = models.TextField("Title (leave blank if same as expression)", max_length=200, blank=True,db_column='title')
@@ -443,14 +442,11 @@ class RemoteContent(models.Model):
     def get_absolute_url(self): return self.url 
 
 class DbContent(models.Model): 
-    edition = models.ForeignKey('OnlineEdition', 
-                                related_name='content_db')
+    edition = models.ForeignKey('OnlineEdition', related_name='content_db')
     name = models.CharField(max_length=100)
     data = models.TextField(blank=True)
-    mimetype = models.CharField(max_length=100,editable=False)
-    id = NoidField(settings.NOID_DIR, 
-                     primary_key=True,
-                     max_length=6)
+    mimetype = models.CharField(max_length=100, editable=False)
+    id = NoidField(settings.NOID_DIR, primary_key=True, max_length=6)
 
     def __unicode__(self): return self.name
 
