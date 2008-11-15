@@ -1,6 +1,6 @@
 {% load ervin %}
 {% if person %}
-  {{ work.authors.all|inverted_name_first_list_linked:person.noid|with_final_period }}
+  {{ work.authors.all|inverted_name_first_list_linked:person.pk|with_final_period }}
 {% else %}
   {{ work.authors.all|inverted_name_first_list_linked|with_final_period }}
 {% endif %}
