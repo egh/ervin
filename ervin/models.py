@@ -249,6 +249,8 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
     id = NoidField(settings.NOID_DIR,max_length=6, primary_key=True)
     sort = models.CharField(max_length=128,editable=False)
 
+    def get_content(self): return (list(self.content_db.all()) + list(self.content_file.all()))
+
     def get_work(self):
         return self.expression.work
 
@@ -284,6 +286,7 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
     subjects = property(get_subjects)
     title = property(get_title)
     work = property(get_work)
+    content = property(get_content)
 
     class Meta:
         ordering = ['sort']
@@ -458,8 +461,8 @@ mime2ext_map = dict([(d[1],d[0]) for d in ext2mime_map.items()])
 class FileContent(models.Model):
     edition = models.ForeignKey('OnlineEdition', related_name='content_file')
     name = models.CharField(max_length=100)
-    filename = MyFileField(upload_to="data")
-    mimetype = models.CharField(max_length=100,editable=False)
+    filename = models.FileField(upload_to="data")
+    mimetype = models.CharField(max_length=100)
     id = NoidField(settings.NOID_DIR, max_length=6, primary_key=True)
 
     def get_ext(self):
@@ -477,7 +480,6 @@ class FileContent(models.Model):
     def get_absolute_url(self): return "/%s"%(self.pk)
 
     def save(self):
-        (basename, ext) = os.path.splitext(self.filename)
+        (basename, ext) = os.path.splitext(str(self.filename))
         self.mimetype = self.get_mimetype_from_ext(ext)
         super(FileContent, self).save()
-   
