@@ -23,7 +23,7 @@ def by_slug(request, *args, **kwargs):
    return detail(person, request, *args, **kwargs)
 
 def by_noid(request, *args, **kwargs):
-   person = Person.objects.get(noid=kwargs['noid'])
+   person = Person.objects.get(id=kwargs['noid'])
    return detail(person, request, *args, **kwargs)
 
 def detail(person, request, *args,**kwargs):

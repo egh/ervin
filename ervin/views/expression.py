@@ -19,7 +19,7 @@ import ervin.views.generic
 from django.http import HttpResponse, HttpResponseRedirect
 
 def by_noid(request, *args, **kwargs):
-    expression = Expression.objects.get(noid=kwargs['noid'])
+    expression = Expression.objects.get(id=kwargs['noid'])
     return detail(expression, request, *args, **kwargs)
 
 def detail(expression, request, *args, **kwargs):
