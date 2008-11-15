@@ -117,7 +117,7 @@ list_views = { Work : 'work_list.html',
                Place : 'place_list.html' }
                
 def by_noid(request,*args,**kwargs):
-    o = find_one(tuple(views.keys()), noid=kwargs['noid'])
+    o = find_one(tuple(views.keys()), id=kwargs['noid'])
     o_class = o.__class__
     if views.has_key(o.__class__):
         if type(views[o_class]) == str:
