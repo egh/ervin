@@ -79,7 +79,7 @@ def find_all(klass):
 
 def showfile(f,*args,**kwargs):
     response = HttpResponse(mimetype=f.mimetype)
-    response['Content-Disposition'] = "inline; filename=%s%s"%(f.noid,f.get_ext())
+    response['Content-Disposition'] = "inline; filename=%s%s"%(f.pk,f.get_ext())
     response['Content-Length'] = os.path.getsize(f.filename)
     response.write(open(f.filename).read())
     return response
@@ -121,7 +121,7 @@ def by_noid(request,*args,**kwargs):
     o_class = o.__class__
     if views.has_key(o.__class__):
         if type(views[o_class]) == str:
-            subject = Subject.objects.get (object_id=o.noid)
+            subject = Subject.objects.get (object_id=o.pk)
             works = Work.objects.filter(subjects=subject).order_by('sort')
             t = loader.get_template(views[o_class])
             c = Context({ o_class.__name__.lower() : o,
