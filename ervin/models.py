@@ -468,7 +468,7 @@ class DbContent(models.Model):
     mimetype = models.CharField(max_length=100, editable=False)
     id = NoidField(settings.NOID_DIR, primary_key=True, max_length=6)
 
-    def __unicode__(self): return self.name
+    def __unicode__(self): return "%s (%s)"%(self.edition.title, self.name)
 
     def get_absolute_url(self): return "/%s"%(self.pk)
 
