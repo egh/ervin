@@ -115,20 +115,27 @@ list_views = { Work : 'work_list.html',
                Event : 'event_list.html',
                FrbrObject : 'object_list.html',
                Place : 'place_list.html' }
-               
+
+variable_names = { OnlineEdition : 'edition',
+                   PhysicalEdition : 'edition' }
+
 def by_noid(request,*args,**kwargs):
     o = find_one(tuple(views.keys()), id=kwargs['noid'])
-    o_class = o.__class__
-    if views.has_key(o.__class__):
-        if type(views[o_class]) == str:
+    klass = o.__class__
+    if views.has_key(klass):
+        if type(views[klass]) == str:
             subject = Subject.objects.get (object_id=o.pk)
             works = Work.objects.filter(subjects=subject).order_by('sort')
-            t = loader.get_template(views[o_class])
-            c = Context({ o_class.__name__.lower() : o,
+            t = loader.get_template(views[klass])
+            if (variable_names.has_key(klass)):
+                variable_name = variable_names[klass]
+            else:
+                variable_name = klass.__name__.lower()
+            c = Context({ variable_name : o,
                           'work_list' : works })
             return HttpResponse(t.render(c))
         else:
-            return views[o.__class__] (o, request, *args, **kwargs)
+            return views[klass] (o, request, *args, **kwargs)
     else:
         return HttpResponseNotFound('Not found')
 
@@ -137,9 +144,13 @@ def list_view(*args, **kwargs):
     else: column_count = 4
     klass = kwargs['class']
     if list_views.has_key(klass):
-        l = list(find_all(klass))
+        item_list = list(find_all(klass))
         t = loader.get_template(list_views[klass])
-        cols = make_columns(l, column_count)
+        cols = make_columns(item_list, column_count)
+        if (variable_names.has_key(klass)):
+            list_variable_name = "%s_list"%(variable_names[klass])
+        else: 
+            list_variable_name = "%s_list"%(klass.__name__.lower())
         c = Context({ "%s_cols"%(klass.__name__.lower()): cols,
-                      "%s_list"%(klass.__name__.lower()): l } )
+                      list_variable_name : item_list } )
         return HttpResponse(t.render(c))

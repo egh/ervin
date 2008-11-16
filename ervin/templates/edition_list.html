@@ -1,0 +1,10 @@
+{% extends "plain.html" %}
+{% load ervin %}
+{% block title %}Editions{% endblock %}
+{% block content %}
+<ul>
+{% for edition in edition_list %}
+  <li><a href="{{ edition.get_absolute_url }}">{{ edition }}</a></li>
+{% endfor %}
+</ul>
+{% endblock %}
