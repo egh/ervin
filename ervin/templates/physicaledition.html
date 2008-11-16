@@ -1,25 +1,25 @@
 {% extends "plain.html" %}
 {% load ervin %}
-{% block title %}Physical edition: {{ physicaledition.title }}{% endblock %}
+{% block title %}Physical edition: {{ edition.title }}{% endblock %}
 {% block content %}
-<abbr class="unapi-id" title="{{ physicaledition.pk }}"/>
+<abbr class="unapi-id" title="{{ edition.pk }}"/>
 <dl>
-<dt>Title:</dt> <dd>{{ physicaledition.title }}</dd>
+<dt>Title:</dt> <dd>{{ edition.title }}</dd>
 
-{% if physicaledition.authors %}
+{% if edition.authors %}
 <dt>Authors:</dt> <dd>
   <ul>
-  {% for person in physicaledition.authors.all %}
+  {% for person in edition.authors.all %}
     <li>{{ person }}</li>
   {% endfor %}
   </ul>
 </dd>
 {% endif %}
 
-{% if physicaledition.subjects %}
+{% if edition.subjects %}
 <dt>Subjects:</dt> <dd>
   <ul>
-  {% for subject in physicaledition.subjects.all %}
+  {% for subject in edition.subjects.all %}
     <li>{{ subject }}</li>
   {% endfor %}
   </ul>

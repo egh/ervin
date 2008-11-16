@@ -26,7 +26,7 @@ def detail(ed, request, *args,**kwargs):
     if kwargs.has_key('ext') and type.has_key(kwargs['ext']):
         type = type_map[kwargs['ext']]
     t = loader.get_template('onlineedition.html')
-    c = Context({ 'onlineedition' : ed})
+    c = Context({ 'edition' : ed})
     if len(ed.content_remote.all()) == 0 and len(ed.content_db.all()) == 1 and len(ed.content_file.all()) == 0:
         c['data'] = ed.content_db.all()[0].data
     else:

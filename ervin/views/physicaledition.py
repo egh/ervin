@@ -21,7 +21,7 @@ def detail(ed, request, *args,**kwargs):
     if kwargs.has_key('ext') and type.has_key(kwargs['ext']):
         type = type_map[kwargs['ext']]
     t = loader.get_template('physicaledition.html')
-    c = Context({ 'physicaledition' : ed})
+    c = Context({ 'edition' : ed})
     return HttpResponse(t.render(c))
     
 def available(*args,**kwargs):
