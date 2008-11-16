@@ -30,6 +30,7 @@ class FileContentInlineAdmin(admin.StackedInline):
     model=FileContent
 
 class WorkAdmin(admin.ModelAdmin):
+    search_fields = ['work_title']
     filter_horizontal=('subjects','authors')
 
 class OnlineEditionAdmin(admin.ModelAdmin):
