@@ -211,7 +211,7 @@ class Expression(models.Model, SubjectMixin,BibSortMixin):
     id = NoidField(settings.NOID_DIR, max_length=6, primary_key=True)
     sort = models.CharField(max_length=128,editable=False)
 
-    def get_manifestations(self):
+    def _get_editions(self):
         return list(self.onlineedition_set.all()) + list(self.physicaledition_set.all())    
 
     def get_authors(self):
@@ -237,7 +237,8 @@ class Expression(models.Model, SubjectMixin,BibSortMixin):
     authors = property(get_authors)
     subjects = property(get_subjects)
     title = property(get_title)
-
+    editions = property(_get_editions)
+    
     class Meta:
         ordering=['sort']
 
