@@ -117,7 +117,14 @@ list_views = { Work : 'work_list.html',
                Place : 'place_list.html' }
 
 variable_names = { OnlineEdition : 'edition',
-                   PhysicalEdition : 'edition' }
+                   PhysicalEdition : 'edition',
+            
+                   Person : 'subject',
+                   Organization : 'subject',
+                   Concept : 'subject',
+                   Event : 'subject',
+                   FrbrObject : 'subject',
+                   Place : 'subject' }
 
 def by_noid(request,*args,**kwargs):
     o = find_one(tuple(views.keys()), id=kwargs['noid'])
@@ -148,9 +155,9 @@ def list_view(*args, **kwargs):
         t = loader.get_template(list_views[klass])
         cols = make_columns(item_list, column_count)
         if (variable_names.has_key(klass)):
-            list_variable_name = "%s_list"%(variable_names[klass])
+            variable_name = variable_names[klass]
         else: 
-            list_variable_name = "%s_list"%(klass.__name__.lower())
-        c = Context({ "%s_cols"%(klass.__name__.lower()): cols,
-                      list_variable_name : item_list } )
+            variable_name = klass.__name__.lower()
+        c = Context({ "%s_cols"%(variable_name) : cols,
+                      "%s_list"%(variable_name) : item_list } )
         return HttpResponse(t.render(c))

@@ -1,12 +1,3 @@
-{% extends "plain.html" %}
-{% load ervin %}
-{% block title %}Persons{% endblock %}
-{% block content %}
+{% extends "subject_list.html" %}
 
-<ul>
-{% for person in person_list %}
-<li><a href="{{ person.get_absolute_url }}">{{ person }}</a>
-</li>
-{% endfor %}
-</ul>
-{% endblock %}
+{% block title %}Persons{% endblock %}

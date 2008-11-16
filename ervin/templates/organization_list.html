@@ -1,12 +1,3 @@
-{% extends "plain.html" %}
-{% load ervin %}
-{% block title %}Organizations{% endblock %}
-{% block content %}
+{% extends "subject_list.html" %}
 
-<ul>
-{% for organization in organization_list %}
-<li><a href="{{ organization.get_absolute_url }}">{{ organization }}</a>
-</li>
-{% endfor %}
-</ul>
-{% endblock %}
+{% block title %}Organizations{% endblock %}
