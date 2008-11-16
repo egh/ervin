@@ -479,7 +479,7 @@ class FileContent(models.Model):
     edition = models.ForeignKey('OnlineEdition', related_name='content_file')
     name = models.CharField(max_length=100)
     filename = models.FileField(upload_to="data")
-    mimetype = models.CharField(max_length=100)
+    mimetype = models.CharField(max_length=100,editable=False)
     id = NoidField(settings.NOID_DIR, max_length=6, primary_key=True)
 
     def get_ext(self):
