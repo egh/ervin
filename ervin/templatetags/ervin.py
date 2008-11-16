@@ -27,7 +27,7 @@ register = template.Library()
 def listfilter(func):
     def _dec(*args, **kwargs):
         if type(args[0]) != list and type(args[0]) != QuerySet:
-            args[0] = [args[0]]
+            args = [[args[0]]] + args[1:]
         return func(*args, **kwargs)
     _dec._decorated_function = getattr(func, '_decorated_function', func)
     return wraps(func)(_dec)
