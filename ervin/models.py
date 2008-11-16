@@ -249,6 +249,15 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
     id = NoidField(settings.NOID_DIR,max_length=6, primary_key=True)
     sort = models.CharField(max_length=128,editable=False)
 
+    def _get_html(self): return self._get_by_mimetype("text/html")
+
+    def _get_by_mimetype(self, mimetype):
+        for c in self.content:
+            if c.mimetype == mimetype: return c
+        return None
+
+    def _get_pdf(self): return self._get_by_mimetype("application/pdf")
+
     def get_content(self):
         return (list(self.content_db.all()) + list(self.content_file.all()))
 
@@ -292,6 +301,8 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
     work = property(get_work)
     content = property(get_content)
     multiple_contents = property(get_multiple_contents)
+    pdf = property(_get_pdf)
+    html = property(_get_html)
 
     class Meta:
         ordering = ['sort']
