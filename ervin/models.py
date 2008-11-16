@@ -244,8 +244,8 @@ class Expression(models.Model, SubjectMixin,BibSortMixin):
 
 class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
     date = models.DateTimeField(null=True)
-    expression = models.ForeignKey(Expression)
-    edition_title = models.TextField("Title (leave blank if same as expression)", max_length=200, blank=True,db_column='title')
+    expression = models.ForeignKey(Expression, verbose_name="Work")
+    edition_title = models.TextField(max_length=200, editable=False, blank=True,db_column='title')
     #numbering = models.CharField("Numbering", max_length=128, blank=True)
     id = NoidField(settings.NOID_DIR,max_length=6, primary_key=True)
     sort = models.CharField(max_length=128,editable=False)
@@ -465,7 +465,7 @@ class DbContent(models.Model):
     edition = models.ForeignKey('OnlineEdition', related_name='content_db')
     name = models.CharField(max_length=100,editable=False,blank=True)
     data = models.TextField(blank=True)
-    mimetype = models.CharField(max_length=100, editable=False)
+    mimetype = models.CharField(max_length=100, editable=False,default="text/html")
     id = NoidField(settings.NOID_DIR, primary_key=True, max_length=6)
 
     def __unicode__(self): return "%s (%s)"%(self.edition.title, self.name)
