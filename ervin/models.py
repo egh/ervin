@@ -249,7 +249,11 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
     id = NoidField(settings.NOID_DIR,max_length=6, primary_key=True)
     sort = models.CharField(max_length=128,editable=False)
 
-    def get_content(self): return (list(self.content_db.all()) + list(self.content_file.all()))
+    def get_content(self):
+        return (list(self.content_db.all()) + list(self.content_file.all()))
+
+    def get_multiple_contents(self): 
+        return ((len(self.content_db.all()) + len(self.content_file.all())) > 1)
 
     def get_work(self):
         return self.expression.work
@@ -287,6 +291,7 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
     title = property(get_title)
     work = property(get_work)
     content = property(get_content)
+    multiple_contents = property(get_multiple_contents)
 
     class Meta:
         ordering = ['sort']
