@@ -463,7 +463,7 @@ class RemoteContent(models.Model):
 
 class DbContent(models.Model): 
     edition = models.ForeignKey('OnlineEdition', related_name='content_db')
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100,editable=False,blank=True)
     data = models.TextField(blank=True)
     mimetype = models.CharField(max_length=100, editable=False)
     id = NoidField(settings.NOID_DIR, primary_key=True, max_length=6)
