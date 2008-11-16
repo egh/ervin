@@ -35,6 +35,7 @@ class WorkAdmin(admin.ModelAdmin):
 
 class OnlineEditionAdmin(admin.ModelAdmin):
     model=OnlineEdition
+    search_fields = ['sort']
 #    inlines=[FileContentInlineAdmin]
 
 class PhysicalEditionAdmin(admin.ModelAdmin):
