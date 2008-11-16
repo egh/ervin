@@ -34,6 +34,7 @@ class WorkAdmin(admin.ModelAdmin):
 
 class OnlineEditionAdmin(admin.ModelAdmin):
     model=OnlineEdition
+#    inlines=[FileContentInlineAdmin]
 
 class PhysicalEditionAdmin(admin.ModelAdmin):
     model=PhysicalEdition
@@ -41,5 +42,7 @@ class PhysicalEditionAdmin(admin.ModelAdmin):
 admin.site.register(Work, WorkAdmin)
 admin.site.register(Person)
 admin.site.register(Concept)
-admin.site.register(OnlineEdition)
+admin.site.register(OnlineEdition,OnlineEditionAdmin)
 admin.site.register(PhysicalEdition)
+admin.site.register(DbContent)
+admin.site.register(FileContent)
