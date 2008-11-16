@@ -80,8 +80,8 @@ def find_all(klass):
 def showfile(f,*args,**kwargs):
     response = HttpResponse(mimetype=f.mimetype)
     response['Content-Disposition'] = "inline; filename=%s%s"%(f.pk,f.get_ext())
-    response['Content-Length'] = os.path.getsize(f.filename)
-    response.write(open(f.filename).read())
+    response['Content-Length'] = os.path.getsize(str(f.filename.path))
+    response.write(open(f.filename.path).read())
     return response
 
 views = {
