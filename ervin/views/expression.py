@@ -23,9 +23,9 @@ def by_noid(request, *args, **kwargs):
     return detail(expression, request, *args, **kwargs)
 
 def detail(expression, request, *args, **kwargs):
-    manifestations = expression.get_manifestations()
-    if len(manifestations) == 1:
-        return HttpResponseRedirect(manifestations[0].get_absolute_url())
+    editions = expression.editions
+    if len(editions) == 1:
+        return HttpResponseRedirect(editions[0].get_absolute_url())
     else:
 	t = loader.get_template('expression.html')
 	c = Context({
