@@ -159,7 +159,6 @@ WORK_FORMS = (('series', 'Serial'),
 
 class Work(models.Model, SubjectMixin, BibSortMixin):
     work_title = models.TextField(max_length=200,blank=True,db_column='title')
-    filter_horizontal = ('authors', 'subjects')
     authors = models.ManyToManyField(Person,verbose_name="Authors",
                                      related_name="authored",
                                      blank=True)
@@ -204,7 +203,6 @@ class Work(models.Model, SubjectMixin, BibSortMixin):
 class Expression(models.Model, SubjectMixin,BibSortMixin):
     work = models.ForeignKey(Work)
     expression_title = models.TextField(max_length=200, blank=True, db_column='title')
-    filter_horizontal = ('translators')
     translators = models.ManyToManyField(Person,verbose_name="Translators",
                                          related_name="translated",
                                          blank=True)

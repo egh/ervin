@@ -19,6 +19,7 @@ from ervin.models import *
 
 class ExpressionInlineAdmin(admin.StackedInline):
     model=Expression
+    filter_horizontal = ('translators')
 
 class RemoteContentInlineAdmin(admin.StackedInline):
     model=RemoteContent
