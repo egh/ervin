@@ -89,7 +89,7 @@ class BibSortMixin(object):
             first_author_key = ervin.templatetags.ervin.sort_friendly(ervin.templatetags.ervin.inverted_name(authors[0]))
             key = "%s%s"%(first_author_key,title_key)
         else: key = title_key
-        self.sort = key[:128].lower()
+        self.sort = re.sub("[\":,.'\[\]\(\)\?\&-]" ,'', key[:128].lower())
 
 class Subject(models.Model):
     content_type = models.ForeignKey(ContentType)
@@ -171,6 +171,7 @@ class Work(models.Model, SubjectMixin, BibSortMixin):
     date_sort = models.CharField(max_length=128,blank=True,null=True,editable=False)
     sort = models.CharField(max_length=128,editable=False)
     form = models.CharField(max_length=128, choices=WORK_FORMS)
+    source = models.TextField(blank=True)
 
     def get_title(self):
         return self.work_title
@@ -208,7 +209,7 @@ class Expression(models.Model, SubjectMixin,BibSortMixin):
                                          blank=True)
     id = NoidField(settings.NOID_DIR, max_length=6, primary_key=True)
     sort = models.CharField(max_length=128,editable=False)
-
+    
     def _get_editions(self):
         return list(self.onlineedition_set.all()) + list(self.physicaledition_set.all())    
 
