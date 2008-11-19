@@ -84,7 +84,7 @@ class BibSortMixin(object):
     def sort_save_hook(self):
         key = None
         title_key = ervin.templatetags.ervin.sort_friendly(self.title)
-        authors = self.get_authors().order_by('surname','forename').all()
+        authors = self.authors.order_by('surname','forename').all()
         if len(authors) > 0:
             first_author_key = ervin.templatetags.ervin.sort_friendly(ervin.templatetags.ervin.inverted_name(authors[0]))
             key = "%s%s"%(first_author_key,title_key)
@@ -173,6 +173,11 @@ class Work(models.Model, SubjectMixin, BibSortMixin):
     form = models.CharField(max_length=128, choices=WORK_FORMS)
     source = models.TextField(blank=True)
 
+    def _get_first_author(self): 
+        authors = self.authors.order_by('surname','forename').all()
+        if (len(authors) > 0): return authors[0]
+        else: return None
+
     def get_title(self):
         return self.work_title
 
@@ -197,6 +202,7 @@ class Work(models.Model, SubjectMixin, BibSortMixin):
             return "%s (in %s)"%(self.title, self.part_of.title)
 
     title = property(get_title)
+    first_author = property(_get_first_author)
 
     class Meta:
         ordering=['sort']
@@ -210,6 +216,11 @@ class Expression(models.Model, SubjectMixin,BibSortMixin):
     id = NoidField(settings.NOID_DIR, max_length=6, primary_key=True)
     sort = models.CharField(max_length=128,editable=False)
     
+    def _get_first_author(self): 
+        authors = self.authors.order_by('surname','forename').all()
+        if (len(authors) > 0): return authors[0]
+        else: return None
+
     def _get_editions(self):
         return list(self.onlineedition_set.all()) + list(self.physicaledition_set.all())    
 
@@ -237,6 +248,7 @@ class Expression(models.Model, SubjectMixin,BibSortMixin):
     subjects = property(get_subjects)
     title = property(get_title)
     editions = property(_get_editions)
+    first_author = property(_get_first_author)
     
     class Meta:
         ordering=['sort']
@@ -248,6 +260,11 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
     #numbering = models.CharField("Numbering", max_length=128, blank=True)
     id = NoidField(settings.NOID_DIR,max_length=6, primary_key=True)
     sort = models.CharField(max_length=128,editable=False)
+
+    def _get_first_author(self): 
+        authors = self.authors.order_by('surname','forename').all()
+        if (len(authors) > 0): return authors[0]
+        else: return None
 
     def _get_html(self): return self._get_by_mimetype("text/html")
 
@@ -303,6 +320,7 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
     multiple_contents = property(get_multiple_contents)
     pdf = property(_get_pdf)
     html = property(_get_html)
+    first_author = property(_get_first_author)
 
     class Meta:
         ordering = ['sort']
@@ -335,6 +353,11 @@ class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
     expression = models.ForeignKey(Expression)
     id = NoidField(settings.NOID_DIR, max_length=6, primary_key=True)
 
+    def _get_first_author(self): 
+        authors = self.authors.order_by('surname','forename').all()
+        if (len(authors) > 0): return authors[0]
+        else: return None
+
     def get_work(self): return self.expression.work
 
     def get_title(self):
@@ -366,7 +389,8 @@ class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
     title = property(get_title)
     work = property(get_work)
     #isbn10 = property(get_isbn10)
-    
+    first_author = property(_get_first_author)
+
     class Meta:
         ordering = ['sort']
     
