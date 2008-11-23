@@ -159,8 +159,9 @@ WORK_FORMS = (('series', 'Serial'),
 
 class Work(models.Model, SubjectMixin, BibSortMixin):
     work_title = models.TextField(max_length=200,blank=True,db_column='title')
-    authors = models.ManyToManyField(Person,verbose_name="Authors",
-                                     related_name="authored",
+    authors = models.ManyToManyField(Person, 
+                                     through='Authorship',
+                                     related_name='authored',
                                      blank=True)
     subjects = models.ManyToManyField(Subject,blank=True)
     description = models.TextField(blank=True)
@@ -207,6 +208,15 @@ class Work(models.Model, SubjectMixin, BibSortMixin):
     class Meta:
         ordering=['sort']
 
+class Authorship(models.Model):
+    person = models.ForeignKey(Person)
+    work = models.ForeignKey(Work)
+    primary = models.BooleanField(verbose_name="Primary?")
+
+    class Meta:
+        db_table = 'ervin_work_authors'
+        verbose_name = "Authors"
+        
 class Expression(models.Model, SubjectMixin,BibSortMixin):
     work = models.ForeignKey(Work)
     expression_title = models.TextField(max_length=200, blank=True, db_column='title')

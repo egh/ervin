@@ -35,9 +35,14 @@ class FileContentInlineAdmin(admin.StackedInline):
     model=FileContent
     extra = 1
 
+class AuthorshipInlineAdmin(admin.TabularInline):
+    model = Authorship
+    extra = 1
+
 class WorkAdmin(admin.ModelAdmin):
     search_fields = ['work_title']
-    filter_horizontal=('subjects','authors')
+    filter_horizontal=('subjects',)
+    inlines = [AuthorshipInlineAdmin]
 
 class OnlineEditionAdmin(admin.ModelAdmin):
     list_display = ('id', 'title')
