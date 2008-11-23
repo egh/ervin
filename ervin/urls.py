@@ -34,6 +34,7 @@ urlpatterns = patterns(
     (r'^onlineeditions$', 'generic.list_view', {'class' : ervin.models.OnlineEdition }),
     (r'^physicaleditions$', 'generic.list_view', {'class' : ervin.models.PhysicalEdition }),
     (r'^unapi$', 'unapi.unapi'),
+    (r'^doc/(?P<name>.*)$', 'page.by_name'),
     (r'^(?P<noid>[a-z0-9-]{6})$', 'generic.by_noid'),
     (r'^$', 'main.home')
     )

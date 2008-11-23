@@ -524,3 +524,11 @@ class FileContent(models.Model):
         (basename, ext) = os.path.splitext(str(self.filename))
         self.mimetype = self.get_mimetype_from_ext(ext)
         super(FileContent, self).save()
+
+class Page(models.Model):
+    title = models.CharField(max_length=100)
+    name = models.CharField(max_length=100)
+    data = models.TextField(blank=True)
+    date = models.DateTimeField(null=True)
+    news = models.BooleanField()
+    def __unicode__(self): return "%s (/doc/%s)"%(self.title,self.name)
