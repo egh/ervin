@@ -25,7 +25,7 @@ def detail(ed, request, *args,**kwargs):
     return HttpResponse(t.render(c))
     
 def available(*args,**kwargs):
-    physicaledition_list = PhysicalEdition.objects.filter(available=True)
+    physicaledition_list = PhysicalEdition.objects.exclude(available_uk=False).exclude(available_us=False).all()
     t = loader.get_template('physicaledition_list.html')
     c = Context({ 'physicaledition_list' : physicaledition_list})
     return HttpResponse(t.render(c))
