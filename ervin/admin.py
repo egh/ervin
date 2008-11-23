@@ -15,7 +15,11 @@
 #along with Ervin.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.contrib import admin
+from django import forms
+from django.db.models import get_model
 from ervin.models import *
+from ervin.widgets import WYMEditor
+from ervin.forms import *
 
 class ExpressionInlineAdmin(admin.StackedInline):
     model=Expression
@@ -23,21 +27,26 @@ class ExpressionInlineAdmin(admin.StackedInline):
 
 class RemoteContentInlineAdmin(admin.StackedInline):
     model=RemoteContent
+    extra = 1
 
 class DbContentInlineAdmin(admin.StackedInline):
     model=DbContent
+    form = DbContentAdminModelForm
+    extra = 1
 
 class FileContentInlineAdmin(admin.StackedInline):
     model=FileContent
+    extra = 1
 
 class WorkAdmin(admin.ModelAdmin):
     search_fields = ['work_title']
     filter_horizontal=('subjects','authors')
 
 class OnlineEditionAdmin(admin.ModelAdmin):
+    list_display = ('id', 'title')
     model=OnlineEdition
     search_fields = ['sort']
-#    inlines=[FileContentInlineAdmin]
+    inlines=[DbContentInlineAdmin, FileContentInlineAdmin]
 
 class PhysicalEditionAdmin(admin.ModelAdmin):
     model=PhysicalEdition
@@ -47,5 +56,4 @@ admin.site.register(Person)
 admin.site.register(Concept)
 admin.site.register(OnlineEdition,OnlineEditionAdmin)
 admin.site.register(PhysicalEdition)
-admin.site.register(DbContent)
-admin.site.register(FileContent)
+
