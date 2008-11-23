@@ -18,8 +18,6 @@ from django.contrib import admin
 from django import forms
 from django.db.models import get_model
 from ervin.models import *
-from ervin.widgets import WYMEditor
-from ervin.forms import *
 
 class ExpressionInlineAdmin(admin.StackedInline):
     model=Expression
@@ -31,7 +29,6 @@ class RemoteContentInlineAdmin(admin.StackedInline):
 
 class DbContentInlineAdmin(admin.StackedInline):
     model=DbContent
-    form = DbContentAdminModelForm
     extra = 1
 
 class FileContentInlineAdmin(admin.StackedInline):
@@ -56,4 +53,3 @@ admin.site.register(Person)
 admin.site.register(Concept)
 admin.site.register(OnlineEdition,OnlineEditionAdmin)
 admin.site.register(PhysicalEdition)
-
