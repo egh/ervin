@@ -527,7 +527,7 @@ class FileContent(models.Model):
 
 class Page(models.Model):
     title = models.CharField(max_length=100)
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100,unique=True,primary_key=True)
     data = models.TextField(blank=True)
     date = models.DateTimeField(null=True)
     news = models.BooleanField()
