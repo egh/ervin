@@ -84,10 +84,10 @@ class BibSortMixin(object):
     def sort_save_hook(self):
         key = None
         title_key = ervin.templatetags.ervin.sort_friendly(self.title)
-        authors = self.authors.order_by('surname','forename').all()
-        if len(authors) > 0:
-            first_author_key = ervin.templatetags.ervin.sort_friendly(ervin.templatetags.ervin.inverted_name(authors[0]))
-            key = "%s%s"%(first_author_key,title_key)
+        author = self.first_author
+        if author != None:
+            author_key = ervin.templatetags.ervin.sort_friendly(ervin.templatetags.ervin.inverted_name(author))
+            key = "%s%s"%(author_key,title_key)
         else: key = title_key
         self.sort = re.sub("[\":,.'\[\]\(\)\?\&-]" ,'', key[:128].lower())
 
@@ -175,9 +175,12 @@ class Work(models.Model, SubjectMixin, BibSortMixin):
     source = models.TextField(blank=True)
 
     def _get_first_author(self): 
-        authors = self.authors.order_by('surname','forename').all()
+        authors = self.authors.filter(authorship__primary=True).all()
         if (len(authors) > 0): return authors[0]
-        else: return None
+        else:
+            authors = self.authors.order_by('surname','forename').all()
+            if (len(authors) > 0): return authors[0]
+            else: return None
 
     def get_title(self):
         return self.work_title
@@ -227,9 +230,7 @@ class Expression(models.Model, SubjectMixin,BibSortMixin):
     sort = models.CharField(max_length=128,editable=False)
     
     def _get_first_author(self): 
-        authors = self.authors.order_by('surname','forename').all()
-        if (len(authors) > 0): return authors[0]
-        else: return None
+        return self.work.first_author
 
     def _get_editions(self):
         return list(self.onlineedition_set.all()) + list(self.physicaledition_set.all())    
@@ -272,9 +273,7 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
     sort = models.CharField(max_length=128,editable=False)
 
     def _get_first_author(self): 
-        authors = self.authors.order_by('surname','forename').all()
-        if (len(authors) > 0): return authors[0]
-        else: return None
+        return self.work.first_author
 
     def _get_html(self): return self._get_by_mimetype("text/html")
 
@@ -365,10 +364,8 @@ class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
     id = NoidField(settings.NOID_DIR, max_length=6, primary_key=True)
 
     def _get_first_author(self): 
-        authors = self.authors.order_by('surname','forename').all()
-        if (len(authors) > 0): return authors[0]
-        else: return None
-
+        return self.work.first_author
+        
     def get_work(self): return self.expression.work
 
     def get_title(self):
