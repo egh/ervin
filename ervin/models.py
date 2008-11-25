@@ -185,9 +185,6 @@ class Work(models.Model, SubjectMixin, BibSortMixin):
     def _get_title(self):
         return self.work_title
 
-    def get_authors(self):
-        return self.authors
-
     def get_absolute_url(self): return "/%s"%(self.pk)
 
     def save(self):
@@ -235,7 +232,7 @@ class Expression(models.Model, SubjectMixin,BibSortMixin):
     def _get_editions(self):
         return list(self.onlineedition_set.all()) + list(self.physicaledition_set.all())    
 
-    def get_authors(self):
+    def _get_authors(self):
         return self.work.authors
 
     def get_subjects(self):
@@ -255,7 +252,7 @@ class Expression(models.Model, SubjectMixin,BibSortMixin):
         self.sort_save_hook()
         super(Expression, self).save() 
 
-    authors = property(get_authors)
+    authors = property(_get_authors)
     subjects = property(get_subjects)
     title = property(_get_title)
     editions = property(_get_editions)
@@ -299,7 +296,7 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
         else:
             return self.expression.title
 
-    def get_authors(self):
+    def _get_authors(self):
         return self.expression.authors
 
     def get_subjects(self):
@@ -319,7 +316,7 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
         self.sort_save_hook()
         super(OnlineEdition, self).save() 
 
-    authors = property(get_authors)
+    authors = property(_get_authors)
     items = property(get_items)
     parts = property(get_parts)
     subjects = property(get_subjects)
@@ -374,7 +371,7 @@ class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
         else:
             return self.expression.title
 
-    def get_authors(self): return self.expression.authors
+    def _get_authors(self): return self.expression.authors
 
     def get_subjects(self): return self.work.subjects
 
@@ -391,7 +388,7 @@ class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
         self.sort_save_hook()
         super(PhysicalEdition, self).save() 
 
-    authors = property(get_authors)
+    authors = property(_get_authors)
     parts = property(get_parts)
     subjects = property(get_subjects)
     title = property(_get_title)
