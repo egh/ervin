@@ -182,7 +182,7 @@ class Work(models.Model, SubjectMixin, BibSortMixin):
             if (len(authors) > 0): return authors[0]
             else: return None
 
-    def get_title(self):
+    def _get_title(self):
         return self.work_title
 
     def get_authors(self):
@@ -205,7 +205,7 @@ class Work(models.Model, SubjectMixin, BibSortMixin):
         else:
             return "%s (in %s)"%(self.title, self.part_of.title)
 
-    title = property(get_title)
+    title = property(_get_title)
     first_author = property(_get_first_author)
 
     class Meta:
@@ -241,7 +241,7 @@ class Expression(models.Model, SubjectMixin,BibSortMixin):
     def get_subjects(self):
         return self.work.subjects
 
-    def get_title(self):
+    def _get_title(self):
         if self.expression_title != None and self.expression_title != '':
             return self.expression_title
         else:
@@ -257,7 +257,7 @@ class Expression(models.Model, SubjectMixin,BibSortMixin):
 
     authors = property(get_authors)
     subjects = property(get_subjects)
-    title = property(get_title)
+    title = property(_get_title)
     editions = property(_get_editions)
     first_author = property(_get_first_author)
     
@@ -293,7 +293,7 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
     def get_work(self):
         return self.expression.work
 
-    def get_title(self):
+    def _get_title(self):
         if self.edition_title != None and self.edition_title != '':
             return self.edition_title
         else:
@@ -323,7 +323,7 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
     items = property(get_items)
     parts = property(get_parts)
     subjects = property(get_subjects)
-    title = property(get_title)
+    title = property(_get_title)
     work = property(get_work)
     content = property(get_content)
     multiple_contents = property(get_multiple_contents)
@@ -368,7 +368,7 @@ class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
         
     def get_work(self): return self.expression.work
 
-    def get_title(self):
+    def _get_title(self):
         if self.edition_title != None and self.edition_title != '':
             return self.edition_title
         else:
@@ -381,7 +381,7 @@ class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
     def get_parts(self): return self.work.parts
 
     def __unicode__(self):
-        return "%s(%s)"%(self.get_title(), unicode(self.date))
+        return "%s(%s)"%(self._get_title(), unicode(self.date))
 
     def get_absolute_url(self): return "/%s"%(self.pk)
 
@@ -394,7 +394,7 @@ class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
     authors = property(get_authors)
     parts = property(get_parts)
     subjects = property(get_subjects)
-    title = property(get_title)
+    title = property(_get_title)
     work = property(get_work)
     #isbn10 = property(get_isbn10)
     first_author = property(_get_first_author)
