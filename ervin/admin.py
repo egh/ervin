@@ -51,6 +51,7 @@ class OnlineEditionAdmin(admin.ModelAdmin):
     inlines=[DbContentInlineAdmin, FileContentInlineAdmin]
 
 class PhysicalEditionAdmin(admin.ModelAdmin):
+    search_fields = ['sort']
     model=PhysicalEdition
 
 admin.site.register(Work, WorkAdmin)
