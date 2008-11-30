@@ -360,6 +360,9 @@ class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
     expression = models.ForeignKey(Expression)
     id = NoidField(settings.NOID_DIR, max_length=6, primary_key=True)
 
+    def _get_available(self):
+        return (self.available_uk or self.available_us)
+
     def _get_first_author(self): 
         return self.work.first_author
         
@@ -395,7 +398,8 @@ class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
     work = property(_get_work)
     isbn10 = property(_get_isbn10)
     first_author = property(_get_first_author)
-    
+    available = property(_get_available)
+
     class Meta:
         ordering = ['sort']
     
