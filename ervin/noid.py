@@ -41,9 +41,9 @@ class RemoteMinter(Minter):
 
 class LocalMinter(Minter):
     def read_ids(self):
-        cmd = "cd %s && noid mint %s" % (self.location, self.at_once)
+        cmd = "cd %s && noid mint %d" % (self.location, self.at_once)
+        
         return popen(cmd).read()
-    
 
 class NoidField(models.CharField):
     def get_internal_type(self):

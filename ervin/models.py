@@ -191,11 +191,14 @@ class Work(models.Model, SubjectMixin, BibSortMixin):
         self.sort_save_hook()
         super(Work, self).save() 
         try:
-            expression = Expression.objects.get(work=self)
+            expression = Expression.objects.get(work=self)            
         except Expression.DoesNotExist:
             e = Expression(work=self)
             e.save()
-        
+        # save hook to update sort keys on children
+        for e in self.expression_set.all():
+            e.save()
+
     def __unicode__(self):
         if self.part_of == None:
             return self.title
@@ -216,7 +219,12 @@ class Authorship(models.Model):
     class Meta:
         db_table = 'ervin_work_authors'
         verbose_name = "Authors"
-        
+
+    def save(self):
+        super(Authorship, self).save() 
+        self.work.save()
+        # update sort key in work
+
 class Expression(models.Model, SubjectMixin,BibSortMixin):
     work = models.ForeignKey(Work)
     expression_title = models.TextField(max_length=200, blank=True, db_column='title')
@@ -251,6 +259,9 @@ class Expression(models.Model, SubjectMixin,BibSortMixin):
     def save(self):
         self.sort_save_hook()
         super(Expression, self).save() 
+        # save hook to update sort keys on children
+        for e in self.editions:
+            e.save()
 
     authors = property(_get_authors)
     subjects = property(get_subjects)
