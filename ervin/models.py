@@ -78,7 +78,7 @@ class SubjectMixin(object):
         try:
             Subject.objects.get(object_id=self.pk)
         except Subject.DoesNotExist:
-            create_subject(item)
+            self.create_subject()
 
 class BibSortMixin(object):
     def sort_save_hook(self):
