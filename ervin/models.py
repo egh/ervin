@@ -174,6 +174,14 @@ class Work(models.Model, SubjectMixin, BibSortMixin):
     form = models.CharField(max_length=128, choices=WORK_FORMS)
     source = models.TextField(blank=True)
 
+    def _get_all_subjects(self):
+        s = set(self.subjects.all())
+        for p in self.parts.all():
+            s = s.union(set(p.subjects.all()))
+        s = list(s)
+        s.sort(key=lambda x:(x.sort))
+        return s
+
     def _get_first_author(self): 
         authors = self.authors.filter(authorship__primary=True).all()
         if (len(authors) > 0): return authors[0]
@@ -207,7 +215,8 @@ class Work(models.Model, SubjectMixin, BibSortMixin):
 
     title = property(_get_title)
     first_author = property(_get_first_author)
-
+    all_subjects = property(_get_all_subjects)
+    
     class Meta:
         ordering=['sort']
 
