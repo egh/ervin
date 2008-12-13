@@ -41,6 +41,19 @@ class AuthorshipInlineAdmin(admin.TabularInline):
 
 class WorkAdmin(admin.ModelAdmin):
     search_fields = ['work_title']
+    fieldsets = [
+        [None, {
+            'fields': ['work_title','date','form','part_of'],
+        }],
+        ['Subjects', {
+            'classes': ['collapse'],
+            'fields': ['subjects'],
+        }],
+        ['More', {
+            'classes': ['collapse'],
+            'fields': ['description','note','source'],
+        }],
+    ]
     filter_horizontal=['subjects']
     inlines = [AuthorshipInlineAdmin]
     raw_id_fields = ['part_of']
