@@ -41,24 +41,30 @@ class AuthorshipInlineAdmin(admin.TabularInline):
 
 class WorkAdmin(admin.ModelAdmin):
     search_fields = ['work_title']
-    filter_horizontal=('subjects',)
+    filter_horizontal=['subjects']
     inlines = [AuthorshipInlineAdmin]
 
 class OnlineEditionAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title')
-    model=OnlineEdition
+    model = OnlineEdition
     search_fields = ['sort']
+    list_display = ['id', 'title']
+    raw_id_fields = ['expression']
     inlines=[DbContentInlineAdmin, FileContentInlineAdmin]
 
 class PhysicalEditionAdmin(admin.ModelAdmin):
+    model = PhysicalEdition
     search_fields = ['sort']
-    model=PhysicalEdition
+    raw_id_fields = ['expression']
 
-admin.site.register(Work, WorkAdmin)
-admin.site.register(Person)
+class ExpressionAdmin(admin.ModelAdmin):
+    search_fields = ['sort']
+
 admin.site.register(Concept)
+admin.site.register(Expression, ExpressionAdmin)
 admin.site.register(OnlineEdition,OnlineEditionAdmin)
-admin.site.register(PhysicalEdition,PhysicalEditionAdmin)
-admin.site.register(Page)
-admin.site.register(Place)
 admin.site.register(Organization)
+admin.site.register(Page)
+admin.site.register(Person)
+admin.site.register(PhysicalEdition,PhysicalEditionAdmin)
+admin.site.register(Place)
+admin.site.register(Work, WorkAdmin)
