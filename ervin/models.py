@@ -560,3 +560,8 @@ class Page(models.Model):
     date = models.DateTimeField(null=True)
     news = models.BooleanField()
     def __unicode__(self): return "%s (/doc/%s)"%(self.title,self.name)
+
+class Section(models.Model):
+    name = models.CharField(max_length=100)
+    id = models.CharField(max_length=6)
+    def __unicode__(self): return self.name
