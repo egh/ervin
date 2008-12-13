@@ -43,6 +43,7 @@ class WorkAdmin(admin.ModelAdmin):
     search_fields = ['work_title']
     filter_horizontal=['subjects']
     inlines = [AuthorshipInlineAdmin]
+    raw_id_fields = ['part_of']
 
 class OnlineEditionAdmin(admin.ModelAdmin):
     model = OnlineEdition
