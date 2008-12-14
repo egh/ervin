@@ -39,6 +39,10 @@ class AuthorshipInlineAdmin(admin.TabularInline):
     model = Authorship
     extra = 1
 
+class ExpressionTranslatorInlineAdmin(admin.TabularInline):
+    model = ExpressionTranslator
+    extra = 1
+
 class WorkAdmin(admin.ModelAdmin):
     search_fields = ['work_title']
     fieldsets = [
@@ -72,6 +76,7 @@ class PhysicalEditionAdmin(admin.ModelAdmin):
 
 class ExpressionAdmin(admin.ModelAdmin):
     search_fields = ['sort']
+    inlines = [ExpressionTranslatorInlineAdmin]
 
 admin.site.register(Concept)
 admin.site.register(Expression, ExpressionAdmin)

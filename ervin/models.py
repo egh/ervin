@@ -227,7 +227,7 @@ class Authorship(models.Model):
 
     class Meta:
         db_table = 'ervin_work_authors'
-        verbose_name = "Authors"
+        verbose_name = "Author"
 
     def save(self):
         super(Authorship, self).save() 
@@ -237,7 +237,9 @@ class Authorship(models.Model):
 class Expression(models.Model, SubjectMixin,BibSortMixin):
     work = models.ForeignKey(Work)
     expression_title = models.TextField(max_length=200, blank=True, db_column='title')
-    translators = models.ManyToManyField(Person,verbose_name="Translators",
+    translators = models.ManyToManyField(Person,
+                                         through='ExpressionTranslator',
+                                         verbose_name="Translators",
                                          related_name="translated",
                                          blank=True)
     id = NoidField(settings.NOID_DIR, max_length=6, primary_key=True)
@@ -280,6 +282,18 @@ class Expression(models.Model, SubjectMixin,BibSortMixin):
     
     class Meta:
         ordering=['sort']
+
+class ExpressionTranslator(models.Model):
+    person = models.ForeignKey(Person)
+    expression = models.ForeignKey(Expression)
+
+    class Meta:
+        db_table = 'ervin_expression_translators'
+        verbose_name = "Translator"
+
+#    def save(self):
+#        super(Authorship, self).save() 
+#        self.work.save()
 
 class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
     date = models.DateTimeField(null=True)
@@ -563,5 +577,5 @@ class Page(models.Model):
 
 class Section(models.Model):
     name = models.CharField(max_length=100)
-    id = models.CharField(max_length=6)
+    id = models.CharField(max_length=6,primary_key=True)
     def __unicode__(self): return self.name
