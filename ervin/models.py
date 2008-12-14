@@ -54,18 +54,12 @@ class SubjectMixin(object):
     def get_subject(self):
         s = None
         try: s = Subject.objects.get (object_id=self.pk)
-        except Subject.DoesNotExist: s = self.create_subject ()
+        except Subject.DoesNotExist: s = self.create_subject()
         return s
 
-    def subject_delete_hook(self):
-        which_type = ContentType.objects.get(model=type(self).__name__.lower(),
-                                             app_label='ervin')
-        try:
-            s = Subject.objects.get(content_type=which_type,
-                                    object_id=self.pk)
-            s.delete()
-        except:
-            pass
+    def _subject_delete_hook(self):
+        s = Subject.objects.get(object_id=self.pk)
+        s.delete()
 
     def create_subject(self):
         t = ContentType.objects.get(model=type(self).__name__.lower(),
@@ -74,11 +68,9 @@ class SubjectMixin(object):
         s.save()
         return s
 
-    def subject_save_hook(self):
-        try:
-            Subject.objects.get(object_id=self.pk)
-        except Subject.DoesNotExist:
-            self.create_subject()
+    def _subject_save_hook(self):
+        try: Subject.objects.get(object_id=self.pk)
+        except Subject.DoesNotExist: self.create_subject()
 
 class BibSortMixin(object):
     def sort_save_hook(self):
@@ -120,8 +112,12 @@ class Person(models.Model, SubjectMixin):
     def get_absolute_url(self): return "/%s"%(self.pk)
 
     def save(self):
-        self.subject_save_hook()
         super(Person, self).save()
+        self._subject_save_hook()
+
+    def delete(self):
+        self._subject_delete_hook()
+        super(Person, self).delete()
 
     def __hash__(self): return hash(self.pk)
 
@@ -141,11 +137,11 @@ class Concept(models.Model, SubjectMixin):
     def get_absolute_url(self): return "/%s"%(self.pk)
 
     def save(self):
-        self.subject_save_hook()
         super(Concept, self).save()
+        self._subject_save_hook()
 
     def delete(self):
-        self.subject_delete_hook()
+        self._subject_delete_hook()
         super(Concept, self).delete()
 
     def __unicode__(self): return self.name
@@ -444,11 +440,11 @@ class Place(models.Model, SubjectMixin):
     def get_absolute_url(self): return "/%s"%(self.pk)
 
     def save(self):
-        self.subject_save_hook()
         super(Place, self).save()
+        self._subject_save_hook()
 
     def delete(self):
-        self.subject_delete_hook()
+        self._subject_delete_hook()
         super(Place, self).delete()
 
     def __unicode__(self): return self.name
@@ -463,11 +459,11 @@ class Organization(models.Model, SubjectMixin):
     def get_absolute_url(self): return "/%s"%(self.pk)
 
     def save(self):
-        self.subject_save_hook()
         super(Organization, self).save()
+        self._subject_save_hook()
 
     def delete(self):
-        self.subject_delete_hook()
+        self._subject_delete_hook()
         super(Organization, self).delete()
 
     def __unicode__(self): return self.name
@@ -482,11 +478,11 @@ class Event(models.Model, SubjectMixin):
     def get_absolute_url(self): return "/%s"%(self.pk)
 
     def save(self):
-        self.subject_save_hook()
         super(Event, self).save()
+        self._subject_save_hook()
 
     def delete(self):
-        self.subject_delete_hook()
+        self._subject_delete_hook()
         super(Event, self).delete()
 
     def __unicode__(self): return self.name
@@ -501,11 +497,11 @@ class FrbrObject(models.Model, SubjectMixin):
     def get_absolute_url(self): return "/%s"%(self.pk)
 
     def save(self):
-        self.subject_save_hook()
         super(FrbrObject, self).save()
+        self._subject_save_hook()
 
     def delete(self):
-        self.subject_delete_hook()
+        self._subject_delete_hook()
         super(FrbrObject, self).delete()
 
     def __unicode__(self): return self.name
