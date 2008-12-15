@@ -19,10 +19,6 @@ from django import forms
 from django.db.models import get_model
 from ervin.models import *
 
-class ExpressionInlineAdmin(admin.StackedInline):
-    model=Expression
-    filter_horizontal = ('translators')
-
 class RemoteContentInlineAdmin(admin.StackedInline):
     model=RemoteContent
     extra = 1
