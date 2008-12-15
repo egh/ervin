@@ -311,7 +311,7 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
         return (list(self.content_db.all()) + list(self.content_file.all()))
 
     def get_multiple_contents(self): 
-        return ((len(self.content_db.all()) + len(self.content_file.all())) > 1)
+        return ((self.content_db.count() + self.content_file.count()) > 1)
 
     def _get_work(self):
         return self.expression.work
