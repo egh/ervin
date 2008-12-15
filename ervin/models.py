@@ -334,9 +334,9 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
         return self.work.parts
     parts = property(_parts)
 
-    def get_items(self):
+    def _items(self):
         return list(self.remoteitem_set.all())
-    items = property(get_items)
+    items = property(_items)
 
     def _get_by_mimetype(self, mimetype):
         for c in self.content:
@@ -415,8 +415,8 @@ class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
 
     def get_absolute_url(self): return "/%s"%(self.pk)
 
-    def get_items(self): return None
-    items = property(get_items)
+    def _items(self): return None
+    items = property(_items)
 
     def save(self):
         self._sort_save_hook()
