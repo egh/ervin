@@ -73,7 +73,7 @@ class SubjectMixin(object):
         except Subject.DoesNotExist: self.create_subject()
 
 class BibSortMixin(object):
-    def sort_save_hook(self):
+    def _sort_save_hook(self):
         key = None
         title_key = ervin.templatetags.ervin.sort_friendly(self.title)
         author = self.first_author
@@ -188,7 +188,7 @@ class Work(models.Model, SubjectMixin, BibSortMixin):
     def get_absolute_url(self): return "/%s"%(self.pk)
 
     def save(self):
-        self.sort_save_hook()
+        self._sort_save_hook()
         super(Work, self).save() 
         try:
             expression = Expression.objects.get(work=self)            
@@ -260,7 +260,7 @@ class Expression(models.Model, SubjectMixin,BibSortMixin):
     def __unicode__(self): return unicode(self.work)
 
     def save(self):
-        self.sort_save_hook()
+        self._sort_save_hook()
         super(Expression, self).save() 
         # save hook to update sort keys on children
         for e in self.editions:
@@ -339,7 +339,7 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
     def get_absolute_url(self): return "/%s"%(self.pk)
 
     def save(self):
-        self.sort_save_hook()
+        self._sort_save_hook()
         super(OnlineEdition, self).save() 
 
     authors = property(_authors)
@@ -414,7 +414,7 @@ class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
     def get_items(self): return None
 
     def save(self):
-        self.sort_save_hook()
+        self._sort_save_hook()
         super(PhysicalEdition, self).save() 
 
     authors = property(_authors)
