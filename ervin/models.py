@@ -169,21 +169,17 @@ class Work(models.Model, SubjectMixin, BibSortMixin):
     sort = models.CharField(max_length=128,editable=False)
     form = models.CharField(max_length=128, choices=WORK_FORMS)
     source = models.TextField(blank=True)
-
-    def _get_all_subjects(self):
-        s = set(self.subjects.all())
-        for p in self.parts.all():
-            s = s.union(set(p.subjects.all()))
-        s = list(s)
-        s.sort(key=lambda x:(x.sort))
-        return s
+    
+    def _all_subjects(self):
+        all_works = [self] + list(self.parts.all())
+        return Subject.objects.filter(work__in=all_works).distinct()
 
     def _get_first_author(self): 
         authors = self.authors.filter(authorship__primary=True).all()
-        if (len(authors) > 0): return authors[0]
+        if (authors.count() > 0): return authors[0]
         else:
             authors = self.authors.order_by('surname','forename').all()
-            if (len(authors) > 0): return authors[0]
+            if (authors.count() > 0): return authors[0]
             else: return None
 
     def _get_title(self):
@@ -211,7 +207,7 @@ class Work(models.Model, SubjectMixin, BibSortMixin):
 
     title = property(_get_title)
     first_author = property(_get_first_author)
-    all_subjects = property(_get_all_subjects)
+    all_subjects = property(_all_subjects)
     
     class Meta:
         ordering=['sort']
