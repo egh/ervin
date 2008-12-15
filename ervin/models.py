@@ -240,7 +240,7 @@ class Expression(models.Model, SubjectMixin,BibSortMixin):
     def _first_author(self): 
         return self.work.first_author
 
-    def _get_editions(self):
+    def _editions(self):
         return list(self.onlineedition_set.all()) + list(self.physicaledition_set.all())    
 
     def _authors(self):
@@ -269,7 +269,7 @@ class Expression(models.Model, SubjectMixin,BibSortMixin):
     authors = property(_authors)
     subjects = property(_subjects)
     title = property(_title)
-    editions = property(_get_editions)
+    editions = property(_editions)
     first_author = property(_first_author)
     
     class Meta:
