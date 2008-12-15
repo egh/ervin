@@ -388,23 +388,30 @@ class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
 
     def _get_available(self):
         return (self.available_uk or self.available_us)
+    available = property(_get_available)
 
     def _first_author(self): 
         return self.work.first_author
+    first_author = property(_first_author)
         
     def _work(self): return self.expression.work
+    work = property(_work)
 
     def _title(self):
         if self.edition_title != None and self.edition_title != '':
             return self.edition_title
         else:
             return self.expression.title
+    title = property(_title)
 
     def _authors(self): return self.expression.authors
+    authors = property(_authors)
 
     def get_subjects(self): return self.work.subjects
+    subjects = property(get_subjects)
 
     def get_parts(self): return self.work.parts
+    parts = property(get_parts)
 
     def __unicode__(self):
         return "%s(%s)"%(self._title(), unicode(self.date))
@@ -412,19 +419,13 @@ class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
     def get_absolute_url(self): return "/%s"%(self.pk)
 
     def get_items(self): return None
+    items = property(get_items)
 
     def save(self):
         self._sort_save_hook()
         super(PhysicalEdition, self).save() 
 
-    authors = property(_authors)
-    parts = property(get_parts)
-    subjects = property(get_subjects)
-    title = property(_title)
-    work = property(_work)
     isbn10 = property(_get_isbn10)
-    first_author = property(_first_author)
-    available = property(_get_available)
 
     class Meta:
         ordering = ['sort']
