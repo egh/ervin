@@ -343,6 +343,10 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
         return list(self.remoteitem_set.all())
     items = property(_items)
 
+    def _translators(self):
+        return self.expression.translators
+    translators = property(_translators)
+
     def _get_by_mimetype(self, mimetype):
         for c in self.content:
             if c.mimetype == mimetype: return c
@@ -415,13 +419,17 @@ class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
     def _parts(self): return self.work.parts
     parts = property(_parts)
 
+    def _items(self): return None
+    items = property(_items)
+
+    def _translators(self):
+        return self.expression.translators
+    translators = property(_translators)
+
     def __unicode__(self):
         return "%s(%s)"%(self._title(), unicode(self.date))
 
     def get_absolute_url(self): return "/%s"%(self.pk)
-
-    def _items(self): return None
-    items = property(_items)
 
     def save(self):
         self._sort_save_hook()
