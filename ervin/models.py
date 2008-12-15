@@ -307,9 +307,9 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
         return (list(self.content_db.all()) + list(self.content_file.all()))
     content = property(_content)
 
-    def get_multiple_contents(self): 
+    def _multiple_contents(self): 
         return ((self.content_db.count() + self.content_file.count()) > 1)
-    multiple_contents = property(get_multiple_contents)
+    multiple_contents = property(_multiple_contents)
 
     def _work(self):
         return self.expression.work
@@ -563,9 +563,11 @@ class Page(models.Model):
     data = models.TextField(blank=True)
     date = models.DateTimeField(null=True)
     news = models.BooleanField()
+
     def __unicode__(self): return "%s (/doc/%s)"%(self.title,self.name)
 
 class Section(models.Model):
     name = models.CharField(max_length=100)
     id = models.CharField(max_length=6,primary_key=True)
+
     def __unicode__(self): return self.name
