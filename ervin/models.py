@@ -243,7 +243,7 @@ class Expression(models.Model, SubjectMixin,BibSortMixin):
     def _get_editions(self):
         return list(self.onlineedition_set.all()) + list(self.physicaledition_set.all())    
 
-    def _get_authors(self):
+    def _authors(self):
         return self.work.authors
 
     def get_subjects(self):
@@ -266,7 +266,7 @@ class Expression(models.Model, SubjectMixin,BibSortMixin):
         for e in self.editions:
             e.save()
 
-    authors = property(_get_authors)
+    authors = property(_authors)
     subjects = property(get_subjects)
     title = property(_title)
     editions = property(_get_editions)
@@ -322,7 +322,7 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
         else:
             return self.expression.title
 
-    def _get_authors(self):
+    def _authors(self):
         return self.expression.authors
 
     def get_subjects(self):
@@ -342,7 +342,7 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
         self.sort_save_hook()
         super(OnlineEdition, self).save() 
 
-    authors = property(_get_authors)
+    authors = property(_authors)
     items = property(get_items)
     parts = property(get_parts)
     subjects = property(get_subjects)
@@ -400,7 +400,7 @@ class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
         else:
             return self.expression.title
 
-    def _get_authors(self): return self.expression.authors
+    def _authors(self): return self.expression.authors
 
     def get_subjects(self): return self.work.subjects
 
@@ -417,7 +417,7 @@ class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
         self.sort_save_hook()
         super(PhysicalEdition, self).save() 
 
-    authors = property(_get_authors)
+    authors = property(_authors)
     parts = property(get_parts)
     subjects = property(get_subjects)
     title = property(_title)
