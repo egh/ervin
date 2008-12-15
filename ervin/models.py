@@ -313,7 +313,7 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
     def get_multiple_contents(self): 
         return ((self.content_db.count() + self.content_file.count()) > 1)
 
-    def _get_work(self):
+    def _work(self):
         return self.expression.work
 
     def _title(self):
@@ -347,7 +347,7 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
     parts = property(get_parts)
     subjects = property(get_subjects)
     title = property(_title)
-    work = property(_get_work)
+    work = property(_work)
     content = property(get_content)
     multiple_contents = property(get_multiple_contents)
     pdf = property(_get_pdf)
@@ -392,7 +392,7 @@ class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
     def _first_author(self): 
         return self.work.first_author
         
-    def _get_work(self): return self.expression.work
+    def _work(self): return self.expression.work
 
     def _title(self):
         if self.edition_title != None and self.edition_title != '':
@@ -421,7 +421,7 @@ class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
     parts = property(get_parts)
     subjects = property(get_subjects)
     title = property(_title)
-    work = property(_get_work)
+    work = property(_work)
     isbn10 = property(_get_isbn10)
     first_author = property(_first_author)
     available = property(_get_available)
