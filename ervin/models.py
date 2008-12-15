@@ -295,42 +295,53 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
 
     def _first_author(self): 
         return self.work.first_author
+    first_author = property(_first_author)
 
     def _html(self): return self._get_by_mimetype("text/html")
-
-    def _get_by_mimetype(self, mimetype):
-        for c in self.content:
-            if c.mimetype == mimetype: return c
-        return None
+    html = property(_html)
 
     def _pdf(self): return self._get_by_mimetype("application/pdf")
+    pdf = property(_pdf)
 
     def _content(self):
         return (list(self.content_db.all()) + list(self.content_file.all()))
+    content = property(_content)
 
     def get_multiple_contents(self): 
         return ((self.content_db.count() + self.content_file.count()) > 1)
+    multiple_contents = property(get_multiple_contents)
 
     def _work(self):
         return self.expression.work
+    work = property(_work)
 
     def _title(self):
         if self.edition_title != None and self.edition_title != '':
             return self.edition_title
         else:
             return self.expression.title
+    title = property(_title)
 
     def _authors(self):
         return self.expression.authors
+    authors = property(_authors)
 
     def _subjects(self):
         return self.expression.subjects
+    subjects = property(_subjects)
 
     def get_parts(self):
         return self.work.parts
+    parts = property(get_parts)
 
     def get_items(self):
         return list(self.remoteitem_set.all())
+    items = property(get_items)
+
+    def _get_by_mimetype(self, mimetype):
+        for c in self.content:
+            if c.mimetype == mimetype: return c
+        return None
 
     def __unicode__(self): return unicode(self.work)
 
@@ -339,18 +350,6 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
     def save(self):
         self._sort_save_hook()
         super(OnlineEdition, self).save() 
-
-    authors = property(_authors)
-    items = property(get_items)
-    parts = property(get_parts)
-    subjects = property(_subjects)
-    title = property(_title)
-    work = property(_work)
-    content = property(_content)
-    multiple_contents = property(get_multiple_contents)
-    pdf = property(_pdf)
-    html = property(_html)
-    first_author = property(_first_author)
 
     class Meta:
         ordering = ['sort']
