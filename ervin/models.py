@@ -51,11 +51,12 @@ class MyFileField(models.FileField):
         setattr(cls, 'save_%s_file' % self.name, lambda instance, filename, raw_contents, save=True: instance._save_FIELD_file(self, _make_filename(filename, raw_contents), raw_contents, save))
 
 class SubjectMixin(object):
-    def get_subject(self):
+    def _subject(self):
         s = None
         try: s = Subject.objects.get (object_id=self.pk)
         except Subject.DoesNotExist: s = self.create_subject()
         return s
+    subject = property(_subject)
 
     def _subject_delete_hook(self):
         s = Subject.objects.get(object_id=self.pk)
@@ -71,6 +72,10 @@ class SubjectMixin(object):
     def _subject_save_hook(self):
         try: Subject.objects.get(object_id=self.pk)
         except Subject.DoesNotExist: self.create_subject()
+
+    def _works_about(self):
+        return Work.objects.filter(subjects=self.subject)
+    works_about = property(_works_about)
 
 class BibSortMixin(object):
     def _sort_save_hook(self):
