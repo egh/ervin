@@ -16,6 +16,7 @@
 from urllib2 import urlopen
 from os import popen
 from django.db import models
+from django.conf import settings
 import re
 
 class Minter(object):
@@ -46,19 +47,21 @@ class LocalMinter(Minter):
         return popen(cmd).read()
 
 class NoidField(models.CharField):
+    def formfield(self, **kwargs): return None
+
     def get_internal_type(self):
-        return models.CharField.__name__
+        return "CharField"
     
-    def __init__(self, location, *args, **kwargs):
-        kwargs['max_length'] = kwargs.get('max_length', 20)
-        self.minter = LocalMinter(location)
-        super(NoidField, self).__init__(self, *args,**kwargs)
-        self.editable = False
-    
+    def __init__(self, *args, **kwargs):
+        kwargs['max_length'] = kwargs.get('max_length', 6)
+        kwargs['noid_dir'] = kwargs.get('noid_dir', settings.NOID_DIR)
+        self.minter = LocalMinter(kwargs['noid_dir'])
+        del(kwargs['noid_dir'])
+        models.CharField.__init__(self, *args, **kwargs)
+
     def pre_save(self, model_instance, add):
         value = super(NoidField, self).pre_save(model_instance, add)
         if (not value):
             value = self.minter.mint()
             setattr(model_instance, self.attname, value)
         return value
-        
