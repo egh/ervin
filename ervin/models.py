@@ -330,9 +330,9 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
         return self.expression.subjects
     subjects = property(_subjects)
 
-    def get_parts(self):
+    def _parts(self):
         return self.work.parts
-    parts = property(get_parts)
+    parts = property(_parts)
 
     def get_items(self):
         return list(self.remoteitem_set.all())
@@ -407,8 +407,8 @@ class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
     def _subjects(self): return self.work.subjects
     subjects = property(_subjects)
 
-    def get_parts(self): return self.work.parts
-    parts = property(get_parts)
+    def _parts(self): return self.work.parts
+    parts = property(_parts)
 
     def __unicode__(self):
         return "%s(%s)"%(self._title(), unicode(self.date))
