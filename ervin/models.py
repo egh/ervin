@@ -173,6 +173,7 @@ class Work(models.Model, SubjectMixin, BibSortMixin):
     def _all_subjects(self):
         all_works = [self] + list(self.parts.all())
         return Subject.objects.filter(work__in=all_works).distinct()
+    all_subjects = property(_all_subjects)
 
     def _first_author(self): 
         authors = self.authors.filter(authorship__primary=True).all()
@@ -181,9 +182,11 @@ class Work(models.Model, SubjectMixin, BibSortMixin):
             authors = self.authors.order_by('surname','forename').all()
             if (authors.count() > 0): return authors[0]
             else: return None
+    first_author = property(_first_author)
 
     def _title(self):
         return self.work_title
+    title = property(_title)
 
     def get_absolute_url(self): return "/%s"%(self.pk)
 
@@ -204,10 +207,6 @@ class Work(models.Model, SubjectMixin, BibSortMixin):
             return self.title
         else:
             return "%s (in %s)"%(self.title, self.part_of.title)
-
-    title = property(_title)
-    first_author = property(_first_author)
-    all_subjects = property(_all_subjects)
     
     class Meta:
         ordering=['sort']
