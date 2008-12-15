@@ -238,21 +238,26 @@ class Expression(models.Model, SubjectMixin,BibSortMixin):
     
     def _first_author(self): 
         return self.work.first_author
+    first_author = property(_first_author)
 
     def _editions(self):
         return list(self.onlineedition_set.all()) + list(self.physicaledition_set.all())    
+    editions = property(_editions)
 
     def _authors(self):
         return self.work.authors
+    authors = property(_authors)
 
     def _subjects(self):
         return self.work.subjects
+    subjects = property(_subjects)
 
     def _title(self):
         if self.expression_title != None and self.expression_title != '':
             return self.expression_title
         else:
             return self.work.title
+    title = property(_title)
 
     def get_absolute_url(self): return "/%s"%(self.pk)
 
@@ -264,12 +269,6 @@ class Expression(models.Model, SubjectMixin,BibSortMixin):
         # save hook to update sort keys on children
         for e in self.editions:
             e.save()
-
-    authors = property(_authors)
-    subjects = property(_subjects)
-    title = property(_title)
-    editions = property(_editions)
-    first_author = property(_first_author)
     
     class Meta:
         ordering=['sort']
