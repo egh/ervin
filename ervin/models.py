@@ -174,7 +174,7 @@ class Work(models.Model, SubjectMixin, BibSortMixin):
         all_works = [self] + list(self.parts.all())
         return Subject.objects.filter(work__in=all_works).distinct()
 
-    def _get_first_author(self): 
+    def _first_author(self): 
         authors = self.authors.filter(authorship__primary=True).all()
         if (authors.count() > 0): return authors[0]
         else:
@@ -206,7 +206,7 @@ class Work(models.Model, SubjectMixin, BibSortMixin):
             return "%s (in %s)"%(self.title, self.part_of.title)
 
     title = property(_get_title)
-    first_author = property(_get_first_author)
+    first_author = property(_first_author)
     all_subjects = property(_all_subjects)
     
     class Meta:
@@ -237,7 +237,7 @@ class Expression(models.Model, SubjectMixin,BibSortMixin):
     id = NoidField(settings.NOID_DIR, max_length=6, primary_key=True)
     sort = models.CharField(max_length=128,editable=False)
     
-    def _get_first_author(self): 
+    def _first_author(self): 
         return self.work.first_author
 
     def _get_editions(self):
@@ -270,7 +270,7 @@ class Expression(models.Model, SubjectMixin,BibSortMixin):
     subjects = property(get_subjects)
     title = property(_get_title)
     editions = property(_get_editions)
-    first_author = property(_get_first_author)
+    first_author = property(_first_author)
     
     class Meta:
         ordering=['sort']
@@ -295,7 +295,7 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
     id = NoidField(settings.NOID_DIR,max_length=6, primary_key=True)
     sort = models.CharField(max_length=128,editable=False)
 
-    def _get_first_author(self): 
+    def _first_author(self): 
         return self.work.first_author
 
     def _get_html(self): return self._get_by_mimetype("text/html")
@@ -352,7 +352,7 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
     multiple_contents = property(get_multiple_contents)
     pdf = property(_get_pdf)
     html = property(_get_html)
-    first_author = property(_get_first_author)
+    first_author = property(_first_author)
 
     class Meta:
         ordering = ['sort']
@@ -389,7 +389,7 @@ class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
     def _get_available(self):
         return (self.available_uk or self.available_us)
 
-    def _get_first_author(self): 
+    def _first_author(self): 
         return self.work.first_author
         
     def _get_work(self): return self.expression.work
@@ -423,7 +423,7 @@ class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
     title = property(_get_title)
     work = property(_get_work)
     isbn10 = property(_get_isbn10)
-    first_author = property(_get_first_author)
+    first_author = property(_first_author)
     available = property(_get_available)
 
     class Meta:
