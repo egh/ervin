@@ -307,7 +307,7 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
 
     def _pdf(self): return self._get_by_mimetype("application/pdf")
 
-    def get_content(self):
+    def _content(self):
         return (list(self.content_db.all()) + list(self.content_file.all()))
 
     def get_multiple_contents(self): 
@@ -348,7 +348,7 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
     subjects = property(_subjects)
     title = property(_title)
     work = property(_work)
-    content = property(get_content)
+    content = property(_content)
     multiple_contents = property(get_multiple_contents)
     pdf = property(_pdf)
     html = property(_html)
