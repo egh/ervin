@@ -15,6 +15,7 @@
 
 from django.template import Context, loader
 from ervin.models import *
+from django.db.models import Q
 from ervin.views.generic import *
 from django.http import HttpResponse
 
@@ -27,25 +28,12 @@ def by_noid(request, *args, **kwargs):
    return detail(person, request, *args, **kwargs)
 
 def detail(person, request, *args,**kwargs):
-   s = person.get_subject ()
-   docs_about = list (Work.objects.filter (subjects=s))
-   docs_by = list (Work.objects.filter (authors=person))
-
-   subjects_set = dict()
-   for w in docs_by:
-      for s in w.subjects.all():
-         subjects_set[s] = s
-   for w in docs_about:
-      for s in w.subjects.all():
-         subjects_set[s] = s
-   subjects = subjects_set.values()
-   subjects.sort()
+   works = Work.objects.filter(Q(authors=person) | Q(subjects=person.subject))
+   subjects = Subject.objects.filter(work__in=works).distinct()
    
    t = loader.get_template('person.html')
    c = Context({
          'subjects' : subjects,
          'person': person,
-         'docs_by': docs_by,
-         'docs_about': docs_about
          })
    return HttpResponse(t.render(c))
