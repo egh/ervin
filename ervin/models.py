@@ -364,7 +364,7 @@ class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
     publisher = models.CharField(max_length=100)
     #in_series = models.ForeignKey(Work,edit_inline=False,related_name="in_series",null=True,blank=True,limit_choices_to={'type': "series"})
     #isbn10 = models.CharField("ISBN-10",max_length=13,blank=True)
-    def _get_isbn10(self): 
+    def _isbn10(self): 
         if isbn.isValid(self.isbn13): return isbn.toI10(self.isbn13)
         else: return None
     isbn13 = models.CharField("ISBN-13",max_length=16,blank=True)
@@ -425,7 +425,7 @@ class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
         self._sort_save_hook()
         super(PhysicalEdition, self).save() 
 
-    isbn10 = property(_get_isbn10)
+    isbn10 = property(_isbn10)
 
     class Meta:
         ordering = ['sort']
