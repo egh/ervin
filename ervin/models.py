@@ -386,9 +386,9 @@ class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
     expression = models.ForeignKey(Expression)
     id = NoidField(settings.NOID_DIR, max_length=6, primary_key=True)
 
-    def _get_available(self):
+    def _available(self):
         return (self.available_uk or self.available_us)
-    available = property(_get_available)
+    available = property(_available)
 
     def _first_author(self): 
         return self.work.first_author
