@@ -13,6 +13,6 @@
 {{ edition.publisher|with_terminal:":" }}
 {{ edition.date|freeformdate|with_terminal:"." }}
 {{ edition.description|with_terminal:"." }}
-{% if edition.expression.translators.all %}
-  Translated by {{ edition.expression.translators.all|name_list_linked|with_terminal:"." }}
+{% if edition.translators.all %}
+  Translated by {{ edition.translators.all|name_list_linked|with_terminal:"." }}
 {% endif %}
