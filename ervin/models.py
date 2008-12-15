@@ -298,7 +298,7 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
     def _first_author(self): 
         return self.work.first_author
 
-    def _get_html(self): return self._get_by_mimetype("text/html")
+    def _html(self): return self._get_by_mimetype("text/html")
 
     def _get_by_mimetype(self, mimetype):
         for c in self.content:
@@ -351,7 +351,7 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
     content = property(get_content)
     multiple_contents = property(get_multiple_contents)
     pdf = property(_get_pdf)
-    html = property(_get_html)
+    html = property(_html)
     first_author = property(_first_author)
 
     class Meta:
