@@ -75,6 +75,7 @@ class ExpressionAdmin(admin.ModelAdmin):
     inlines = [ExpressionTranslatorInlineAdmin]
 
 admin.site.register(Concept)
+admin.site.register(Event)
 admin.site.register(Expression, ExpressionAdmin)
 admin.site.register(OnlineEdition,OnlineEditionAdmin)
 admin.site.register(Organization)
