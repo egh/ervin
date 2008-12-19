@@ -26,7 +26,7 @@ class RemoteContentInlineAdmin(admin.StackedInline):
 
 class DbContentInlineAdmin(admin.StackedInline):
     model=DbContent
-    extra = 1
+    extra = 0
     form = DbContentAdminModelForm
 
 class FileContentInlineAdmin(admin.StackedInline):
