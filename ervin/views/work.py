@@ -15,7 +15,7 @@
 
 from django.template import Context, loader
 from ervin.models import *
-from django.http import HttpResponse,HttpResponseNotFound
+from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.db.models import Q
 
 def by_noid(request, *args, **kwargs):
