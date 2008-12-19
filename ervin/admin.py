@@ -78,6 +78,7 @@ class PageAdmin(admin.ModelAdmin):
     form = PageAdminModelForm
 
 admin.site.register(Concept)
+admin.site.register(Expression)
 admin.site.register(Event)
 admin.site.register(OnlineEdition,OnlineEditionAdmin)
 admin.site.register(Organization)
