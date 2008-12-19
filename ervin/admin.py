@@ -18,7 +18,7 @@ from django.contrib import admin
 from django import forms
 from django.db.models import get_model
 from ervin.models import *
-#from ervin.forms import DbContentAdminModelForm
+from ervin.forms import DbContentAdminModelForm
 
 class RemoteContentInlineAdmin(admin.StackedInline):
     model=RemoteContent
@@ -27,7 +27,7 @@ class RemoteContentInlineAdmin(admin.StackedInline):
 class DbContentInlineAdmin(admin.StackedInline):
     model=DbContent
     extra = 1
-#    form = DbContentAdminModelForm
+    form = DbContentAdminModelForm
 
 class FileContentInlineAdmin(admin.StackedInline):
     model=FileContent
