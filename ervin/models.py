@@ -192,6 +192,11 @@ class Work(models.Model, SubjectMixin, BibSortMixin):
     def _title(self):
         return self.work_title
     title = property(_title)
+    
+    def _is_online(self):
+        all_works = [self] + list(self.parts.all())
+        return OnlineEdition.objects.filter(expression__work__in=all_works).count() > 0
+    is_online = property(_is_online)
 
     def get_absolute_url(self): return "/%s"%(self.pk)
 
