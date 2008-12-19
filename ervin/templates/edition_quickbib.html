@@ -1,4 +1,11 @@
 {% load ervin %}
-{{ edition.authors.all|name_list_linked|with_final_period }} <a href="{{edition.work.get_absolute_url}}"><em>{{edition.title}}</em></a>. 
-<abbr class="unapi-id" title="{{ edition.work.slug }}"/>
+{# variables #}
+{#  edition #}
+{#  edition_nolink : true if we should not link the edition #}
 
+{{ edition.authors.all|inverted_name_first_list_linked|with_terminal:"." }}
+{% if edition_nolink %}
+  <cite>{{ edition.title }}</cite>.
+{% else %}
+  <a href="{{ edition.get_absolute_url }}"><cite>{{ edition.title }}</cite></a>.
+{% endif %}
