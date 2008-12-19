@@ -18,6 +18,7 @@ from django.contrib import admin
 from django import forms
 from django.db.models import get_model
 from ervin.models import *
+#from ervin.forms import DbContentAdminModelForm
 
 class RemoteContentInlineAdmin(admin.StackedInline):
     model=RemoteContent
@@ -26,6 +27,7 @@ class RemoteContentInlineAdmin(admin.StackedInline):
 class DbContentInlineAdmin(admin.StackedInline):
     model=DbContent
     extra = 1
+#    form = DbContentAdminModelForm
 
 class FileContentInlineAdmin(admin.StackedInline):
     model=FileContent
@@ -35,9 +37,10 @@ class AuthorshipInlineAdmin(admin.TabularInline):
     model = Authorship
     extra = 1
 
-class ExpressionTranslatorInlineAdmin(admin.TabularInline):
-    model = ExpressionTranslator
-    extra = 1
+class ExpressionInlineAdmin(admin.StackedInline):
+    model = Expression
+    filter_horizontal=['translators']
+    extra = 0
 
 class WorkAdmin(admin.ModelAdmin):
     search_fields = ['work_title']
@@ -55,7 +58,7 @@ class WorkAdmin(admin.ModelAdmin):
         }],
     ]
     filter_horizontal=['subjects']
-    inlines = [AuthorshipInlineAdmin]
+    inlines = [AuthorshipInlineAdmin, ExpressionInlineAdmin]
     raw_id_fields = ['part_of']
 
 class OnlineEditionAdmin(admin.ModelAdmin):
@@ -68,15 +71,10 @@ class OnlineEditionAdmin(admin.ModelAdmin):
 class PhysicalEditionAdmin(admin.ModelAdmin):
     model = PhysicalEdition
     search_fields = ['sort']
-    raw_id_fields = ['expression']
-
-class ExpressionAdmin(admin.ModelAdmin):
-    search_fields = ['sort']
-    inlines = [ExpressionTranslatorInlineAdmin]
+    raw_id_fields = ['expression']    
 
 admin.site.register(Concept)
 admin.site.register(Event)
-admin.site.register(Expression, ExpressionAdmin)
 admin.site.register(OnlineEdition,OnlineEditionAdmin)
 admin.site.register(Organization)
 admin.site.register(Page)

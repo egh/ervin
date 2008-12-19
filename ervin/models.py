@@ -232,9 +232,9 @@ class Authorship(models.Model):
 
 class Expression(models.Model, SubjectMixin,BibSortMixin):
     work = models.ForeignKey(Work)
-    expression_title = models.TextField(max_length=200, blank=True, db_column='title')
+    expression_title = models.CharField(max_length=200, verbose_name="Translation title", blank=True, db_column='title')
     translators = models.ManyToManyField(Person,
-                                         through='ExpressionTranslator',
+                                         #through="ExpressionTranslator"
                                          verbose_name="Translators",
                                          related_name="translated",
                                          blank=True)
@@ -277,21 +277,18 @@ class Expression(models.Model, SubjectMixin,BibSortMixin):
     
     class Meta:
         ordering=['sort']
+        verbose_name = "Translation"
 
-class ExpressionTranslator(models.Model):
-    person = models.ForeignKey(Person)
-    expression = models.ForeignKey(Expression)
+# class ExpressionTranslator(models.Model):
+#     person = models.ForeignKey(Person)
+#     expression = models.ForeignKey(Expression)
 
-    class Meta:
-        db_table = 'ervin_expression_translators'
-        verbose_name = "Translator"
-
-#    def save(self):
-#        super(Authorship, self).save() 
-#        self.work.save()
+#     class Meta:
+#         db_table = 'ervin_expression_translators'
+#         verbose_name = "Translator"
 
 class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
-    date = models.DateTimeField(null=True)
+    date = models.DateTimeField(null=True,blank=True)
     expression = models.ForeignKey(Expression, verbose_name="Work")
     edition_title = models.TextField(max_length=200, editable=False, blank=True,db_column='title')
     #numbering = models.CharField("Numbering", max_length=128, blank=True)
