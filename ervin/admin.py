@@ -64,7 +64,6 @@ class WorkAdmin(admin.ModelAdmin):
 class OnlineEditionAdmin(admin.ModelAdmin):
     model = OnlineEdition
     search_fields = ['sort']
-    list_display = ['title']
     raw_id_fields = ['expression']
     inlines=[DbContentInlineAdmin, FileContentInlineAdmin]
 
