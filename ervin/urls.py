@@ -15,10 +15,10 @@
 
 from django.conf.urls.defaults import patterns
 import ervin.models
-urlpatterns = patterns(
-    'ervin.views',
+
+urlpatterns = patterns('ervin.views',
     (r'^concepts$', 'generic.list_view', {'class' : ervin.models.Concept,
-                                         'columns' : 4 }),
+                                          'columns' : 4 }),
     (r'^events$', 'generic.list_view', {'class' : ervin.models.Event,
                                         'columns' : 4 }),
     (r'^places$', 'generic.list_view', {'class' : ervin.models.Place,
@@ -31,7 +31,7 @@ urlpatterns = patterns(
     (r'^organizations$', 'generic.list_view', {'class' : ervin.models.Organization,
                                                'columns' : 4 }),
     (r'^works$', 'generic.list_view', {'class' : ervin.models.Work }),
-    (r'^onlineeditions$', 'generic.list_view', {'class' : ervin.models.OnlineEdition }),
+    (r'^onlineeditions$', 'work.online_works'),
     (r'^physicaleditions$', 'generic.list_view', {'class' : ervin.models.PhysicalEdition }),
     (r'^unapi$', 'unapi.unapi'),
     (r'^doc/(?P<name>.*)$', 'page.by_name'),

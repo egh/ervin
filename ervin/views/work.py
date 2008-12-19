@@ -15,8 +15,8 @@
 
 from django.template import Context, loader
 from ervin.models import *
-from ervin.views.generic import *
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse,HttpResponseNotFound
+from django.db.models import Q
 
 def by_noid(request, *args, **kwargs):
     work = Work.objects.get(id=kwargs['noid'])
@@ -31,4 +31,10 @@ def detail(work, request, *args, **kwargs):
                 'work': work
                 })
     	return HttpResponse(t.render(c))
-        
+
+def online_works(request, *args, **kwargs):
+    works = Work.objects.exclude(Q(expression__onlineedition=None) & Q(parts=None)).distinct().all()
+    works = [ work for work in works if work.is_online ]
+    t = loader.get_template('onlineedition_list.html')
+    c = Context({ "edition_list" : works })
+    return HttpResponse(t.render(c))
