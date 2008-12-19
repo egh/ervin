@@ -18,7 +18,7 @@ from django.contrib import admin
 from django import forms
 from django.db.models import get_model
 from ervin.models import *
-from ervin.forms import DbContentAdminModelForm
+from ervin.forms import DbContentAdminModelForm, PageAdminModelForm
 
 class RemoteContentInlineAdmin(admin.StackedInline):
     model=RemoteContent
@@ -73,11 +73,15 @@ class PhysicalEditionAdmin(admin.ModelAdmin):
     search_fields = ['sort']
     raw_id_fields = ['expression']    
 
+class PageAdmin(admin.ModelAdmin):
+    model = Page
+    form = PageAdminModelForm
+
 admin.site.register(Concept)
 admin.site.register(Event)
 admin.site.register(OnlineEdition,OnlineEditionAdmin)
 admin.site.register(Organization)
-admin.site.register(Page)
+admin.site.register(Page, PageAdmin)
 admin.site.register(Person)
 admin.site.register(PhysicalEdition,PhysicalEditionAdmin)
 admin.site.register(Place)
