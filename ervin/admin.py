@@ -26,7 +26,7 @@ class RemoteContentInlineAdmin(admin.StackedInline):
 
 class DbContentInlineAdmin(admin.StackedInline):
     model=DbContent
-    extra = 0
+    extra = 1
     form = DbContentAdminModelForm
 
 class FileContentInlineAdmin(admin.StackedInline):
@@ -40,7 +40,7 @@ class AuthorshipInlineAdmin(admin.TabularInline):
 class ExpressionInlineAdmin(admin.StackedInline):
     model = Expression
     filter_horizontal=['translators']
-    extra = 0
+    extra = 1
 
 class WorkAdmin(admin.ModelAdmin):
     search_fields = ['work_title']
