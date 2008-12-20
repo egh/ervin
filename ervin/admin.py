@@ -76,8 +76,12 @@ class PageAdmin(admin.ModelAdmin):
     model = Page
     form = PageAdminModelForm
 
+class ExpressionAdmin(admin.ModelAdmin):
+    model = Expression
+    search_fields = ['sort']
+
 admin.site.register(Concept)
-admin.site.register(Expression)
+admin.site.register(Expression,ExpressionAdmin)
 admin.site.register(Event)
 admin.site.register(OnlineEdition,OnlineEditionAdmin)
 admin.site.register(Organization)
