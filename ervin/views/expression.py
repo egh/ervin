@@ -23,8 +23,10 @@ def by_noid(request, *args, **kwargs):
     return detail(expression, request, *args, **kwargs)
 
 def detail(expression, request, *args, **kwargs):
+    # for expressions which have only one edition & which are not
+    # multi-part works, redirect to the edition.
     editions = expression.editions
-    if len(editions) == 1:
+    if len(editions) == 1 and expression.work.parts.count() == 0:
         return HttpResponseRedirect(editions[0].get_absolute_url())
     else:
 	t = loader.get_template('expression.html')
