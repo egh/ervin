@@ -3,18 +3,10 @@
 {% filter typogrify %}
 <div>
   <p>{% include "edition_bib.html" %}</p>
-  {% if edition.work.description or edition.work.parts.all %}
-    <div class="description">
-      {% if edition.parts.all %}
-        <ul>
-          {% for edition in edition.work.parts.all %}
-            <li><a href="{{edition.work.get_absolute_url}}">{{edition.title}}</a></li>
-          {% endfor %}
-        </ul>
-      {% else %}
-        <p>{{edition.work.description}}</p>
-      {% endif %}
-    </div>
+  {% if edition.work.description %}
+  <div class="description">
+    <p>{{edition.work.description}}</p>
+  </div>
   {% endif %} 
 </div>
 {% endfilter %}
