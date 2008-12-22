@@ -198,6 +198,18 @@ class Work(models.Model, SubjectMixin, BibSortMixin):
         return OnlineEdition.objects.filter(expression__work__in=all_works).count() > 0
     is_online = property(_is_online)
 
+    def _is_in_series(self):
+        return self.has_part_of and self.part_of.form == 'series'
+    is_in_series = property(_is_in_series)
+
+    def _is_subpart(self):
+        return self.has_part_of and self.part_of.form != 'series'
+    is_subpart = property(_is_subpart)
+
+    def _has_part_of(self):
+        return self.part_of != None
+    has_part_of = property(_has_part_of)
+
     def get_absolute_url(self): return "/%s"%(self.pk)
 
     def save(self):
@@ -253,6 +265,22 @@ class Expression(models.Model, SubjectMixin,BibSortMixin):
     def _editions(self):
         return list(self.onlineedition_set.all()) + list(self.physicaledition_set.all())    
     editions = property(_editions)
+
+    def _onlineedition(self):
+        if self.onlineedition_set.count() > 0:
+            return self.onlineedition_set.all()[0]
+        else: return None
+    onlineedition = property(_onlineedition)
+
+    def _physicaledition(self):
+        if self.physicaledition_set.count() > 0:
+            return self.physicaledition_set.all()[0]
+        else: return None
+    physicaledition = property(_physicaledition)
+    
+    def _edition(self):
+        return self.onlineedition or self.physicaledition
+    edition = property(_edition)
 
     def _authors(self):
         return self.work.authors
