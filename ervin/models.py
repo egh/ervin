@@ -216,10 +216,12 @@ class Work(models.Model, SubjectMixin, BibSortMixin):
         self._sort_save_hook()
         super(Work, self).save() 
         try:
-            expression = Expression.objects.get(work=self)            
+            expression = Expression.objects.get(work=self)
         except Expression.DoesNotExist:
             e = Expression(work=self)
             e.save()
+        except MultipleObjectsReturned:
+            pass
         # save hook to update sort keys on children
         for e in self.expression_set.all():
             e.save()
