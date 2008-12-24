@@ -220,7 +220,7 @@ class Work(models.Model, SubjectMixin, BibSortMixin):
         except Expression.DoesNotExist:
             e = Expression(work=self)
             e.save()
-        except MultipleObjectsReturned:
+        except Expression.MultipleObjectsReturned:
             pass
         # save hook to update sort keys on children
         for e in self.expression_set.all():
