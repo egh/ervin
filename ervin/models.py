@@ -579,6 +579,10 @@ class FileContent(models.Model):
     mimetype = models.CharField(max_length=100,editable=False)
     id = NoidField(primary_key=True)
 
+    def _size(self):
+        return (os.path.getsize(str(self.filename.path)))
+    size = property(_size)
+
     def get_ext(self):
         if mime2ext_map.has_key(self.mimetype):
             return mime2ext_map[self.mimetype]
