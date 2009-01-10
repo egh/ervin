@@ -43,7 +43,7 @@ class ExpressionInlineAdmin(admin.StackedInline):
     extra = 1
 
 class WorkAdmin(admin.ModelAdmin):
-    search_fields = ['work_title']
+    search_fields = ['sort']
     fieldsets = [
         [None, {
             'fields': ['work_title','date','form','part_of'],
