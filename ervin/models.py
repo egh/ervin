@@ -419,6 +419,7 @@ class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
                                        null=True)
     available_us = models.BooleanField()
     available_uk = models.BooleanField()
+    forthcoming = models.BooleanField()
     numbering = models.CharField("Numbering", max_length=128, blank=True)
     sort = models.CharField(max_length=128,editable=False)
     expression = models.ForeignKey(Expression)
