@@ -75,7 +75,11 @@ def find_one(*args, **kwargs):
     return None
 
 def find_all(klass):
-    return klass.objects.all()
+    if (klass == FrbrObject) or (klass == Concept) or (klass == Event) or (klass == Place):
+        # for "group 3" only return where we have a positive subject count
+        return [ x for x in klass.objects.all() if x.subject.work_set.count() > 0]
+    else:
+        return klass.objects.all()
 
 def showfile(f,*args,**kwargs):
     response = HttpResponse(mimetype=str(f.mimetype))
