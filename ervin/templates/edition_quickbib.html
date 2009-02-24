@@ -7,5 +7,5 @@
 {% if edition_nolink %}
   <cite>{{ edition.title }}</cite>.
 {% else %}
-  <a href="{{ edition.get_absolute_url }}"><cite>{{ edition.title }}</cite></a>.
+  <a href="{{ edition.work.get_absolute_url }}"><cite>{{ edition.title }}</cite></a>.
 {% endif %}

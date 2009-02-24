@@ -4,7 +4,7 @@
 {% block content %}
 <ul>
 {% for edition in edition_list %}
-  <li><a href="{{ edition.get_absolute_url }}">{{ edition }}</a></li>
+  <li><a href="{{ edition.work.get_absolute_url }}">{{ edition }}</a></li>
 {% endfor %}
 </ul>
 {% endblock %}
