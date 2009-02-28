@@ -174,7 +174,13 @@ class Work(models.Model, SubjectMixin, BibSortMixin):
     sort = models.CharField(max_length=128,editable=False)
     form = models.CharField(max_length=128, choices=WORK_FORMS)
     source = models.TextField(blank=True)
-    
+
+    def _expression(self):
+        if self.expression_set.count() > 0:
+            return self.expression_set.all()[0]
+        else: return None
+    expression = property(_expression)
+
     def _all_subjects(self):
         all_works = [self] + list(self.parts.all())
         return Subject.objects.filter(work__in=all_works).distinct()
@@ -334,11 +340,14 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
         return self.work.first_author
     first_author = property(_first_author)
 
-    def _html(self): return self._get_by_mimetype("text/html")
+    def _html(self): return self._get_by_mimetype(r'text/html')
     html = property(_html)
 
-    def _pdf(self): return self._get_by_mimetype("application/pdf")
+    def _pdf(self): return self._get_by_mimetype(r'application/pdf')
     pdf = property(_pdf)
+
+    def _image(self): return self._get_by_mimetype(r'image/.*')
+    image = property(_image)
 
     def _content(self):
         return (list(self.content_db.all()) + list(self.content_file.all()))
@@ -351,6 +360,10 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
     def _work(self):
         return self.expression.work
     work = property(_work)
+
+    def _x(self):
+        return str(type(self))
+    x = property(_x)
 
     def _title(self):
         if self.edition_title != None and self.edition_title != '':
@@ -381,7 +394,7 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
 
     def _get_by_mimetype(self, mimetype):
         for c in self.content:
-            if c.mimetype == mimetype: return c
+            if re.match(mimetype, c.mimetype): return c
         return None
 
     def __unicode__(self): return unicode(self.work)
@@ -572,12 +585,16 @@ class DbContent(models.Model):
 
     def get_absolute_url(self): return "/%s"%(self.pk)
 
-ext2mime_map = { '.pdf' : 'application/pdf' }
+ext2mime_map = { '.pdf' : 'application/pdf',
+                 '.jpeg': 'image/jpeg',
+                 '.jpg': 'image/jpeg'
+                 }
+
 mime2ext_map = dict([(d[1],d[0]) for d in ext2mime_map.items()])
 
 class FileContent(models.Model):
     edition = models.ForeignKey('OnlineEdition', related_name='content_file')
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, blank=True)
     filename = models.FileField(upload_to="data")
     mimetype = models.CharField(max_length=100,editable=False)
     id = NoidField(primary_key=True)
