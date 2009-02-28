@@ -1,0 +1,16 @@
+{% extends "plain.html" %}
+{% load ervin %}
+{% block title %}{{work.title}}{% endblock %}
+{% block content %}
+
+<dl>
+<dt>Work title</dt><dd>{{ work.title }}</dd>
+<dt>Work authors</dt><dd>{{ work.authors.all|inverted_name_first_list}}</dd>
+</dl>
+<p>Multiple expressions</p>
+<ul>
+{% for expression in work.expression_set.all %}
+<li><a href="{{expression.get_absolute_url}}">{{ expression}}</a></li>
+{% endfor %}
+</ul>
+{% endblock %}
