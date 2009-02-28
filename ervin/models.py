@@ -350,7 +350,6 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
     image = property(_image)
     
     def _is_image(self):
-        print "hi"
         return (self._get_by_mimetype(r'image/.*') != None) and \
             (self._get_by_mimetype(r'text/.*') == None) and \
             (self._get_by_mimetype(r'application/.*') == None)
