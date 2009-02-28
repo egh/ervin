@@ -156,7 +156,8 @@ class Concept(models.Model, SubjectMixin):
 
 WORK_FORMS = (('series', 'Serial'),
               ('article', 'Article'),
-              ('monograph', 'Monograph'))
+              ('monograph', 'Monograph'),
+              ('image', 'Image'))
 
 class Work(models.Model, SubjectMixin, BibSortMixin):
     work_title = models.TextField(max_length=200,blank=True,db_column='title')
