@@ -28,12 +28,14 @@ def by_noid(request, *args, **kwargs):
    return detail(person, request, *args, **kwargs)
 
 def detail(person, request, *args,**kwargs):
-   works = Work.objects.filter(Q(authors=person) | Q(subjects=person.subject))
-   subjects = Subject.objects.filter(work__in=works).distinct()
-   
+   work_list = Work.objects.filter(Q(authors=person) | Q(subjects=person.subject))
+   subject_list = Subject.objects.filter(work__in=work_list).distinct()
+   image_list = work_list.filter(expression__onlineedition__content_file__mimetype__startswith='image/')
+
    t = loader.get_template('person.html')
    c = Context({
-         'subjects' : subjects,
+         'subject_list' : subject_list,
          'person': person,
+         'image_list': image_list,
          })
    return HttpResponse(t.render(c))
