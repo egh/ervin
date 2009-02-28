@@ -9,3 +9,4 @@
 {% else %}
   <a href="{{ edition.get_absolute_url }}"><cite>{{ edition.title }}</cite></a>.
 {% endif %}
+{% if edition.is_image %}[Image]{% endif %}
