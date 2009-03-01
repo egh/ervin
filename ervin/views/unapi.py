@@ -17,6 +17,7 @@ from django.template import Context, loader, TemplateDoesNotExist
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from django.conf import settings
+from django.contrib.sites.models import Site
 
 from ervin.models import *
 from ervin.views.generic import *
@@ -27,7 +28,7 @@ def list_formats(request,iden):
         return HttpResponse(t.render(c), status=300,
                             mimetype='application/xml')
 
-classes = [OnlineEdition, PhysicalEdition]
+CLASSES = [OnlineEdition, Expression, PhysicalEdition, Work]
 
 def unapi(request):
     if not(request.GET.has_key('id')):
@@ -39,12 +40,12 @@ def unapi(request):
         else:
             try:
                 format = request.GET['format']
-                o = find_one(classes, pk=request.GET['id'])
+                o = find_one(CLASSES, pk=request.GET['id'])
                 if o == None: return HttpResponse(status=404)
                 class_name = o.__class__.__name__.lower()
 		t = loader.get_template('unapi/%s.%s.xml' % (class_name, format))
                 c = Context({ class_name : o,
-                              'base_url' : settings.BASE_URL })
+                              'base_url' : "http://%s"%(Site.objects.get_current().domain) })
                 return HttpResponse(t.render(c),
                                     mimetype='application/xml')
             except TemplateDoesNotExist:
