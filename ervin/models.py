@@ -594,8 +594,10 @@ class DbContent(models.Model):
 
 ext2mime_map = { '.pdf' : 'application/pdf',
                  '.jpeg': 'image/jpeg',
-                 '.jpg': 'image/jpeg'
-                 }
+                 '.jpg' : 'image/jpeg',
+                 '.gif' : 'image/gif',
+                 '.tif' : 'image/tiff',
+                 '.tiff': 'image/tiff' }
 
 mime2ext_map = dict([(d[1],d[0]) for d in ext2mime_map.items()])
 
