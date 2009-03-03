@@ -80,13 +80,18 @@ class ExpressionAdmin(admin.ModelAdmin):
     model = Expression
     search_fields = ['sort']
 
+class PersonAdmin(admin.ModelAdmin):
+    model = Person
+    search_fields = ['surname', 'forename']
+
 admin.site.register(Concept)
 admin.site.register(Expression,ExpressionAdmin)
 admin.site.register(Event)
+admin.site.register(FileContent)
 admin.site.register(OnlineEdition,OnlineEditionAdmin)
 admin.site.register(Organization)
 admin.site.register(Page, PageAdmin)
-admin.site.register(Person)
+admin.site.register(Person, PersonAdmin)
 admin.site.register(PhysicalEdition,PhysicalEditionAdmin)
 admin.site.register(Place)
 admin.site.register(Work, WorkAdmin)
