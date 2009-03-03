@@ -119,6 +119,8 @@ class Person(models.Model, SubjectMixin):
     def save(self):
         super(Person, self).save()
         self._subject_save_hook()
+        for w in self.authored.all():
+            w.save()
 
     def delete(self):
         self._subject_delete_hook()
