@@ -30,8 +30,8 @@ def by_noid(request, *args, **kwargs):
 def detail(person, request, *args,**kwargs):
    work_list = Work.objects.filter(Q(authors=person) | Q(subjects=person.subject))
    subject_list = Subject.objects.filter(work__in=work_list).distinct()
-   image_list = work_list.filter(form='image')
-   text_list = person.authored.exclude(form='image')
+   image_list = work_list.filter(form='image').distinct()
+   text_list = person.authored.exclude(form='image').distinct()
 
    t = loader.get_template('person.html')
    c = Context({
