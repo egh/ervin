@@ -80,12 +80,26 @@ def find_all(klass):
         return [ x for x in klass.objects.all() if x.subject.work_set.count() > 0]
     else:
         return klass.objects.all()
-
-def showfile(f,*args,**kwargs):
+    
+def showfile(f, request, *args, **kwargs):
+    from sorl.thumbnail.main import DjangoThumbnail
     response = HttpResponse(mimetype=str(f.mimetype))
-    response['Content-Disposition'] = "inline; filename=%s%s"%(f.pk,f.get_ext())
-    response['Content-Length'] = f.size
-    response.write(open(f.filename.path).read())
+    disposition = "inline; filename=%s%s"%(f.pk,f.get_ext())
+    size = f.size
+    fullpath = f.filename.path
+    if (request.REQUEST.has_key('x')) and f.mimetype.startswith('image/'):
+        x = request.REQUEST['x']
+        if request.REQUEST.has_key('y'):
+            y = request.REQUEST['y']
+        else:
+            y = x
+        t = DjangoThumbnail(f.filename.path, (x,y))
+        disposition = "inline"
+        size = t.filesize
+        fullpath = t.dest
+    response['Content-Disposition'] = disposition
+    response['Content-Length'] = size
+    response.write(open(fullpath,'rb').read())
     return response
 
 views = {
