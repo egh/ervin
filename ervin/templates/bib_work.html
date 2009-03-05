@@ -8,3 +8,5 @@
 {% if work.publisher %}
   {{ work.publisher }}
 {% endif %}
+{% ifequal work.form "image" %}[Image]{% endifequal %}
+
