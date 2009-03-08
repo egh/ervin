@@ -8,5 +8,4 @@
   <cite>{{ edition.title }}</cite>.
 {% else %}
   <a href="{{ edition.get_absolute_url }}"><cite>{{ edition.title }}</cite></a>.
-{% endif %}
-{% ifequal edition.work.form "image"  %}<img src="/images/icons/image.gif" />{% endifequal %}
+{% endif %}&nbsp;{% ifequal edition.work.form "image" %}<img src="/images/icons/image.gif" />{% endifequal %}
