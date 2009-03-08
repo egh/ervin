@@ -109,11 +109,11 @@ class Subject(models.Model):
         ordering = ['sort']
 
 class Person(models.Model, SubjectMixin):
+    id = NoidField(primary_key=True)
+    olkey = models.CharField("Open Library Key", max_length=20, blank=True)
     surname = models.CharField(max_length=200)
     forename = models.CharField(max_length=200)
     dates = models.CharField(max_length=20,blank=True)
-    id = NoidField(primary_key=True)
-    olkey = models.CharField("Open Library Key", max_length=20, blank=True)
     def get_absolute_url(self): return "/%s"%(self.pk)
 
     def save(self):
@@ -138,8 +138,8 @@ class Person(models.Model, SubjectMixin):
         ordering=['surname','forename']
     
 class Concept(models.Model, SubjectMixin):
-    name = models.CharField(max_length=200)
     id = NoidField(primary_key=True)
+    name = models.CharField(max_length=200)
 
     def get_absolute_url(self): return "/%s"%(self.pk)
 
@@ -162,6 +162,7 @@ WORK_FORMS = (('series', 'Serial'),
               ('image', 'Image'))
 
 class Work(models.Model, SubjectMixin, BibSortMixin):
+    id = NoidField(primary_key=True)
     work_title = models.TextField(max_length=200,blank=True,db_column='title')
     authors = models.ManyToManyField(Person, 
                                      through='Authorship',
@@ -171,7 +172,6 @@ class Work(models.Model, SubjectMixin, BibSortMixin):
     description = models.TextField(blank=True)
     note = models.TextField(blank=True)
     part_of = models.ForeignKey("self",blank=True,null=True,related_name="parts")
-    id = NoidField(primary_key=True)
     date = FreeformDateField(max_length=128,blank=True,null=True)
     date_sort = models.CharField(max_length=128,blank=True,null=True,editable=False)
     sort = models.CharField(max_length=128,editable=False)
@@ -259,6 +259,7 @@ class Authorship(models.Model):
         # update sort key in work
 
 class Expression(models.Model, SubjectMixin,BibSortMixin):
+    id = NoidField(primary_key=True)
     work = models.ForeignKey(Work)
     expression_title = models.CharField(max_length=200, verbose_name="Translation title", blank=True, db_column='title')
     translators = models.ManyToManyField(Person,
@@ -266,7 +267,6 @@ class Expression(models.Model, SubjectMixin,BibSortMixin):
                                          verbose_name="Translators",
                                          related_name="translated",
                                          blank=True)
-    id = NoidField(primary_key=True)
     sort = models.CharField(max_length=128,editable=False)
     
     def _first_author(self): 
@@ -332,11 +332,11 @@ class Expression(models.Model, SubjectMixin,BibSortMixin):
 #         verbose_name = "Translator"
 
 class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
+    id = NoidField(primary_key=True)
     date = models.DateTimeField(null=True,blank=True)
     expression = models.ForeignKey(Expression, verbose_name="Work")
     edition_title = models.TextField(max_length=200, editable=False, blank=True,db_column='title')
     #numbering = models.CharField("Numbering", max_length=128, blank=True)
-    id = NoidField(primary_key=True)
     sort = models.CharField(max_length=128,editable=False)
 
     def _first_author(self): 
@@ -418,6 +418,8 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
         ordering = ['sort']
     
 class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
+    id = NoidField(primary_key=True)
+    olkey = models.CharField("Open Library Key", max_length=20, blank=True)
     edition_title = models.TextField("Title (leave blank if same as expression)", max_length=200, blank=True,db_column='title')
     date = FreeformDateField(max_length=128,blank=True, null=True)
     date_sort = models.CharField(max_length=128,blank=True,null=True,editable=False)
@@ -445,7 +447,6 @@ class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
     numbering = models.CharField("Numbering", max_length=128, blank=True)
     sort = models.CharField(max_length=128,editable=False)
     expression = models.ForeignKey(Expression)
-    id = NoidField(primary_key=True)
 
     def _available(self):
         return (self.available_uk or self.available_us)
@@ -496,8 +497,8 @@ class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
         ordering = ['sort']
     
 class Place(models.Model, SubjectMixin):
-    name = models.CharField(max_length=200)
     id = NoidField(primary_key=True)
+    name = models.CharField(max_length=200)
 
     def get_absolute_url(self): return "/%s"%(self.pk)
 
@@ -515,8 +516,8 @@ class Place(models.Model, SubjectMixin):
         ordering=['name']
 
 class Organization(models.Model, SubjectMixin):
-    name = models.CharField(max_length=200)
     id = NoidField(primary_key=True)
+    name = models.CharField(max_length=200)
 
     def get_absolute_url(self): return "/%s"%(self.pk)
 
@@ -534,8 +535,8 @@ class Organization(models.Model, SubjectMixin):
         ordering=['name']
 
 class Event(models.Model, SubjectMixin):
-    name = models.CharField(max_length=200)
     id = NoidField(primary_key=True)
+    name = models.CharField(max_length=200)
 
     def get_absolute_url(self): return "/%s"%(self.pk)
 
@@ -553,8 +554,8 @@ class Event(models.Model, SubjectMixin):
         ordering=['name']
 
 class FrbrObject(models.Model, SubjectMixin):
-    name = models.CharField(max_length=200)
     id = NoidField(primary_key=True)
+    name = models.CharField(max_length=200)
 
     def get_absolute_url(self): return "/%s"%(self.pk)
 
@@ -573,10 +574,10 @@ class FrbrObject(models.Model, SubjectMixin):
         ordering=['name']
 
 class RemoteContent(models.Model):
+    id = NoidField(primary_key=True)
     edition = models.ForeignKey('OnlineEdition', 
                                 related_name='content_remote')
     name = models.CharField(max_length=100)
-    id = NoidField(primary_key=True)
     url = models.CharField(max_length=1024)
 
     def __unicode__(self): return self.name
@@ -584,11 +585,11 @@ class RemoteContent(models.Model):
     def get_absolute_url(self): return self.url 
 
 class DbContent(models.Model): 
+    id = NoidField(primary_key=True)
     edition = models.ForeignKey('OnlineEdition', related_name='content_db')
     name = models.CharField(max_length=100, editable=False, blank=True)
     data = models.TextField(blank=True)
     mimetype = models.CharField(max_length=100, editable=False, default="text/html")
-    id = NoidField(primary_key=True)
 
     def __unicode__(self): return "%s (%s)"%(self.edition.title, self.name)
 
@@ -604,11 +605,11 @@ ext2mime_map = { '.pdf' : 'application/pdf',
 mime2ext_map = dict([(d[1],d[0]) for d in ext2mime_map.items()])
 
 class FileContent(models.Model):
+    id = NoidField(primary_key=True)
     edition = models.ForeignKey('OnlineEdition', related_name='content_file')
     name = models.CharField(max_length=100, blank=True)
     filename = models.FileField(upload_to="data")
     mimetype = models.CharField(max_length=100,editable=False)
-    id = NoidField(primary_key=True)
 
     def _size(self):
         return (os.path.getsize(str(self.filename.path)))
@@ -643,7 +644,7 @@ class Page(models.Model):
     def __unicode__(self): return "%s (/doc/%s)"%(self.title,self.name)
 
 class Section(models.Model):
-    name = models.CharField(max_length=100)
     id = models.CharField(max_length=6,primary_key=True)
+    name = models.CharField(max_length=100)
 
     def __unicode__(self): return self.name
