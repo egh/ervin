@@ -1,0 +1,12 @@
+{% load ervin %}
+{# variables #}
+{#  work #}
+{#  work_nolink : true if we should not link the work #}
+
+{{ work.authors.all|inverted_name_first_list_linked|with_terminal:"." }}
+{% if work_nolink %}
+  <cite>{{ work.title }}</cite>.
+{% else %}
+  <a href="{{ work.get_absolute_url }}"><cite>{{ work.title }}</cite></a>.
+{% endif %}
+{% ifequal work.form "image"  %}<img alt="[Image]" src="/images/icons/image.gif" />{% endifequal %}
