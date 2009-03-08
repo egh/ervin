@@ -45,11 +45,13 @@ class LazyThing(dict):
 
 class ThingEdition(LazyThing):
     def _populate_hook(self):
-        self['_authors'] = self['authors']
-        self['authors'] = [ ThingAuthor(a['key']) for a in self['_authors'] ]
-        self['_languages'] = self['languages']
-        self['languages'] = [ ThingLanguage(l['key']) for l in self['_languages'] ]
-        print self
+        if self.has_key('authors'):
+            self['_authors'] = self['authors']
+            self['authors'] = [ ThingAuthor(a['key']) for a in self['_authors'] ]
+        if self.has_key('languages'):
+            self['_languages'] = self['languages']
+            self['languages'] = [ ThingLanguage(l['key']) for l in self['_languages'] ]
+
     def __init__(self, key):
         return super(ThingEdition,self).__init__(key)
 
