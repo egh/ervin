@@ -18,6 +18,7 @@ from ervin.models import *
 from django.db.models import Q
 from ervin.views.generic import *
 from django.http import HttpResponse
+from ervin.ol import ThingAuthor
 
 def by_slug(request, *args, **kwargs):
    person = Person.objects.get(slug=kwargs['slug'])
@@ -33,11 +34,16 @@ def detail(person, request, *args,**kwargs):
    image_list = work_list.filter(form='image').distinct()
    text_list = person.authored.exclude(form='image').distinct()
 
+   if person.olkey:
+      ol_edition_list = ThingAuthor(person.olkey).fulltext_editions()
+   else: ol_edition_list = None
+
    t = loader.get_template('person.html')
    c = Context({
          'subject_list' : subject_list,
          'person'       : person,
          'image_list'   : image_list,
          'text_list'    : text_list,
+         'ol_list'      : ol_edition_list,
          })
    return HttpResponse(t.render(c))

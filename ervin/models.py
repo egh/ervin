@@ -113,7 +113,7 @@ class Person(models.Model, SubjectMixin):
     forename = models.CharField(max_length=200)
     dates = models.CharField(max_length=20,blank=True)
     id = NoidField(primary_key=True)
-
+    olkey = models.CharField("Open Library Key", max_length=20, blank=True)
     def get_absolute_url(self): return "/%s"%(self.pk)
 
     def save(self):
