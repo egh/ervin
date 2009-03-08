@@ -34,7 +34,6 @@ def detail(work, request, *args, **kwargs):
 
 def online_works(request, *args, **kwargs):
     works = Work.objects.exclude(Q(expression__onlineedition=None) & Q(parts=None)).distinct().all()
-    works = [ work for work in works if work.is_online ]
-    t = loader.get_template('onlineedition_list.html')
-    c = Context({ "edition_list" : works })
+    t = loader.get_template('work_list.html')
+    c = Context({ "work_list" : works })
     return HttpResponse(t.render(c))
