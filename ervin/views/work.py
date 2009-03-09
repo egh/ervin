@@ -55,15 +55,17 @@ def group_to_re(group):
     return "^[%s]"%("".join(group))
         
 def group_to_string(group):
-    return "%s-%s"%(group[0].upper(),group[-1].upper())
+    if len(group) == 1:
+        return group[0]
+    else:
+        return "%s-%s"%(group[0].upper(),group[-1].upper())
 
 def online_works(request, *args, **kwargs):
     works = Work.objects.exclude(Q(expression__onlineedition=None) & Q(parts=None)).distinct().all()
     groups = cache.get('document_groups')
     if groups == None:
-        groups = build_groups(works,100)
+        groups = build_groups(works,50)
         cache.set('document_groups', groups, 600)
-    
     if request.REQUEST.has_key('page'): page = int(request.REQUEST['page'])
     else: page = 1
     works = works.filter(sort__iregex=group_to_re(groups[page-1]))
