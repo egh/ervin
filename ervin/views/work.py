@@ -56,7 +56,7 @@ def group_to_re(group):
         
 def group_to_string(group):
     if len(group) == 1:
-        return group[0]
+        return group[0].upper()
     else:
         return "%s-%s"%(group[0].upper(),group[-1].upper())
 
