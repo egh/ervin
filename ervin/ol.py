@@ -1,8 +1,9 @@
 import urllib, httplib2, simplejson
+from django.core.cache import cache
 
 h = httplib2.Http(".cache")
 
-cache = {}
+CACHE_TIME=600
 
 def ol_query(q):
     resp, content = h.request("http://openlibrary.org/api/things?query=%s"%(urllib.quote(q)))
@@ -17,14 +18,15 @@ class LazyThing(dict):
         self._populated = False
 
     def _populate(self):
-        if cache.has_key(self._key):
-            self._populate_from_cache()
+        cached = cache.get("ol_%s"%(self._key))
+        if cached != None:
+            self._populate_from_value(cached)
         else:
             self._populate_from_ol()
 
-    def _populate_from_cache(self):
-        for k in cache[self._key].keys():
-            self[k] = cache[self._key][k]
+    def _populate_from_value(self, cached):
+        for k in cached.keys():
+            self[k] = cached[k]
         self._populated = True
         self._populate_hook()
 
@@ -32,8 +34,8 @@ class LazyThing(dict):
         resp, content = h.request("http://openlibrary.org/api/get?key=%s" %(self._key), "GET")
         r = simplejson.loads(content)
         if r['status'] == 'ok':
-            cache[self._key] = r['result']
-            self._populate_from_cache()
+            cache.set("ol_%s"%(self._key), r['result'], CACHE_TIME)
+            self._populate_from_value(r['result'])
 
     def _populate_hook(self):
         pass
@@ -65,7 +67,6 @@ class ThingAuthor(LazyThing):
     def editions(self):
         r = ol_query("{\"type\":\"\\/type\\/edition\", \"authors\":\"%s\"}"%(str(self._key)))
         if r['status'] == 'ok':
-            print r['result']
             return [ ThingEdition(key) for key in r['result']]
         else: return None
 
