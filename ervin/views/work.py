@@ -17,6 +17,7 @@ from django.template import Context, loader
 from ervin.models import *
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.db.models import Q
+from django.core.cache import cache
 
 def by_noid(request, *args, **kwargs):
     work = Work.objects.get(id=kwargs['noid'])
@@ -32,8 +33,42 @@ def detail(work, request, *args, **kwargs):
                 })
     	return HttpResponse(t.render(c))
 
+def build_groups(q, max_size):
+    startswith = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
+    groups = [('a'),('b'),('c'),('d'),('e'),('f'),('g'),('h'),('i'),('j'),('k'),('l'),('m'),('n'),('o'),('p'),('q'),('r'),('s'),('t'),('u'),('v'),('w'),('x'),('y'),('z')]
+    count = {}
+    for l in startswith:
+        count[l] = q.filter(sort__startswith=l).count()
+    finished = False
+    while (not(finished)):
+        for i in range(0, len(groups)-1):
+            i_size = sum([ count[l] for l in groups[i] ])
+            next_size = sum([ count[l] for l in groups[i+1] ])
+            if (i_size + next_size) < max_size:
+                groups = groups[:i] + [(groups[i] + groups[i+1])] + groups[i+2:]
+                break
+        else:
+            finished = True
+    return groups
+
+def group_to_re(group):
+    return "^[%s]"%("".join(group))
+        
+def group_to_string(group):
+    return "%s-%s"%(group[0].upper(),group[-1].upper())
+
 def online_works(request, *args, **kwargs):
     works = Work.objects.exclude(Q(expression__onlineedition=None) & Q(parts=None)).distinct().all()
+    groups = cache.get('document_groups')
+    if groups == None:
+        groups = build_groups(works,100)
+        cache.set('document_groups', groups, 600)
+    
+    if request.REQUEST.has_key('page'): page = int(request.REQUEST['page'])
+    else: page = 1
+    works = works.filter(sort__iregex=group_to_re(groups[page-1]))
     t = loader.get_template('work_list.html')
-    c = Context({ "work_list" : works })
+    c = Context({ "work_list" : works,
+                  "groups"    : [ group_to_string(g) for g in groups ],
+                  'page'      : page })
     return HttpResponse(t.render(c))
