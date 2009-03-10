@@ -1,2 +1,6 @@
 {% load ervin %}
-<a href="{{ edition.key }}">{{ edition.title }}</a>
+<a href="{{ edition.key }}">
+{% if edition.title_prefix %}
+{{ edition.title_prefix }}
+{% endif %}
+{{ edition.title }}</a>
