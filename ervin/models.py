@@ -136,7 +136,20 @@ class Person(models.Model, SubjectMixin):
 
     class Meta:
         ordering=['surname','forename']
-    
+
+class Alias(models.Model):
+    person = models.ForeignKey(Person)
+    surname = models.CharField(max_length=200, blank=True)
+    forename = models.CharField(max_length=200, blank=True)
+
+    def __hash__(self): return hash(self.pk)
+
+    def __unicode__(self):
+        return "%s %s"%(self.forename, self.surname)
+
+    class Meta:
+        ordering=['surname','forename']
+        
 class Concept(models.Model, SubjectMixin):
     id = NoidField(primary_key=True)
     name = models.CharField(max_length=200)
