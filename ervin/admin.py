@@ -37,6 +37,10 @@ class AuthorshipInlineAdmin(admin.TabularInline):
     model = Authorship
     extra = 1
 
+class AliasInlineAdmin(admin.TabularInline):
+    model = Alias
+    extra = 1
+
 class ExpressionInlineAdmin(admin.StackedInline):
     model = Expression
     filter_horizontal=['translators']
@@ -83,6 +87,7 @@ class ExpressionAdmin(admin.ModelAdmin):
 class PersonAdmin(admin.ModelAdmin):
     model = Person
     search_fields = ['surname', 'forename']
+    inlines=[AliasInlineAdmin]
 
 admin.site.register(Concept)
 admin.site.register(Expression,ExpressionAdmin)
