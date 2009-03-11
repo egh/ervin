@@ -133,6 +133,8 @@ class Person(models.Model, SubjectMixin):
     def __unicode__(self):
         if self.dates:
             return "%s, %s (%s)"%(self.surname, self.forename, self.dates)
+        if self.alias_for and self.alias_for.dates:
+            return "%s, %s (%s)"%(self.surname, self.forename, self.alias_for.dates)
         else: 
             return "%s, %s"%(self.surname, self.forename)
 
