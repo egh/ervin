@@ -13,3 +13,19 @@
 #You should have received a copy of the GNU General Public License
 #along with Ervin.  If not, see <http://www.gnu.org/licenses/>.
 
+def make_columns(data, col_count):
+    l = len(data)
+    r = l % col_count
+    col_size = []
+    cols = []
+    for i in range(col_count):
+        if (i > (r - 1)): col_size.append(l/col_count)
+        else: col_size.append(l/col_count + 1)
+    start = 0
+    for i in range((col_count)):
+        if i == col_count - 1: finish = l
+        else: finish = (start + col_size[i])
+        cols.append(data[start:finish])
+        start = finish
+    return cols
+

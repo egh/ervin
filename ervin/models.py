@@ -114,6 +114,8 @@ class Person(models.Model, SubjectMixin):
     surname = models.CharField(max_length=200)
     forename = models.CharField(max_length=200)
     dates = models.CharField(max_length=20,blank=True)
+    alias_for = models.ForeignKey("self",blank=True,null=True, related_name="alias_set")
+
     def get_absolute_url(self): return "/%s"%(self.pk)
 
     def save(self):
@@ -133,19 +135,6 @@ class Person(models.Model, SubjectMixin):
             return "%s, %s (%s)"%(self.surname, self.forename, self.dates)
         else: 
             return "%s, %s"%(self.surname, self.forename)
-
-    class Meta:
-        ordering=['surname','forename']
-
-class Alias(models.Model):
-    person = models.ForeignKey(Person)
-    surname = models.CharField(max_length=200, blank=True)
-    forename = models.CharField(max_length=200, blank=True)
-
-    def __hash__(self): return hash(self.pk)
-
-    def __unicode__(self):
-        return "%s %s"%(self.forename, self.surname)
 
     class Meta:
         ordering=['surname','forename']

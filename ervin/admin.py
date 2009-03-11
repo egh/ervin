@@ -38,8 +38,11 @@ class AuthorshipInlineAdmin(admin.TabularInline):
     extra = 1
 
 class AliasInlineAdmin(admin.TabularInline):
-    model = Alias
+    model = Person
     extra = 1
+    fields = ('forename', 'surname')
+    verbose_name = "Alias"
+    verbose_name_plural = "Aliases"
 
 class ExpressionInlineAdmin(admin.StackedInline):
     model = Expression
@@ -88,7 +91,8 @@ class PersonAdmin(admin.ModelAdmin):
     model = Person
     search_fields = ['surname', 'forename']
     inlines=[AliasInlineAdmin]
-
+    fields = ('forename', 'surname', 'dates', 'olkey')
+    
 admin.site.register(Concept)
 admin.site.register(Expression,ExpressionAdmin)
 admin.site.register(Event)

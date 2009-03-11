@@ -17,23 +17,8 @@ from django.template import Context, loader
 from ervin.models import *
 from django.http import HttpResponse,HttpResponseNotFound
 from django.core.exceptions import ObjectDoesNotExist
+from ervin.views import make_columns
 import re, ervin.views.person, ervin.views.work, ervin.views.expression, ervin.views.onlineedition, ervin.views.physicaledition
-
-def make_columns(data, col_count):
-    l = len(data)
-    r = l % col_count
-    col_size = []
-    cols = []
-    for i in range(col_count):
-        if (i > (r - 1)): col_size.append(l/col_count)
-        else: col_size.append(l/col_count + 1)
-    start = 0
-    for i in range((col_count)):
-        if i == col_count - 1: finish = l
-        else: finish = (start + col_size[i])
-        cols.append(data[start:finish])
-        start = finish
-    return cols
 
 def get_sections():
     sections = list(Section.objects.all())

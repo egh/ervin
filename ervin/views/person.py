@@ -15,35 +15,35 @@
 
 from django.template import Context, loader
 from ervin.models import *
+from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.db.models import Q
-from ervin.views.generic import *
 from django.http import HttpResponse
+from ervin.views import make_columns
 from ervin.ol import ThingAuthor
-
-def by_slug(request, *args, **kwargs):
-   person = Person.objects.get(slug=kwargs['slug'])
-   return detail(person, request, *args, **kwargs)
 
 def by_noid(request, *args, **kwargs):
    person = Person.objects.get(id=kwargs['noid'])
    return detail(person, request, *args, **kwargs)
 
 def detail(person, request, *args,**kwargs):
-   work_list = Work.objects.filter(Q(authors=person) | Q(subjects=person.subject))
-   subject_list = Subject.objects.filter(work__in=work_list).distinct()
-   image_list = work_list.filter(form='image').distinct()
-   text_list = person.authored.exclude(form='image').distinct()
+   if person.alias_for:
+      return HttpResponseRedirect(person.alias_for.get_absolute_url())
+   else:
+      work_list = Work.objects.filter(Q(authors=person) | Q(subjects=person.subject))
+      subject_list = Subject.objects.filter(work__in=work_list).distinct()
+      image_list = work_list.filter(form='image').distinct()
+      text_list = person.authored.exclude(form='image').distinct()
 
-   if person.olkey:
-      ol_edition_list = ThingAuthor(person.olkey).fulltext_editions()
-   else: ol_edition_list = None
+      if person.olkey:
+         ol_edition_list = ThingAuthor(person.olkey).fulltext_editions()
+      else: ol_edition_list = None
 
-   t = loader.get_template('person.html')
-   c = Context({
-         'subject_list' : subject_list,
-         'person'       : person,
-         'image_list'   : image_list,
-         'text_list'    : text_list,
-         'ol_list'      : ol_edition_list,
-         })
-   return HttpResponse(t.render(c))
+      t = loader.get_template('person.html')
+      c = Context({
+            'subject_list' : subject_list,
+            'person'       : person,
+            'image_list'   : image_list,
+            'text_list'    : text_list,
+            'ol_list'      : ol_edition_list,
+            })
+      return HttpResponse(t.render(c))
