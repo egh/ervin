@@ -1,4 +1,4 @@
-#Copyright (C) 2007 Erik Hetzner
+#Copyright (C) 2007-2009, Erik Hetzner
 
 #This file is part of Ervin.  Ervin is free software: you can
 #redistribute it and/or modify it under the terms of the GNU General
@@ -37,7 +37,7 @@ def detail(person, request, *args,**kwargs):
       if person.olkey:
          ol_edition_list = ThingAuthor(person.olkey).fulltext_editions()
       else: ol_edition_list = None
-
+      
       t = loader.get_template('person.html')
       c = Context({
             'subject_list' : subject_list,
