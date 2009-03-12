@@ -33,6 +33,10 @@ class FileContentInlineAdmin(admin.StackedInline):
     model=FileContent
     extra = 1
 
+class RemoteContentInlineAdmin(admin.StackedInline):
+    model=RemoteContent
+    extra = 1
+
 class AuthorshipInlineAdmin(admin.TabularInline):
     model = Authorship
     extra = 1
@@ -72,7 +76,7 @@ class OnlineEditionAdmin(admin.ModelAdmin):
     model = OnlineEdition
     search_fields = ['sort']
     raw_id_fields = ['expression']
-    inlines=[DbContentInlineAdmin, FileContentInlineAdmin]
+    inlines=[DbContentInlineAdmin, FileContentInlineAdmin,RemoteContentInlineAdmin]
 
 class PhysicalEditionAdmin(admin.ModelAdmin):
     model = PhysicalEdition
