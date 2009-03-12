@@ -34,8 +34,8 @@ def detail(work, request, *args, **kwargs):
     	return HttpResponse(t.render(c))
 
 def build_groups(q, max_size):
-    startswith = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
-    groups = [('a'),('b'),('c'),('d'),('e'),('f'),('g'),('h'),('i'),('j'),('k'),('l'),('m'),('n'),('o'),('p'),('q'),('r'),('s'),('t'),('u'),('v'),('w'),('x'),('y'),('z')]
+    startswith = ['0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
+    groups = [('0'),('1'),('2'),('3'),('4'),('5'),('6'),('7'),('8'),('9'),('a'),('b'),('c'),('d'),('e'),('f'),('g'),('h'),('i'),('j'),('k'),('l'),('m'),('n'),('o'),('p'),('q'),('r'),('s'),('t'),('u'),('v'),('w'),('x'),('y'),('z')]
     count = {}
     for l in startswith:
         count[l] = q.filter(sort__startswith=l).count()
