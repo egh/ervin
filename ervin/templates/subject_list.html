@@ -5,10 +5,14 @@
 {% block html_title %}Subjects{% endblock %}
 
 {% block content %}
+<h1>Subjects</h1>
+{% if subject_list %}
 <ul>
-{% for subject in subject_list %}
-<li><a href="{{ subject.get_absolute_url }}">{{ subject }}</a>
-</li>
-{% endfor %}
+  {% for subject in subject_list %}
+  <li><a href="{{ subject.get_absolute_url }}">{{ subject }}</a></li>
+  {% endfor %}
 </ul>
+{% else %}
+<p>No subjects.</p>
+{% endif %}
 {% endblock %}
