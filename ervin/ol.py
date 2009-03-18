@@ -1,7 +1,7 @@
 import urllib, httplib2, simplejson
 from django.core.cache import cache
 
-h = httplib2.Http(".cache")
+h = httplib2.Http("/tmp/httpcache")
 
 CACHE_TIME=600
 
