@@ -89,7 +89,7 @@ def inverted_name_first_list (persons):
     names = []
     for (i, person) in enumerate(persons):
         if (i == 0): names.append(inverted_name(person))
-        else: names.append(name_linked(p))
+        else: names.append(name_linked(person))
     return join_with_final(", ", " and ", names)
 
 @register.filter
