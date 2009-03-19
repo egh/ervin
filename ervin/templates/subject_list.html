@@ -5,7 +5,7 @@
 {% block html_title %}Subjects{% endblock %}
 
 {% block content %}
-<h1>Subjects</h1>
+<h1>{% block title %}Subjects{% endblock %}</h1>
 {% if subject_list %}
 <ul>
   {% for subject in subject_list %}
