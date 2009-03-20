@@ -77,6 +77,7 @@ class OnlineEditionAdmin(admin.ModelAdmin):
     search_fields = ['sort']
     raw_id_fields = ['expression']
     inlines=[DbContentInlineAdmin, FileContentInlineAdmin,RemoteContentInlineAdmin]
+    list_display = ('__unicode__','date')
 
 class PhysicalEditionAdmin(admin.ModelAdmin):
     model = PhysicalEdition
