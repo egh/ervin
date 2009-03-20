@@ -353,7 +353,12 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
     def _pdf(self): return self._get_by_mimetype(r'application/pdf')
     pdf = property(_pdf)
 
-    def _image(self): return self._get_by_mimetype(r'image/.*')
+    def _image(self): 
+        image = self._get_by_mimetype(r'image/.*')
+        if image.name == 'cover': 
+            return None
+        else:
+            return image
     image = property(_image)
     
     def _is_image(self):
