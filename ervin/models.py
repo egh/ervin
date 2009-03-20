@@ -391,11 +391,11 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
     title = property(_title)
 
     def _authors(self):
-        return self.expression.authors
+        return self.work.authors
     authors = property(_authors)
 
     def _subjects(self):
-        return self.expression.subjects
+        return self.work.subjects
     subjects = property(_subjects)
 
     def _parts(self):
@@ -494,7 +494,7 @@ class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
             return self.expression.title
     title = property(_title)
 
-    def _authors(self): return self.expression.authors
+    def _authors(self): return self.work.authors
     authors = property(_authors)
 
     def _subjects(self): return self.work.subjects
