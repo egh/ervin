@@ -413,10 +413,29 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
     def __unicode__(self): return unicode(self.work)
 
     def get_absolute_url(self): return "/%s"%(self.pk)
-
+    
     def save(self):
         self._sort_save_hook()
         super(OnlineEdition, self).save() 
+
+    def __init__(self, *args, **kwargs):
+        self.content_by_name = OnlineEdition.ContentByName(self)
+        super(OnlineEdition, self).__init__(*args, **kwargs)
+
+    class ContentByName(dict):
+        def __init__(self, edition):
+            self.edition = edition
+        def __getitem__(self, key):
+            for c in self.edition.content:
+                if (key == c.name):
+                    return c
+            return None
+
+        def has_key(self, key):
+            for c in self.edition.content:
+                if (key == c.name):
+                    return true
+            return false
 
     class Meta:
         ordering = ['sort']
