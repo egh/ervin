@@ -110,6 +110,18 @@ def inverted_name_first_list (persons):
     return join_with_final(", ", " and ", names)
 
 @register.filter
+@listfilter
+@testemptylist
+def inverted_name_first_etal_list (persons):
+    """
+    Prints name list with first name inverted, using et al. if authors > 3.
+    """
+    if len(persons) > 3:
+        return "%s et al."%(inverted_name (persons[0]))
+    else:
+        return inverted_name_first_list (persons)
+
+@register.filter
 def name_linked(person):
     return "<a href=\"%s\">%s %s</a>"%(person.get_absolute_url(), person.forename, person.surname)
 
