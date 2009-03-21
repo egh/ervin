@@ -86,6 +86,9 @@ def inverted_name_first_etal_list_linked (persons, arg=""):
     """
     Prints name list with first name inverted (linked names), using et al. if authors > 3.
     """
+    ignore = None
+    if (re.compile("[a-z0-9]+").match(arg)):
+        ignore = arg
     if len(persons) > 3:
         person = persons[0]
         if (person.pk == ignore): "%s et al."%(inverted_name (person))
