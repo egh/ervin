@@ -91,8 +91,8 @@ def inverted_name_first_etal_list_linked (persons, arg=""):
         ignore = arg
     if len(persons) > 3:
         person = persons[0]
-        if (person.pk == ignore): "%s et al."%(inverted_name (person))
-        else: "%s et al."%(inverted_name_linked (person))
+        if (person.pk == ignore): return "%s et al."%(inverted_name (person))
+        else: return "%s et al."%(inverted_name_linked (person))
     else:
         return inverted_name_first_list_linked (persons, arg)
 
