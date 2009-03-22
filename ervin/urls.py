@@ -38,6 +38,5 @@ urlpatterns = patterns('ervin.views',
     (r'^(?P<noid>[a-z0-9-]{6})$', 'generic.by_noid'),
     (r'^(?P<olkey>a/[A-Za-z0-9-]+)$', 'ol.author'),
     (r'^(?P<olkey>b/[A-Za-z0-9-]+)$', 'ol.edition'),
-    (r'^search/', include('solango.urls')),
     (r'^$', 'main.home')
 )
