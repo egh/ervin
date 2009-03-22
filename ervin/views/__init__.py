@@ -29,3 +29,29 @@ def make_columns(data, col_count):
         start = finish
     return cols
 
+def build_groups(q, max_size):
+    startswith = ['0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
+    groups = [('0'),('1'),('2'),('3'),('4'),('5'),('6'),('7'),('8'),('9'),('a'),('b'),('c'),('d'),('e'),('f'),('g'),('h'),('i'),('j'),('k'),('l'),('m'),('n'),('o'),('p'),('q'),('r'),('s'),('t'),('u'),('v'),('w'),('x'),('y'),('z')]
+    count = {}
+    for l in startswith:
+        count[l] = q.filter(sort__startswith=l).count()
+    finished = False
+    while (not(finished)):
+        for i in range(0, len(groups)-1):
+            i_size = sum([ count[l] for l in groups[i] ])
+            next_size = sum([ count[l] for l in groups[i+1] ])
+            if (i_size + next_size) < max_size:
+                groups = groups[:i] + [(groups[i] + groups[i+1])] + groups[i+2:]
+                break
+        else:
+            finished = True
+    return groups
+
+def group_to_re(group):
+    return "^[%s]"%("".join(group))
+        
+def group_to_string(group):
+    if len(group) == 1:
+        return group[0].upper()
+    else:
+        return "%s-%s"%(group[0].upper(),group[-1].upper())

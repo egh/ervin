@@ -17,7 +17,8 @@ from django.template import Context, loader
 from ervin.models import *
 from django.http import HttpResponse,HttpResponseNotFound
 from django.core.exceptions import ObjectDoesNotExist
-from ervin.views import make_columns
+from django.core.cache import cache
+from ervin.views import make_columns, build_groups, group_to_re, group_to_string
 import re, ervin.views.person, ervin.views.work, ervin.views.expression, ervin.views.onlineedition, ervin.views.physicaledition
 
 def get_sections():
@@ -59,12 +60,15 @@ def find_one(*args, **kwargs):
             pass
     return None
 
-def find_all(klass):
+def find_all(klass, q=None):
+    if q == None:
+        q = klass.objects.all()
     if (klass == FrbrObject) or (klass == Concept) or (klass == Event) or (klass == Place):
         # for "group 3" only return where we have a positive subject count
-        return [ x for x in klass.objects.all() if x.subject.work_set.count() > 0]
+        ids = [ x.pk for x in q if x.subject.work_set.count() == 0]
+        return q.exclude(id__in=ids)
     else:
-        return klass.objects.all()
+        return q
     
 def showfile(f, request, *args, **kwargs):
     from sorl.thumbnail.main import DjangoThumbnail
@@ -149,18 +153,29 @@ def by_noid(request,*args,**kwargs):
     else:
         return HttpResponseNotFound('Not found')
 
-def list_view(*args, **kwargs):
+def list_view(request, *args, **kwargs):
     if kwargs.has_key('columns'): column_count = kwargs['columns']
     else: column_count = 4
     klass = kwargs['class']
     if list_views.has_key(klass):
-        item_list = list(find_all(klass))
+        groups = cache.get("%s_groups"%(klass.__name__))
+        if groups == None:
+            item_list = find_all(klass)
+            groups = build_groups(item_list, 60)
+            cache.set("%s_groups"%(klass.__name__), groups, 600)
+        page = int(request.GET.get('page','1'))
+        item_list = find_all(klass, klass.objects.filter(sort__iregex=group_to_re(groups[page-1])))
         t = loader.get_template(list_views[klass])
         cols = make_columns(item_list, column_count)
         if (variable_names.has_key(klass)):
             variable_name = variable_names[klass]
         else: 
             variable_name = klass.__name__.lower()
+        group_list = [ group_to_string(g) for g in groups ]
+        if len(group_list) == 1: group_list = None
         c = Context({ "%s_cols"%(variable_name) : cols,
-                      "%s_list"%(variable_name) : item_list } )
+                      "%s_list"%(variable_name) : item_list,
+                      "page" : page,
+                      "subject_type" : klass.__name__.lower(),
+                      "group_list"    : group_list })
         return HttpResponse(t.render(c))
