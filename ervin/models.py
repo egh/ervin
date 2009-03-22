@@ -679,8 +679,8 @@ class Page(models.Model):
     id = models.SlugField(max_length=100, unique=True, primary_key=True)
     date = models.DateTimeField(null=True)
     news = models.BooleanField()
-    blurb = models.TextField(blank=True,null=True)
     content = models.TextField(blank=True)
+    blurb = models.TextField(blank=True,null=True)
     def __unicode__(self): return "%s (%s)"%(self.title,self.get_absolute_url())
     def get_absolute_url(self): return "/doc/%s"%(self.pk)
 
