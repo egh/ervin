@@ -42,17 +42,14 @@ def build_groups(q, max_size):
         group_count = [ sum([ count[l] for l in groups[i] ])
                         for i in range(0,len(groups)) ]
         # we want to sort so that we first combine the smallest groups
-        def cmp(a,b):
+        def my_cmp(a,b):
             return int((group_count[a]+group_count[a+1])-(group_count[b]+group_count[b+1]))
-        i_list = range(0, len(groups)-1)
-        i_list.sort(cmp)
-        for i in i_list:
-            # if the combined size will be less than max_size, group it
-            if (group_count[i] + group_count[i+1]) < max_size:
-                groups = groups[:i] + [(groups[i] + groups[i+1])] + groups[i+2:]
-                break
+        i = sorted(range(0, len(groups)-1), my_cmp)[0]
+        # if the first combined size will be less than max_size, group it
+        if (group_count[i] + group_count[i+1]) < max_size:
+            groups = groups[:i] + [(groups[i] + groups[i+1])] + groups[i+2:]
         else:
-            finished = True
+                finished = True
     return groups
 
 def group_to_re(group):
