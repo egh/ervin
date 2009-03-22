@@ -115,10 +115,12 @@ class Person(models.Model, SubjectMixin):
     forename = models.CharField(max_length=200)
     dates = models.CharField(max_length=20,blank=True)
     alias_for = models.ForeignKey("self",blank=True,null=True, related_name="alias_set")
+    sort = models.CharField(max_length=128)
 
     def get_absolute_url(self): return "/%s"%(self.pk)
 
     def save(self):
+        self.sort = ervin.templatetags.ervin.sort_friendly(unicode(self))[:128]
         super(Person, self).save()
         self._subject_save_hook()
         for w in self.authored.all():
@@ -144,10 +146,12 @@ class Person(models.Model, SubjectMixin):
 class Concept(models.Model, SubjectMixin):
     id = NoidField(primary_key=True)
     name = models.CharField(max_length=200)
+    sort = models.CharField(max_length=128,editable=False)
 
     def get_absolute_url(self): return "/%s"%(self.pk)
 
     def save(self):
+        self.sort = ervin.templatetags.ervin.sort_friendly(unicode(self))[:128]
         super(Concept, self).save()
         self._subject_save_hook()
 
@@ -527,10 +531,12 @@ class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
 class Place(models.Model, SubjectMixin):
     id = NoidField(primary_key=True)
     name = models.CharField(max_length=200)
+    sort = models.CharField(max_length=128,editable=False)
 
     def get_absolute_url(self): return "/%s"%(self.pk)
 
     def save(self):
+        self.sort = ervin.templatetags.ervin.sort_friendly(unicode(self))[:128]
         super(Place, self).save()
         self._subject_save_hook()
 
@@ -546,10 +552,12 @@ class Place(models.Model, SubjectMixin):
 class Organization(models.Model, SubjectMixin):
     id = NoidField(primary_key=True)
     name = models.CharField(max_length=200)
+    sort = models.CharField(max_length=128,editable=False)
 
     def get_absolute_url(self): return "/%s"%(self.pk)
 
     def save(self):
+        self.sort = ervin.templatetags.ervin.sort_friendly(unicode(self))[:128]
         super(Organization, self).save()
         self._subject_save_hook()
 
@@ -565,10 +573,12 @@ class Organization(models.Model, SubjectMixin):
 class Event(models.Model, SubjectMixin):
     id = NoidField(primary_key=True)
     name = models.CharField(max_length=200)
+    sort = models.CharField(max_length=128,editable=False)
 
     def get_absolute_url(self): return "/%s"%(self.pk)
 
     def save(self):
+        self.sort = ervin.templatetags.ervin.sort_friendly(unicode(self))[:128]
         super(Event, self).save()
         self._subject_save_hook()
 
@@ -584,10 +594,12 @@ class Event(models.Model, SubjectMixin):
 class FrbrObject(models.Model, SubjectMixin):
     id = NoidField(primary_key=True)
     name = models.CharField(max_length=200)
+    sort = models.CharField(max_length=128,editable=False)
 
     def get_absolute_url(self): return "/%s"%(self.pk)
 
     def save(self):
+        self.sort = ervin.templatetags.ervin.sort_friendly(unicode(self))[:128]
         super(FrbrObject, self).save()
         self._subject_save_hook()
 
