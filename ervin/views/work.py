@@ -66,8 +66,7 @@ def online_works(request, *args, **kwargs):
     if groups == None:
         groups = build_groups(works,50)
         cache.set('document_groups', groups, 600)
-    if request.REQUEST.has_key('page'): page = int(request.REQUEST['page'])
-    else: page = 1
+    page = int(request.GET.get('page','1'))
     works = works.filter(sort__iregex=group_to_re(groups[page-1]))
     t = loader.get_template('work_list.html')
     c = Context({ "work_list" : works,
