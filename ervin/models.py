@@ -664,12 +664,13 @@ class FileContent(models.Model):
 
 class Page(models.Model):
     title = models.CharField(max_length=100)
-    name = models.CharField(max_length=100,unique=True,primary_key=True)
-    data = models.TextField(blank=True)
+    id = models.SlugField(max_length=100, unique=True, primary_key=True)
     date = models.DateTimeField(null=True)
     news = models.BooleanField()
-
-    def __unicode__(self): return "%s (/doc/%s)"%(self.title,self.name)
+    blurb = models.TextField(blank=True,null=True)
+    content = models.TextField(blank=True)
+    def __unicode__(self): return "%s (%s)"%(self.title,self.get_absolute_url())
+    def get_absolute_url(self): return "/doc/%s"%(self.pk)
 
 class Section(models.Model):
     id = models.CharField(max_length=6,primary_key=True)

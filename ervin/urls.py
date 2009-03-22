@@ -13,7 +13,7 @@
 #You should have received a copy of the GNU General Public License
 #along with Ervin.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.conf.urls.defaults import patterns
+from django.conf.urls.defaults import *
 import ervin.models
 
 urlpatterns = patterns('ervin.views',
@@ -34,9 +34,10 @@ urlpatterns = patterns('ervin.views',
     (r'^documents$', 'work.online_works'),
     (r'^physicaleditions$', 'generic.list_view', {'class' : ervin.models.PhysicalEdition }),
     (r'^unapi$', 'unapi.unapi'),
-    (r'^doc/(?P<name>.*)$', 'page.by_name'),
+    (r'^doc/(?P<id>.*)$', 'page.by_id'),
     (r'^(?P<noid>[a-z0-9-]{6})$', 'generic.by_noid'),
     (r'^(?P<olkey>a/[A-Za-z0-9-]+)$', 'ol.author'),
     (r'^(?P<olkey>b/[A-Za-z0-9-]+)$', 'ol.edition'),
+    (r'^search/', include('solango.urls')),
     (r'^$', 'main.home')
-    )
+)

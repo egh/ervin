@@ -3,8 +3,8 @@ from ervin.models import *
 from django.http import HttpResponse,HttpResponseNotFound
 from django.core.exceptions import ObjectDoesNotExist
 
-def by_name(*args, **kwargs):
-    pages = Page.objects.filter(name=kwargs['name']).all()
+def by_id(*args, **kwargs):
+    pages = Page.objects.filter(id=kwargs['id']).all()
     if len(pages) == 0:    
         return HttpResponseNotFound('Not found')
     else:

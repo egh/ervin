@@ -87,6 +87,7 @@ class PhysicalEditionAdmin(admin.ModelAdmin):
 class PageAdmin(admin.ModelAdmin):
     model = Page
     form = PageAdminModelForm
+    prepopulated_fields = {"id": ("title",)}
 
 class ExpressionAdmin(admin.ModelAdmin):
     model = Expression

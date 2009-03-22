@@ -9,7 +9,9 @@ class DbContentAdminModelForm(forms.ModelForm):
         model = get_model('ervin', 'dbcontent')
 
 class PageAdminModelForm(forms.ModelForm):
-    data = forms.CharField(widget=WYMEditor())
+    content = forms.CharField(widget=WYMEditor())
+    blurb = forms.CharField(widget=WYMEditor())
 
     class Meta:
         model = get_model('ervin', 'page')
+        
