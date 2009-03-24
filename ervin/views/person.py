@@ -32,8 +32,8 @@ def detail(person, request, *args,**kwargs):
       work_list = Work.objects.filter(Q(authors=person) | Q(subjects=person.subject))
       subject_list = Subject.objects.filter(work__in=work_list).distinct()
       image_list = work_list.filter(form='image').distinct()
-      works_by_list = work_list.filter(authors=person).exclude(pk=image_list).distinct()
-      works_about_list = work_list.filter(subjects=person.subject).exclude(pk=image_list).distinct()
+      works_by_list = work_list.filter(authors=person).exclude(pk__in=image_list).distinct()
+      works_about_list = work_list.filter(subjects=person.subject).exclude(pk__in=image_list).distinct()
       if person.olkey:
          ol_edition_list = ThingAuthor(person.olkey).fulltext_editions()
       else: ol_edition_list = None
