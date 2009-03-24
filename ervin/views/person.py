@@ -32,18 +32,19 @@ def detail(person, request, *args,**kwargs):
       work_list = Work.objects.filter(Q(authors=person) | Q(subjects=person.subject))
       subject_list = Subject.objects.filter(work__in=work_list).distinct()
       image_list = work_list.filter(form='image').distinct()
-      text_list = person.authored.exclude(form='image').distinct()
-
+      works_by_list = work_list.filter(authors=person).exclude(pk=image_list).distinct()
+      works_about_list = work_list.filter(subjects=person.subject).exclude(pk=image_list).distinct()
       if person.olkey:
          ol_edition_list = ThingAuthor(person.olkey).fulltext_editions()
       else: ol_edition_list = None
       
       t = loader.get_template('person.html')
       c = Context({
-            'subject_list' : subject_list,
-            'person'       : person,
-            'image_list'   : image_list,
-            'text_list'    : text_list,
-            'ol_list'      : ol_edition_list,
+            'subject_list'        : subject_list,
+            'person'              : person,
+            'image_list'          : image_list,
+            'works_by_list'       : works_by_list,
+            'works_about_list'    : works_about_list,
+            'ol_list'             : ol_edition_list,
             })
       return HttpResponse(t.render(c))
