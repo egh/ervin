@@ -34,12 +34,11 @@ class MultiValuedCharField(MultiValuedField, solango.fields.CharField):
     dynamic_suffix = "s"
     type="string"
 
-class OnlineEditionDocument(solango.SearchDocument):
+class EditionDocument(solango.SearchDocument):
     title = solango.fields.CharField(copy=True)
     author = MultiValuedTextField(multi_valued=True,copy=True)
     author_facet = MultiValuedCharField(multi_valued=True,stored=False)
     translator = MultiValuedTextField(multi_valued=True,copy=True)
-    content = solango.fields.TextField(copy=True)
     mysort = solango.fields.CharField(copy=False,indexed=True,stored=False)
     subject = MultiValuedTextField(multi_valued=True,copy=True)
     subject_facet = MultiValuedCharField(multi_valued=True,stored=False)
@@ -62,6 +61,15 @@ class OnlineEditionDocument(solango.SearchDocument):
     def transform_subject_facet(self, instance):
         return [ unicode(a) for a in instance.subjects.all() ]
 
+    def transform_mysort(self, instance):
+        return instance.sort
+
+    class Media:
+        template = "edition_search.html"
+    
+class OnlineEditionDocument(EditionDocument):
+    content = solango.fields.TextField(copy=True)
+
     def transform_content(self, instance):
         if instance.html.data:
             retval = re.sub(r"<[^>]*?>", "", instance.html.data)
@@ -69,15 +77,17 @@ class OnlineEditionDocument(solango.SearchDocument):
         else:
             return None
     
-    def transform_mysort(self, instance):
-        return instance.sort
 
     def render_html(self):
         edition = OnlineEdition.objects.get(pk=self.pk_field.value)
         return render_to_string(self.template, {'document' : self,
                                                 'edition'  : edition })
 
-    class Media:
-        template = "onlineedition_search.html"
+class PhysicalEditionDocument(EditionDocument):
+    def render_html(self):
+        edition = PhysicalEdition.objects.get(pk=self.pk_field.value)
+        return render_to_string(self.template, {'document' : self,
+                                                'edition'  : edition })
 
 solango.register(OnlineEdition, OnlineEditionDocument)
+solango.register(PhysicalEdition, PhysicalEditionDocument)
