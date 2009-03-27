@@ -38,6 +38,7 @@ class OnlineEditionDocument(solango.SearchDocument):
     title = solango.fields.CharField(copy=True)
     author = MultiValuedTextField(multi_valued=True,copy=True)
     author_facet = MultiValuedCharField(multi_valued=True,stored=False)
+    translator = MultiValuedTextField(multi_valued=True,copy=True)
     content = solango.fields.TextField(copy=True)
     mysort = solango.fields.CharField(copy=False,indexed=True,stored=False)
     subject = MultiValuedTextField(multi_valued=True,copy=True)
@@ -49,8 +50,11 @@ class OnlineEditionDocument(solango.SearchDocument):
     def transform_author(self, instance):
         return [ unicode(a) for a in instance.authors.all() ]
 
-    def transform_author_facet(self, instance):
+    def transform_translator(self, instance):
         return [ unicode(a) for a in instance.authors.all() ]
+
+    def transform_author_facet(self, instance):
+        return [ unicode(a) for a in instance.authors.all() ] + [ unicode(a) for a in instance.translators.all() ]
 
     def transform_subject(self, instance):
         return [ unicode(a) for a in instance.subjects.all() ]
