@@ -16,6 +16,7 @@
 import solango
 from ervin.models import *
 from solango.solr import utils
+from django.template.loader import render_to_string
 
 class MultiValuedField(object):
     def __unicode__(self):
@@ -38,6 +39,9 @@ class OnlineEditionDocument(solango.SearchDocument):
     author = MultiValuedTextField(multi_valued=True,copy=True)
     author_facet = MultiValuedCharField(multi_valued=True,stored=False)
     content = solango.fields.TextField(copy=True)
+    mysort = solango.fields.CharField(copy=False,indexed=True,stored=False)
+    subject = MultiValuedTextField(multi_valued=True,copy=True)
+    subject_facet = MultiValuedCharField(multi_valued=True,stored=False)
 
     def transform_title(self,instance):
         return instance.title
@@ -48,11 +52,28 @@ class OnlineEditionDocument(solango.SearchDocument):
     def transform_author_facet(self, instance):
         return [ unicode(a) for a in instance.authors.all() ]
 
+    def transform_subject(self, instance):
+        return [ unicode(a) for a in instance.subjects.all() ]
+
+    def transform_subject_facet(self, instance):
+        return [ unicode(a) for a in instance.subjects.all() ]
+
     def transform_content(self, instance):
         if instance.html.data:
             retval = re.sub(r"<[^>]*?>", "", instance.html.data)
             return retval
         else:
             return None
+    
+    def transform_mysort(self, instance):
+        return instance.sort
+
+    def render_html(self):
+        edition = OnlineEdition.objects.get(pk=self.pk_field.value)
+        return render_to_string(self.template, {'document' : self,
+                                                'edition'  : edition })
+
+    class Media:
+        template = "onlineedition_search.html"
 
 solango.register(OnlineEdition, OnlineEditionDocument)
