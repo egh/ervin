@@ -14,7 +14,7 @@
 #along with Ervin.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.conf.urls.defaults import *
-import ervin.models
+import ervin.models, ervin.feeds, django.contrib.syndication.views
 
 urlpatterns = patterns('ervin.views',
     (r'^concepts$', 'generic.list_view', {'class' : ervin.models.Concept,
@@ -38,5 +38,10 @@ urlpatterns = patterns('ervin.views',
     (r'^(?P<noid>[a-z0-9-]{6})$', 'generic.by_noid'),
     (r'^(?P<olkey>a/[A-Za-z0-9-]+)$', 'ol.author'),
     (r'^(?P<olkey>b/[A-Za-z0-9-]+)$', 'ol.edition'),
+    (r"^feeds/(.*)$", django.contrib.syndication.views.feed, {
+        "feed_dict": {
+            "recent": ervin.feeds.RecentFeed,
+        }
+    }),
     (r'^$', 'main.home')
 )
