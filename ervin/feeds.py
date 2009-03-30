@@ -21,6 +21,8 @@ class RecentFeed(Feed):
     def item_updated(self, ed):
         return ed.date
     
-    def item_links(self,ed):
-        return [{'href': 'http://%s%s' % (Site.objects.get_current().domain, ed.get_absolute_url())}]
+    def item_published(self, ed):
+        return ed.date
 
+    def item_links(self, ed):
+        return [{'href': 'http://%s%s' % (Site.objects.get_current().domain, ed.get_absolute_url())}]
