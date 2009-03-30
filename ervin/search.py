@@ -20,7 +20,6 @@ from django.template.loader import render_to_string
 
 class MultiValuedField(object):
     def __unicode__(self):
-        print "*"
         if isinstance(self.value, list):
             return "".join(['<field name="%s"><![CDATA[%s]]></field>\n'%(self.get_name(), utils._from_python(v)) for v in self.value])
         else:
@@ -76,7 +75,10 @@ class OnlineEditionDocument(EditionDocument):
             return retval
         else:
             return None
-    
+
+    def is_indexable(self, instance):
+	html = instance.html
+	return (html != None) and (html.data != "")   
 
     def render_html(self):
         edition = OnlineEdition.objects.get(pk=self.pk_field.value)
