@@ -3,15 +3,7 @@ from atompub.atom import Feed
 from ervin.models import *
 import ervin.conf
 
-class RecentFeed(Feed):
-    feed_id = ervin.conf.RECENT_DOCUMENTS_FEED_ID
-    feed_title = ervin.conf.RECENT_DOCUMENTS_FEED_TITLE
-    feed_authors = [{'name':  ervin.conf.FEED_AUTHOR,
-                     'email': ervin.conf.FEED_EMAIL}]
-
-    def items(self):
-        return OnlineEdition.objects.order_by('-date').filter(content_db__gt=0)[0:20]
-
+class EditionFeed(Feed):
     def item_id(self, ed):
         return 'http://%s%s' % (Site.objects.get_current().domain, ed.get_absolute_url())
 
@@ -37,3 +29,12 @@ class RecentFeed(Feed):
     
     def item_authors(self, ed):
         return [ {'name': unicode(a)} for a in ed.authors.all() ]
+
+class RecentFeed(EditionFeed):
+    feed_id = ervin.conf.RECENT_DOCUMENTS_FEED_ID
+    feed_title = ervin.conf.RECENT_DOCUMENTS_FEED_TITLE
+    feed_authors = [{'name':  ervin.conf.FEED_AUTHOR,
+                     'email': ervin.conf.FEED_EMAIL}]
+
+    def items(self):
+        return OnlineEdition.objects.order_by('-date').filter(content_db__gt=0)[0:20]
