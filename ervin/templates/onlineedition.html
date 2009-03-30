@@ -2,32 +2,38 @@
 {% load ervin %}
 {% block html_title %}Online edition: {{ edition.title }}{% endblock %}
 {% block content %}
-<abbr class="unapi-id" title="{{ edition.pk }}"/>
-<dl>
-<dt>Title:</dt> <dd>{{ edition.title }}</dd>
 
-{% if edition.authors %}
-<dt>Authors:</dt> <dd>
-  <ul>
-  {% for person in edition.authors.all %}
-    <li>{{ person }}</li>
-  {% endfor %}
-  </ul>
-</dd>
-{% endif %}
+<div about="http://example.org/{{ edition.get_absolute_url }}" >
+  <a about="http://example.org/{{ edition.get_absolute_url }}"
+     rel="frbr:embodimentOf" href="http://example.org{{edition.expression.get_absolute_url}}" />
 
-{% if edition.subjects %}
-<dt>Subjects:</dt> <dd>
-  <ul>
-  {% for subject in edition.subjects.all %}
-    <li>{{ subject }}</li>
-  {% endfor %}
-  </ul>
-</dd>
-{% endif %}
-</dl>
+  <abbr class="unapi-id" title="{{ edition.pk }}"/>
+  <dl>
+    <dt>Title:</dt> <dd property="dc:Title">{{ edition.title }}</dd>
+    
+    {% if edition.authors.all %}
+    <dt>Authors:</dt> <dd>
+      <ul>
+        {% for person in edition.authors.all %}
+        <li property="dc:Creator">{{ person }}</li>
+        {% endfor %}
+      </ul>
+    </dd>
+    {% endif %}
+    
+    {% if edition.subjects %}
+    <dt>Subjects:</dt> <dd>
+      <ul>
+        {% for subject in edition.subjects.all %}
+        <li>{{ subject }}</li>
+        {% endfor %}
+      </ul>
+    </dd>
+    {% endif %}
+  </dl>
+</div>
 
-{{ data }}
+{# data #}
 
 {% if contents %}
 <dt>
