@@ -16,4 +16,3 @@
 from django.conf import settings
 
 settings.APPEND_SLASH = False
-settings.NOID_DIR = 'noid/'
