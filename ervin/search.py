@@ -68,6 +68,7 @@ class EditionDocument(solango.SearchDocument):
     
 class OnlineEditionDocument(EditionDocument):
     content = solango.fields.TextField(copy=True)
+    date = solango.fields.DateField(copy=True)
 
     def transform_content(self, instance):
         if instance.html.data:
@@ -76,6 +77,11 @@ class OnlineEditionDocument(EditionDocument):
         else:
             return None
 
+    def transform_date(self, instance):
+        if instance.date == '' or instance.date == None:
+            return None
+        else: return instance.date
+    
     def is_indexable(self, instance):
 	html = instance.html
 	return (html != None) and (html.data != "")   
