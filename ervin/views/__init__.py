@@ -13,6 +13,8 @@
 #You should have received a copy of the GNU General Public License
 #along with Ervin.  If not, see <http://www.gnu.org/licenses/>.
 
+import re
+
 def make_columns(data, col_count):
     l = len(data)
     r = l % col_count
@@ -30,13 +32,14 @@ def make_columns(data, col_count):
     return cols
 
 def build_groups(q, max_size):
-    startswith = ['0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
-    groups = [('0'),('1'),('2'),('3'),('4'),('5'),('6'),('7'),('8'),('9'),('a'),('b'),('c'),('d'),('e'),('f'),('g'),('h'),('i'),('j'),('k'),('l'),('m'),('n'),('o'),('p'),('q'),('r'),('s'),('t'),('u'),('v'),('w'),('x'),('y'),('z')]
+    groups = [['0'],['1'],['2'],['3'],['4'],['5'],['6'],['7'],['8'],['9'],['a'],['b'],['c'],['d'],['e'],['f'],['g'],['h'],['i'],['j'],['k'],['l'],['m'],['n'],['o'],['p'],['q'],['r'],['s'],['t'],['u'],['v'],['w'],['x'],['y'],['z']]
     letter_count = {}
-    for l in startswith:
-        letter_count[l] = q.filter(sort__startswith=l).count()
+    for group in groups:
+	letter = group[0]
+        letter_count[letter] = q.filter(sort__startswith=letter).count()
+    # remove all groups where the count is 0 to begin with
+    groups = filter(lambda group: (letter_count[group[0]] > 0), groups)
     finished = False
-    
     while (not(finished)):
         if (len(groups)) == 1:
             finished = True
@@ -61,6 +64,13 @@ def group_to_re(group):
         
 def group_to_string(group):
     if len(group) == 1:
-        return group[0].upper()
+        return readable_char(group[0])
     else:
-        return "%s-%s"%(group[0].upper(),group[-1].upper())
+        return "%s-%s"%(readable_char(group[0]),readable_char(group[-1]))
+
+def readable_char(c):
+    if (re.match('^[0-9]$', c)):
+        return '(Numerals)'
+    else:
+        return c.upper()
+        
