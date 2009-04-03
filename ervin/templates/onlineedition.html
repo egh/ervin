@@ -9,13 +9,13 @@
 
   <abbr class="unapi-id" title="{{ edition.pk }}"/>
   <dl>
-    <dt>Title:</dt> <dd property="dc:Title">{{ edition.title }}</dd>
+    <dt>Title:</dt> <dd property="dc:title">{{ edition.title }}</dd>
     
     {% if edition.authors.all %}
     <dt>Authors:</dt> <dd>
       <ul>
         {% for person in edition.authors.all %}
-        <li property="dc:Creator">{{ person }}</li>
+        <li property="dc:creator">{{ person }}</li>
         {% endfor %}
       </ul>
     </dd>
