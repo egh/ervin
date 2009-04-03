@@ -677,7 +677,8 @@ class FileContent(models.Model):
 class Page(models.Model):
     title = models.CharField(max_length=100)
     id = models.SlugField(max_length=100, unique=True, primary_key=True)
-    date = models.DateTimeField(null=True)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
     news = models.BooleanField()
     content = models.TextField(blank=True)
     blurb = models.TextField(blank=True,null=True)
