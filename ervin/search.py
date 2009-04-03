@@ -64,7 +64,7 @@ class EditionDocument(solango.SearchDocument):
         return instance.sort
 
     class Media:
-        template = "edition_search.html"
+        template = "solango/edition_search.html"
     
 class OnlineEditionDocument(EditionDocument):
     content = solango.fields.TextField(copy=True)

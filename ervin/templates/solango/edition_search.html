@@ -1,0 +1,11 @@
+<div class="searchdocument">
+<h3>
+  {% autoescape off %}
+  {% include "edition_quickbib.html" %}
+  {% endautoescape %}
+</h3>
+<p>
+{{ document.highlight|safe }}
+</p>
+</div>
+
