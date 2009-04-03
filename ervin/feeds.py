@@ -20,7 +20,8 @@ class EditionFeed(Feed):
         return [{'href': 'http://%s%s' % (Site.objects.get_current().domain, ed.get_absolute_url())}]
     
     def item_content(self, ed):
-        return ({'type':'html'}, ed.html.data)
+        if hasattr(ed, 'html') and hasattr(ed.html, 'data'):
+            return ({'type':'html'}, ed.html.data)
     
     def item_source(self, ed):
         if ed.work.source:
@@ -30,7 +31,7 @@ class EditionFeed(Feed):
     def item_authors(self, ed):
         return [ {'name': unicode(a)} for a in ed.authors.all() ]
 
-class RecentFeed(EditionFeed):
+class RecentDocumentsFeed(EditionFeed):
     feed_id = ervin.conf.RECENT_DOCUMENTS_FEED_ID
     feed_title = ervin.conf.RECENT_DOCUMENTS_FEED_TITLE
     feed_authors = [{'name':  ervin.conf.FEED_AUTHOR,
@@ -38,3 +39,12 @@ class RecentFeed(EditionFeed):
 
     def items(self):
         return OnlineEdition.objects.order_by('-date').filter(content_db__gt=0)[0:20]
+
+class RecentPublicationsFeed(EditionFeed):
+    feed_id = ervin.conf.RECENT_PUBLICATIONS_FEED_ID
+    feed_title = ervin.conf.RECENT_PUBLICATIONS_FEED_TITLE
+    feed_authors = [{'name':  ervin.conf.FEED_AUTHOR,
+                     'email': ervin.conf.FEED_EMAIL}]
+
+    def items(self):
+        return PhysicalEdition.objects.order_by('-date_sort')[0:10]

@@ -40,7 +40,7 @@ urlpatterns = patterns('ervin.views',
     (r'^(?P<olkey>b/[A-Za-z0-9-]+)$', 'ol.edition'),
     (r"^feeds/(.*)$", django.contrib.syndication.views.feed, {
       "feed_dict": {
-        "recent": ervin.feeds.RecentFeed,
+        "recent-documents": ervin.feeds.RecentDocumentsFeed,
       }
     }),
     (r'^search/', include('solango.urls')),
