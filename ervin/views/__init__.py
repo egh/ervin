@@ -32,23 +32,27 @@ def make_columns(data, col_count):
 def build_groups(q, max_size):
     startswith = ['0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
     groups = [('0'),('1'),('2'),('3'),('4'),('5'),('6'),('7'),('8'),('9'),('a'),('b'),('c'),('d'),('e'),('f'),('g'),('h'),('i'),('j'),('k'),('l'),('m'),('n'),('o'),('p'),('q'),('r'),('s'),('t'),('u'),('v'),('w'),('x'),('y'),('z')]
-    count = {}
+    letter_count = {}
     for l in startswith:
-        count[l] = q.filter(sort__startswith=l).count()
+        letter_count[l] = q.filter(sort__startswith=l).count()
     finished = False
     
     while (not(finished)):
-        # start with a count of the size of the total groups so far
-        group_count = [ sum([ count[l] for l in groups[i] ])
-                        for i in range(0,len(groups)) ]
-        # we want to sort so that we first combine the smallest groups
-        def my_cmp(a,b):
-            return int((group_count[a]+group_count[a+1])-(group_count[b]+group_count[b+1]))
-        i = sorted(range(0, len(groups)-1), my_cmp)[0]
-        # if the first combined size will be less than max_size, group it
-        if (group_count[i] + group_count[i+1]) < max_size:
-            groups = groups[:i] + [(groups[i] + groups[i+1])] + groups[i+2:]
+        if (len(groups)) == 1:
+            finished = True
         else:
+            # start with a count of the size of each of the groups so far
+            group_count = [ sum([ letter_count[letter] for letter in groups[i] ])
+                            for i in range(0,len(groups)) ]
+            # we want to sort so that the smallest groups are grouped first
+            def my_cmp(a,b):
+                return int((group_count[a]+group_count[a+1])-(group_count[b]+group_count[b+1]))
+            # find the index of the first (smallest) group
+            i = sorted(range(0, len(groups)-1), my_cmp)[0]
+            # if the smallest group combined with its neighbor to the right will be less than max_size, group it
+            if (group_count[i] + group_count[i+1]) < max_size:
+                groups = groups[:i] + [(groups[i] + groups[i+1])] + groups[i+2:]
+            else:
                 finished = True
     return groups
 
