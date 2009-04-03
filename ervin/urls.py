@@ -41,6 +41,7 @@ urlpatterns = patterns('ervin.views',
     (r"^feeds/(.*)$", django.contrib.syndication.views.feed, {
       "feed_dict": {
         "recent-documents": ervin.feeds.RecentDocumentsFeed,
+        "news" : ervin.feeds.NewsFeed,
       }
     }),
     (r'^search/', include('solango.urls')),
