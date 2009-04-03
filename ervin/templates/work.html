@@ -5,12 +5,12 @@
 
 <div about="{{work.get_absolute_url}}" >
   <dl>
-    <dt>Work title</dt><dd property="dc:Title">{{ work.title }}</dd>
+    <dt>Work title</dt><dd property="dc:title">{{ work.title }}</dd>
     <dt>Work authors</dt>
     <dd>
       <ul>
         {% for author in work.authors.all %}
-        <li xmlns="dc:Author">{{ author | inverted_name }}</li>
+        <li xmlns="dc:author">{{ author | inverted_name }}</li>
         {% endfor %}
       </ul>
     </dd>
