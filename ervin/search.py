@@ -13,7 +13,7 @@
 #You should have received a copy of the GNU General Public License
 #along with Ervin.  If not, see <http://www.gnu.org/licenses/>.
 
-import solango, os
+import solango, os, ervin.conf
 from ervin.models import *
 from solango.solr import utils
 from django.template.loader import render_to_string
@@ -72,7 +72,7 @@ class OnlineEditionDocument(EditionDocument):
 
     def transform_content(self, instance):
         if instance.pdf:
-            p = os.popen("%s %s -"%(conf.PDFTOTEXT_BIN, instance.pdf.filename.path))
+            p = os.popen("%s %s -"%(ervin.conf.PDFTOTEXT_BIN, instance.pdf.filename.path))
             retval = re.sub(u"[\u000c]", "", p.read())
             p.close()
             return retval

@@ -42,7 +42,7 @@ class RemoteMinter(Minter):
 
 class LocalMinter(Minter):
     def read_ids(self):
-        cmd = "cd %s && noid mint %d" % (self.location, self.at_once)
+        cmd = "cd %s && %s mint %d" % (self.location, ervin.conf.NOID_BIN, self.at_once)
         
         return popen(cmd).read()
 
