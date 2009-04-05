@@ -13,7 +13,7 @@
 #You should have received a copy of the GNU General Public License
 #along with Ervin.  If not, see <http://www.gnu.org/licenses/>.
 
-import solango
+import solango, os
 from ervin.models import *
 from solango.solr import utils
 from django.template.loader import render_to_string
@@ -71,9 +71,13 @@ class OnlineEditionDocument(EditionDocument):
     date = solango.fields.DateField(copy=True)
 
     def transform_content(self, instance):
-        if instance.html.data:
-            retval = re.sub(r"<[^>]*?>", "", instance.html.data)
+        if instance.pdf:
+            p = os.popen("%s %s -"%(conf.PDFTOTEXT_BIN, instance.pdf.filename.path))
+            retval = re.sub(u"[\u000c]", "", p.read())
+            p.close()
             return retval
+        elif instance.html.data:
+            return re.sub(r"<[^>]*?>", "", instance.html.data)
         else:
             return None
 
@@ -84,7 +88,7 @@ class OnlineEditionDocument(EditionDocument):
     
     def is_indexable(self, instance):
 	html = instance.html
-	return (html != None) and (html.data != "")   
+	return (instance.pdf) or ((html != None) and (html.data != ""))
 
     def render_html(self):
         edition = OnlineEdition.objects.get(pk=self.pk_field.value)
