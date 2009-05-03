@@ -65,7 +65,7 @@ class EditionFeed(Feed):
             return ({'type':'html'}, ed.html.data)
         elif self._is_image(ed):
             uri = 'http://%s%s?x=400'%(Site.objects.get_current().domain, ed.image.get_absolute_url())
-            return ({'type': 'html'}, '<p><img alt="%s" src="%s"></p>'%(ed.image.title, uri))
+            return ({'type': 'html'}, '<p><img alt="%s" src="%s"></p>'%(ed.title, uri))
         else:
             return None
 
