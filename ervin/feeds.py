@@ -32,6 +32,12 @@ class NewsFeed(Feed):
         return ({'type':'html'}, item.content)
     
 class EditionFeed(Feed):
+    def _is_image(self, ed):
+        return hasattr(ed, 'image') and hasattr(ed.image, 'mimetype')
+
+    def _is_html(self, ed):
+        return hasattr(ed, 'html') and hasattr(ed.html, 'data')
+
     def item_id(self, ed):
         return 'http://%s%s' % (Site.objects.get_current().domain, ed.get_absolute_url())
 
@@ -48,14 +54,15 @@ class EditionFeed(Feed):
         return [{'href': 'http://%s%s' % (Site.objects.get_current().domain, ed.get_absolute_url())}]
     
     def item_content(self, ed):
-        if hasattr(ed, 'html') and hasattr(ed.html, 'data'):
+        if self._is_html(ed):
             return ({'type':'html'}, ed.html.data)
-        elif hasattr(ed, 'image') and hasattr(ed.image, 'mimetype'):
+        elif self._is_image(ed):
             mt = ed.image.mimetype
             uri = 'http://%s%s?x=400'%(Site.objects.get_current().domain, ed.image.get_absolute_url())
             return ({"type": mt, "src": uri}, "")
         else:
             return None
+
     def item_source(self, ed):
         if ed.work.source:
             return {'title':ed.work.source}
@@ -64,6 +71,11 @@ class EditionFeed(Feed):
     def item_authors(self, ed):
         return [ {'name': unicode(a)} for a in ed.authors.all() ]
 
+    def item_summary(self, ed):
+        if self._is_image(ed):
+            return ed.title
+        
+        
 class RecentDocumentsFeed(EditionFeed):
     feed_id = ervin.conf.RECENT_DOCUMENTS_FEED_ID
     feed_title = ervin.conf.RECENT_DOCUMENTS_FEED_TITLE
