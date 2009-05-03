@@ -50,7 +50,12 @@ class EditionFeed(Feed):
     def item_content(self, ed):
         if hasattr(ed, 'html') and hasattr(ed.html, 'data'):
             return ({'type':'html'}, ed.html.data)
-    
+        elif hasattr(ed, 'image') and hasattr(ed.image, 'mimetype'):
+            mt = ed.image.mimetype
+            uri = 'http://%s%s?x=400'%(Site.objects.get_current().domain, ed.image.get_absolute_url())
+            return ({"type": mt, "src": uri}, "")
+        else:
+            return None
     def item_source(self, ed):
         if ed.work.source:
             return {'title':ed.work.source}
