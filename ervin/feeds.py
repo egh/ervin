@@ -52,12 +52,6 @@ class EditionFeed(Feed):
 
     def item_links(self, ed):
         retval = [{'href': 'http://%s%s' % (Site.objects.get_current().domain, ed.get_absolute_url())}]
-        if self._is_image(ed):
-            retval.append({'rel': 'self', 
-                           'href': 'http://%s%s'%(Site.objects.get_current().domain, ed.image.get_absolute_url()),
-                           'type': ed.image.mimetype, 
-                           'title': ed.title,
-                           'length': ed.image.size})
         return retval
 
     def item_content(self, ed):
