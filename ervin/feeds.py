@@ -51,15 +51,21 @@ class EditionFeed(Feed):
         return ed.date
 
     def item_links(self, ed):
-        return [{'href': 'http://%s%s' % (Site.objects.get_current().domain, ed.get_absolute_url())}]
-    
+        retval = [{'href': 'http://%s%s' % (Site.objects.get_current().domain, ed.get_absolute_url())}]
+        if self._is_image(ed):
+            retval.append({'rel': 'self', 
+                           'href': 'http://%s%s'%(Site.objects.get_current().domain, ed.image.get_absolute_url()),
+                           'type': ed.image.mimetype, 
+                           'title': ed.title,
+                           'length': ed.image.size})
+        return retval
+
     def item_content(self, ed):
         if self._is_html(ed):
             return ({'type':'html'}, ed.html.data)
         elif self._is_image(ed):
-            mt = ed.image.mimetype
             uri = 'http://%s%s?x=400'%(Site.objects.get_current().domain, ed.image.get_absolute_url())
-            return ({"type": mt, "src": uri}, "")
+            return ({'type': 'html'}, '<p><img alt="%s" src="%s"></p>'%(ed.image.title, uri))
         else:
             return None
 
@@ -70,10 +76,6 @@ class EditionFeed(Feed):
     
     def item_authors(self, ed):
         return [ {'name': unicode(a)} for a in ed.authors.all() ]
-
-    def item_summary(self, ed):
-        if self._is_image(ed):
-            return ed.title
         
         
 class RecentDocumentsFeed(EditionFeed):
