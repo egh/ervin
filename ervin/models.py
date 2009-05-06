@@ -19,8 +19,8 @@ from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
 from noid import LocalMinter, NoidField
-import re, os, md5, ervin.templatetags.ervin, isbn
-
+import re, os, md5, ervin.templatetags.ervin, isbn, libxml2, libxslt, ervin.conf
+    
 class FreeformDateField(models.CharField):
     def get_internal_type(self):
         return models.CharField.__name__
@@ -354,6 +354,26 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
     def _html(self): return self._get_by_mimetype(r'text/html')
     html = property(_html)
 
+    try:
+        _style = libxslt.parseStylesheetDoc(libxml2.parseFile(ervin.conf.HTML_PROCESS_XSLT_FILE))
+    except:
+        _style = None
+
+    def _processed_html(self):
+        if (self._style == None): 
+            return self.html.data
+        else:
+            try:
+                doc = libxml2.parseDoc("<div>%s</div>"%(self.html.data))
+                result = self._style.applyStylesheet(doc, None)
+                retval = self._style.saveResultToString(result)
+                doc.freeDoc()
+                result.freeDoc()
+                return retval
+            except:
+                return self.html.data
+    processed_html = property(_processed_html)
+    
     def _pdf(self): return self._get_by_mimetype(r'application/pdf')
     pdf = property(_pdf)
 
@@ -684,7 +704,7 @@ class Page(models.Model):
     blurb = models.TextField(blank=True,null=True)
     def __unicode__(self): return "%s (%s)"%(self.title,self.get_absolute_url())
     def get_absolute_url(self): return "/doc/%s"%(self.pk)
-
+        
 class Section(models.Model):
     id = models.CharField(max_length=6,primary_key=True)
     name = models.CharField(max_length=100)

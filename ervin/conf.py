@@ -11,3 +11,4 @@ RECENT_PUBLICATIONS_FEED_TITLE = getattr(settings, "ERVIN_RECENT_PUBLICATIONS_FE
 NOID_DIR = getattr(settings, 'ERVIN_NOID_DIR', 'noid/')
 NOID_BIN = getattr(settings, 'ERVIN_NOID_BIN', 'noid')
 PDFTOTEXT_BIN = getattr(settings, 'ERVIN_PDFTOTEXT_BIN', 'pdftotext')
+HTML_PROCESS_XSLT_FILE = getattr(settings, "ERVIN_HTML_PROCESS_XSLT_FILE", None)
