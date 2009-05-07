@@ -702,13 +702,13 @@ class Page(models.Model):
     updated = models.DateTimeField(editable=False)
     news = models.BooleanField()
     content = models.TextField(blank=True)
-    blurb = models.TextField(blank=True,null=True)
+    blurb = models.TextField(blank=True)
     def __unicode__(self): return "%s (%s)"%(self.title,self.get_absolute_url())
     def get_absolute_url(self): return "/doc/%s"%(self.pk)
 
     def save(self):
-        if self.id == None:
-            self.created= datetime.datetime.now()
+        if not self.id:
+            self.created = datetime.datetime.now()
         self.updated = datetime.datetime.now()
         super(Page, self).save()
         
