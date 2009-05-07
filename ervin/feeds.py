@@ -11,7 +11,7 @@ class NewsFeed(Feed):
                      'email': ervin.conf.FEED_EMAIL}]
 
     def items(self):
-        return Page.objects.filter(news=True).order_by('-created')[0:10]
+        return Page.objects.filter(news=True).order_by('-published')[0:10]
 
     def item_id(self, item):
         return 'http://%s%s' % (Site.objects.get_current().domain, item.get_absolute_url())
@@ -20,10 +20,10 @@ class NewsFeed(Feed):
         return item.title
 
     def item_updated(self, item):
-        return item.updated
+        return item.published
     
     def item_published(self, item):
-        return item.created
+        return item.published
 
     def item_links(self, item):
         return [{'href': 'http://%s%s' % (Site.objects.get_current().domain, item.get_absolute_url())}]

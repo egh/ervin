@@ -19,7 +19,7 @@ from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
 from noid import LocalMinter, NoidField
-import re, os, md5, ervin.templatetags.ervin, isbn, libxml2, libxslt, ervin.conf
+import re, os, md5, ervin.templatetags.ervin, isbn, libxml2, libxslt, ervin.conf,datetime
     
 class FreeformDateField(models.CharField):
     def get_internal_type(self):
@@ -697,13 +697,20 @@ class FileContent(models.Model):
 class Page(models.Model):
     title = models.CharField(max_length=100)
     id = models.SlugField(max_length=100, unique=True, primary_key=True)
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
+    published = models.DateTimeField(default=datetime.datetime.now)
+    created = models.DateTimeField(editable=False)
+    updated = models.DateTimeField(editable=False)
     news = models.BooleanField()
     content = models.TextField(blank=True)
     blurb = models.TextField(blank=True,null=True)
     def __unicode__(self): return "%s (%s)"%(self.title,self.get_absolute_url())
     def get_absolute_url(self): return "/doc/%s"%(self.pk)
+
+    def save(self):
+        if self.id == None:
+            self.created= datetime.datetime.now()
+        self.updated = datetime.datetime.now()
+        super(Page, self).save()
         
 class Section(models.Model):
     id = models.CharField(max_length=6,primary_key=True)
