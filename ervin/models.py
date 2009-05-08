@@ -170,6 +170,11 @@ WORK_FORMS = (('series', 'Serial'),
               ('monograph', 'Monograph'),
               ('image', 'Image'))
 
+class WorkWithContentManager(models.Manager):
+    def get_query_set(self):
+        return super(WorkWithContentManager, self).get_query_set().\
+            exclude(Q(expression__onlineedition=None) & Q(parts=None))
+
 class Work(models.Model, SubjectMixin, BibSortMixin):
     id = NoidField(primary_key=True)
     work_title = models.TextField(max_length=200,blank=True,db_column='title')
@@ -186,6 +191,9 @@ class Work(models.Model, SubjectMixin, BibSortMixin):
     sort = models.CharField(max_length=128,editable=False)
     form = models.CharField(max_length=128, choices=WORK_FORMS)
     source = models.TextField(blank=True)
+
+    objects = models.Manager()
+    with_content = WorkWithContentManager()
 
     def _expression(self):
         if self.expression_set.count() > 0:
