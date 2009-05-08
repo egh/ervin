@@ -340,14 +340,6 @@ class Expression(models.Model, SubjectMixin,BibSortMixin):
         ordering=['sort']
         verbose_name = "Translation"
 
-# class ExpressionTranslator(models.Model):
-#     person = models.ForeignKey(Person)
-#     expression = models.ForeignKey(Expression)
-
-#     class Meta:
-#         db_table = 'ervin_expression_translators'
-#         verbose_name = "Translator"
-
 class OnlineEditionWithContentManager(models.Manager):
     def get_query_set(self):
         # select editions, but exclude if a) there is no online or db content
