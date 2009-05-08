@@ -17,8 +17,7 @@ from django.template import Context, loader
 from ervin.models import *
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.db.models import Q
-from django.core.cache import cache
-from ervin.views import make_columns, build_groups, group_to_re, group_to_string
+from ervin.views import make_columns, build_groups, group_to_re, group_to_string, get_groups
 
 def by_noid(request, *args, **kwargs):
     work = Work.objects.get(id=kwargs['noid'])
@@ -35,12 +34,9 @@ def detail(work, request, *args, **kwargs):
     	return HttpResponse(t.render(c))
 
 def online_works(request, *args, **kwargs):
-    works = Work.objects.exclude(Q(expression__onlineedition=None) & Q(parts=None)).distinct().all()
-    groups = cache.get('document_groups')
-    if groups == None:
-        groups = build_groups(works,50)
-        cache.set('document_groups', groups, 600)
     page = int(request.GET.get('page','1'))
+    works = Work.with_content.distinct().all()
+    groups = get_groups('document_groups', works, 50)
     works = works.filter(sort__iregex=group_to_re(groups[page-1]))
     t = loader.get_template('work_list.html')
     c = Context({ "work_list" : works,
