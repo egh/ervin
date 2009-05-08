@@ -1,7 +1,6 @@
 from django.contrib.sites.models import Site
 from atompub.atom import Feed
 from ervin.models import *
-from django.db.models import Q
 import ervin.conf
 
 class NewsFeed(Feed):
@@ -79,12 +78,7 @@ class RecentDocumentsFeed(EditionFeed):
                      'email': ervin.conf.FEED_EMAIL}]
 
     def items(self):
-        retval = []
-        for o in OnlineEdition.objects.order_by('-date')[0:30]:
-            if len(o.content) != 0:
-                retval.append(o)
-            if len(retval) == 20: break
-        return retval
+        return OnlineEdition.with_content.order_by('-date')[0:20]
 
 class RecentPublicationsFeed(EditionFeed):
     feed_id = ervin.conf.RECENT_PUBLICATIONS_FEED_ID
