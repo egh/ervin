@@ -14,6 +14,7 @@
 #along with Ervin.  If not, see <http://www.gnu.org/licenses/>.
 
 import re
+from django.core.cache import cache
 
 def make_columns(data, col_count):
     l = len(data)
@@ -67,6 +68,13 @@ def group_to_string(group):
         return readable_char(group[0])
     else:
         return "%s-%s"%(readable_char(group[0]),readable_char(group[-1]))
+
+def get_groups(key, q, max_size):
+    groups = cache.get(key)
+    if groups == None:
+        groups = build_groups(q, max_size)
+        cache.set(key, groups, 600)
+    return groups
 
 def readable_char(c):
     if (re.match('^[0-9]$', c)):
