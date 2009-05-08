@@ -707,7 +707,7 @@ class Page(models.Model):
     def get_absolute_url(self): return "/doc/%s"%(self.pk)
 
     def save(self):
-        if not self.id:
+        if not self.created:
             self.created = datetime.datetime.now()
         self.updated = datetime.datetime.now()
         super(Page, self).save()
