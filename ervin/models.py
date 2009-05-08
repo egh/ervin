@@ -19,6 +19,7 @@ from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
 from noid import LocalMinter, NoidField
+from django.db.models import Q
 import re, os, md5, ervin.templatetags.ervin, isbn, libxml2, libxslt, ervin.conf,datetime
     
 class FreeformDateField(models.CharField):
@@ -339,6 +340,14 @@ class Expression(models.Model, SubjectMixin,BibSortMixin):
 #         db_table = 'ervin_expression_translators'
 #         verbose_name = "Translator"
 
+class OnlineEditionWithContentManager(models.Manager):
+    def get_query_set(self):
+        # select editions, but exclude if a) there is no online or db content
+        # and b) there is either no online content & the file content is not of type application/pdf
+        return super(OnlineEditionWithContentManager, self).get_query_set().\
+            exclude(Q(content_db=None) & Q(content_file=None)).\
+            exclude(Q(content_db=None) & ~Q(content_file__mimetype='application/pdf'))
+
 class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
     id = NoidField(primary_key=True)
     date = models.DateTimeField(null=True,blank=True)
@@ -346,6 +355,9 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
     edition_title = models.TextField(max_length=200, editable=False, blank=True,db_column='title')
     #numbering = models.CharField("Numbering", max_length=128, blank=True)
     sort = models.CharField(max_length=128,editable=False)
+
+    objects = models.Manager()
+    with_content = OnlineEditionWithContentManager()
 
     def _first_author(self): 
         return self.work.first_author
