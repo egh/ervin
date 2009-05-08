@@ -195,6 +195,10 @@ class Work(models.Model, SubjectMixin, BibSortMixin):
     objects = models.Manager()
     with_content = WorkWithContentManager()
 
+    def _work(self):
+        return self
+    work = property(_work)
+
     def _expression(self):
         if self.expression_set.count() > 0:
             return self.expression_set.all()[0]
