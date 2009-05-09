@@ -21,12 +21,12 @@ from ervin.ol import ThingAuthor, ThingEdition
 
 def author(request,*args,**kwargs):
     author = ThingAuthor(kwargs['olkey'])
-    t = loader.get_template('ol_author.html')
+    t = loader.get_template('ervin/ol_author.html')
     c = Context({ "author" : author })
     return HttpResponse(t.render(c))
 
 def edition(request,*args,**kwargs):
     edition = ThingEdition(kwargs['olkey'])
-    t = loader.get_template('ol_edition.html')
+    t = loader.get_template('ervin/ol_edition.html')
     c = Context({ "edition" : edition })
     return HttpResponse(t.render(c))

@@ -100,28 +100,28 @@ views = {
 
     # group 2
     Person : ervin.views.person.detail,
-    Organization : 'organization.html',
+    Organization : 'ervin/organization.html',
     
     # group 3
-    FrbrObject : 'object.html',
-    Concept : 'concept.html',
-    Event : 'event.html',
-    Place : 'place.html',
+    FrbrObject : 'ervin/object.html',
+    Concept : 'ervin/concept.html',
+    Event : 'ervin/event.html',
+    Place : 'ervin/place.html',
     
     #content
     FileContent : showfile }
           
-list_views = { Work : 'work_list.html',
-               OnlineEdition : 'onlineedition_list.html',
-               PhysicalEdition : 'physicaledition_list.html',
+list_views = { Work : 'ervin/work_list.html',
+               OnlineEdition : 'ervin/onlineedition_list.html',
+               PhysicalEdition : 'ervin/physicaledition_list.html',
                
-               Person : 'person_list.html',
-               Organization : 'organization_list.html',
+               Person : 'ervin/person_list.html',
+               Organization : 'ervin/organization_list.html',
                
-               Concept : 'concept_list.html',
-               Event : 'event_list.html',
-               FrbrObject : 'object_list.html',
-               Place : 'place_list.html' }
+               Concept : 'ervin/concept_list.html',
+               Event : 'ervin/event_list.html',
+               FrbrObject : 'ervin/object_list.html',
+               Place : 'ervin/place_list.html' }
 
 variable_names = { OnlineEdition : 'edition',
                    PhysicalEdition : 'edition',

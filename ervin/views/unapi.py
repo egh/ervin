@@ -23,7 +23,7 @@ from ervin.models import *
 from ervin.views.generic import *
 
 def list_formats(request,iden):
-        t = loader.get_template('unapi/format_list.xml')
+        t = loader.get_template('ervin/unapi/format_list.xml')
         c = Context({'id': iden})
         return HttpResponse(t.render(c), status=300,
                             mimetype='application/xml')
@@ -43,7 +43,7 @@ def unapi(request):
                 o = find_one(CLASSES, pk=request.GET['id'])
                 if o == None: return HttpResponse(status=404)
                 class_name = o.__class__.__name__.lower()
-		t = loader.get_template('unapi/%s.%s.xml' % (class_name, format))
+		t = loader.get_template('ervin/unapi/%s.%s.xml' % (class_name, format))
                 c = Context({ class_name : o,
                               'base_url' : "http://%s"%(Site.objects.get_current().domain) })
                 return HttpResponse(t.render(c),

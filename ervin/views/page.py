@@ -8,7 +8,7 @@ def by_id(*args, **kwargs):
     if len(pages) == 0:    
         return HttpResponseNotFound('Not found')
     else:
-        t = loader.get_template('page.html')
+        t = loader.get_template('ervin/page.html')
         c = Context({ 'page' : pages[0] })
         return HttpResponse(t.render(c))
     

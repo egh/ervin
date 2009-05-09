@@ -20,12 +20,12 @@ from django.http import HttpResponse
 def detail(ed, request, *args,**kwargs):
     if kwargs.has_key('ext') and type.has_key(kwargs['ext']):
         type = type_map[kwargs['ext']]
-    t = loader.get_template('physicaledition.html')
+    t = loader.get_template('ervin/physicaledition.html')
     c = Context({ 'edition' : ed})
     return HttpResponse(t.render(c))
     
 def available(*args,**kwargs):
     physicaledition_list = PhysicalEdition.objects.exclude(available_uk=False).exclude(available_us=False).all()
-    t = loader.get_template('physicaledition_list.html')
+    t = loader.get_template('ervin/physicaledition_list.html')
     c = Context({ 'physicaledition_list' : physicaledition_list})
     return HttpResponse(t.render(c))

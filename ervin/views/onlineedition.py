@@ -26,7 +26,7 @@ type_map = { 'pdf' : 'application/pdf',
 def detail(ed, request, *args,**kwargs):
     if kwargs.has_key('ext') and type.has_key(kwargs['ext']):
         type = type_map[kwargs['ext']]
-    t = loader.get_template('onlineedition.html')
+    t = loader.get_template('ervin/onlineedition.html')
     c = Context({ 'edition' : ed})
     if len(ed.content_remote.all()) == 0 and len(ed.content_db.all()) == 1 and len(ed.content_file.all()) == 0:
         c['data'] = ed.content_db.all()[0].data
@@ -42,7 +42,7 @@ def detail(ed, request, *args,**kwargs):
 def recently_online(request, *args, **kwargs):
     page_n = int(request.GET.get('page','1'))
     edition_paginator = Paginator(OnlineEdition.with_content.order_by('-date'), 20,'recently_online').page(page_n)
-    t = loader.get_template('work_list.html')
+    t = loader.get_template('ervin/work_list.html')
     c = Context({ 
             "page" : page
             })

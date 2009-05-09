@@ -38,7 +38,7 @@ def detail(person, request, *args,**kwargs):
          ol_edition_list = ThingAuthor(person.olkey).fulltext_editions()
       else: ol_edition_list = None
       
-      t = loader.get_template('person.html')
+      t = loader.get_template('ervin/person.html')
       c = Context({
             'subject_list'        : subject_list,
             'person'              : person,

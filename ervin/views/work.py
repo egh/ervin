@@ -28,7 +28,7 @@ def detail(work, request, *args, **kwargs):
     if work.expression_set.all().count() == 1:
         return HttpResponseRedirect(work.expression_set.all()[0].get_absolute_url())
     else:
-	t = loader.get_template('work.html')
+	t = loader.get_template('ervin/work.html')
 	c = Context({
                 "work": work
                 })
@@ -37,7 +37,7 @@ def detail(work, request, *args, **kwargs):
 def online_works(request, *args, **kwargs):
     page_n = int(request.GET.get('page','1'))
     page = GroupingPaginator(Work.with_content.distinct().all(), 50, 'online_works_groups').page(page_n)
-    t = loader.get_template('work_list_grouped.html')
+    t = loader.get_template('ervin/work_list_grouped.html')
     c = Context({ 
             "page" : page
             })

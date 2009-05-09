@@ -29,7 +29,7 @@ def detail(expression, request, *args, **kwargs):
     if len(editions) == 1 and expression.work.parts.count() == 0:
         return HttpResponseRedirect(editions[0].get_absolute_url())
     else:
-	t = loader.get_template('expression.html')
+	t = loader.get_template('ervin/expression.html')
 	c = Context({
           'expression': expression
         })
