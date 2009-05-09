@@ -17,6 +17,7 @@ from django.template import Context, loader
 from ervin.models import *
 from ervin.views.generic import *
 from django.http import HttpResponse
+from django.core.paginator import Paginator
 
 type_map = { 'pdf' : 'application/pdf',
              'html' : 'text/html',
@@ -38,3 +39,11 @@ def detail(ed, request, *args,**kwargs):
         c['contents'] = contents
     return HttpResponse(t.render(c))
     
+def recently_online(request, *args, **kwargs):
+    page_n = int(request.GET.get('page','1'))
+    edition_paginator = Paginator(OnlineEdition.with_content.order_by('-date'), 20,'recently_online').page(page_n)
+    t = loader.get_template('work_list.html')
+    c = Context({ 
+            "page" : page
+            })
+    return HttpResponse(t.render(c))
