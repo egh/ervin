@@ -17,29 +17,28 @@ from django.template import Context, loader
 from ervin.models import *
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.db.models import Q
-from ervin.views import make_columns, build_groups, group_to_re, group_to_string, get_groups
+from ervin.views import make_columns
+from ervin.grouping_paginator import GroupingPaginator
 
 def by_noid(request, *args, **kwargs):
     work = Work.objects.get(id=kwargs['noid'])
     return detail(work, request, *args, **kwargs)
 
 def detail(work, request, *args, **kwargs):
-    if len(work.expression_set.all()) == 1:
+    if work.expression_set.all().count() == 1:
         return HttpResponseRedirect(work.expression_set.all()[0].get_absolute_url())
     else:
 	t = loader.get_template('work.html')
 	c = Context({
-                'work': work
+                "work": work
                 })
     	return HttpResponse(t.render(c))
 
 def online_works(request, *args, **kwargs):
-    page = int(request.GET.get('page','1'))
-    works = Work.with_content.distinct().all()
-    groups = get_groups('document_groups', works, 50)
-    works = works.filter(sort__iregex=group_to_re(groups[page-1]))
-    t = loader.get_template('work_list.html')
-    c = Context({ "work_list" : works,
-                  "groups"    : [ group_to_string(g) for g in groups ],
-                  'page'      : page })
+    page_n = int(request.GET.get('page','1'))
+    page = GroupingPaginator(Work.with_content.distinct().all(), 50, 'online_works_groups').page(page_n)
+    t = loader.get_template('work_list_grouped.html')
+    c = Context({ 
+            "page" : page
+            })
     return HttpResponse(t.render(c))
