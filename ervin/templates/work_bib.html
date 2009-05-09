@@ -1,12 +1,11 @@
 {% load ervin %}
 {% if person %}
-  {{ work.authors.all|inverted_name_first_list_linked:person.pk|with_final_period }}
+  {{ work.work.authors.all|inverted_name_first_list_linked:person.pk|with_final_period }}
 {% else %}
-  {{ work.authors.all|inverted_name_first_list_linked|with_final_period }}
+  {{ work.work.authors.all|inverted_name_first_list_linked|with_final_period }}
 {% endif %}
-<a href="{{work.get_absolute_url}}"><em>{{work.title}}</em></a>.
-{% if work.publisher %}
-  {{ work.publisher }}
+<a href="{{work.work.get_absolute_url}}"><em>{{work.work.title}}</em></a>.
+{% if work.work.publisher %}
+  {{ work.work.publisher }}
 {% endif %}
-{% ifequal work.form "image" %}[Image]{% endifequal %}
-
+{% ifequal work.work.form "image" %}[Image]{% endifequal %}
