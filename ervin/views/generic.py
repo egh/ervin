@@ -18,7 +18,7 @@ from ervin.models import *
 from django.http import HttpResponse,HttpResponseNotFound
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.cache import cache
-from ervin.views import make_columns, build_groups, group_to_re, group_to_string
+from ervin.views import make_columns
 import re, ervin.views.person, ervin.views.work, ervin.views.expression, ervin.views.onlineedition, ervin.views.physicaledition
 
 def get_sections():
