@@ -14,7 +14,8 @@
 #along with Ervin.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.conf.urls.defaults import *
-import ervin.models, ervin.feeds, django.contrib.syndication.views
+import ervin.models, ervin.feeds, django.contrib.syndication.views, \
+       django.views.generic.simple
 
 urlpatterns = patterns('ervin.views',
     (r'^concepts$', 'generic.list_view', {'class' : ervin.models.Concept,
@@ -36,6 +37,10 @@ urlpatterns = patterns('ervin.views',
     (r'^unapi$', 'unapi.unapi'),
     (r'^doc/(?P<id>.*)$', 'page.by_id'),
     (r'^(?P<noid>[a-z0-9-]{6})$', 'generic.by_noid'),
+    #redirect noids with a trailing slash
+    (r'^(?P<noid>[a-z0-9-]{6})/$',
+      django.views.generic.simple.redirect_to,
+      {'url': '/%(noid)s'}),
     (r'^(?P<olkey>a/[A-Za-z0-9-]+)$', 'ol.author'),
     (r'^(?P<olkey>b/[A-Za-z0-9-]+)$', 'ol.edition'),
     (r"^feeds/(.*)$", django.contrib.syndication.views.feed, {
