@@ -5,9 +5,10 @@ import re
 class GroupingPaginator(django.core.paginator.Paginator):
     _GROUP_START = [['0'],['1'],['2'],['3'],['4'],['5'],['6'],['7'],['8'],['9'],['a'],['b'],['c'],['d'],['e'],['f'],['g'],['h'],['i'],['j'],['k'],['l'],['m'],['n'],['o'],['p'],['q'],['r'],['s'],['t'],['u'],['v'],['w'],['x'],['y'],['z']]
 
-    def __init__(self, object_list, per_page, key=None):
+    def __init__(self, object_list, per_page, key=None, allow_empty_first_page=True):
         self.object_list = object_list
         self.per_page = per_page
+        self.allow_empty_first_page = allow_empty_first_page
         self._groups = cache.get(key)
         if self._groups == None:
             self._groups = self._build_groups(self.object_list, self.per_page)
@@ -53,12 +54,16 @@ class GroupingPaginator(django.core.paginator.Paginator):
                 def my_cmp(a,b):
                     return int((group_count[a]+group_count[a+1])-(group_count[b]+group_count[b+1]))
                 # find the index of the first (smallest) group
-                i = sorted(range(0, len(groups)-1), my_cmp)[0]
-                # if the smallest group combined with its neighbor to the right will be less than max_size, group it
-                if (group_count[i] + group_count[i+1]) < max_size:
-                    groups = groups[:i] + [(groups[i] + groups[i+1])] + groups[i+2:]
-                else:
+                tmp = sorted(range(0, len(groups)-1), my_cmp)
+                if len(tmp) == 0:
                     finished = True
+                else:
+                    i = tmp[0]
+                    # if the smallest group combined with its neighbor to the right will be less than max_size, group it
+                    if (group_count[i] + group_count[i+1]) < max_size:
+                        groups = groups[:i] + [(groups[i] + groups[i+1])] + groups[i+2:]
+                    else:
+                        finished = True
         return groups
 
     def _get_count(self):
@@ -74,14 +79,20 @@ class GroupingPaginator(django.core.paginator.Paginator):
         if number < 1:
             raise django.core.paginator.EmptyPage('That page number is less than 1')
         if number > self.num_pages:
-            raise django.core.paginator.EmptyPage('That page contains no results')
+            if number == 1 and self.allow_empty_first_page:
+                pass
+            else:
+                raise django.core.paginator.EmptyPage('That page contains no results')
         return number
 
     def page(self, number):
         "Returns a Page object for the given 1-based page number."
         number = self.validate_number(number)
-        page_object_list = self.object_list.filter(sort__iregex=self._group_to_re(self._groups[number-1]))
-        return Page(page_object_list, number, self)
+        if len(self._groups) == 0:
+            return Page([], number, self)
+        else:
+            page_object_list = self.object_list.filter(sort__iregex=self._group_to_re(self._groups[number-1]))
+            return Page(page_object_list, number, self)
 
     def _get_num_pages(self):
         "Returns the total number of pages."
