@@ -20,6 +20,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.cache import cache
 from ervin.views import make_columns
 import re, ervin.views.person, ervin.views.work, ervin.views.expression, ervin.views.onlineedition, ervin.views.physicaledition
+from ervin.grouping_paginator import GroupingPaginator
 
 def get_sections():
     sections = list(Section.objects.all())
@@ -158,15 +159,11 @@ def list_view(request, *args, **kwargs):
     else: column_count = 4
     klass = kwargs['class']
     if list_views.has_key(klass):
-        groups = cache.get("%s_groups"%(klass.__name__))
-        if groups == None:
-            item_list = find_all(klass)
-            groups = build_groups(item_list, 60)
-            cache.set("%s_groups"%(klass.__name__), groups, 600)
-        page = int(request.GET.get('page','1'))
-        item_list = find_all(klass, klass.objects.filter(sort__iregex=group_to_re(groups[page-1])))
+        page_n = int(request.GET.get('page','1'))
+        page = GroupingPaginator(find_all(klass, klass.objects.filter(sort__iregex=group_to_re(groups[page-1]))), 
+                                 60, "%s_groups"%klass).page(page_n)
         t = loader.get_template(list_views[klass])
-        cols = make_columns(item_list, column_count)
+        cols = make_columns(page.object_list, column_count)
         if (variable_names.has_key(klass)):
             variable_name = variable_names[klass]
         else: 
