@@ -6,9 +6,9 @@
 
 {% block content %}
 <h1>{% block title %}Subjects{% endblock %}</h1>
-{% if subject_list %}
+{% if page.object_list %}
 <ul>
-  {% for subject in subject_list %}
+  {% for subject in page.object_list %}
   <li><a href="{{ subject.get_absolute_url }}">{{ subject }}</a></li>
   {% endfor %}
 </ul>
