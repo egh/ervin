@@ -1,12 +1,23 @@
 import urllib, httplib2, simplejson
-from django.core.cache import cache
 
-h = httplib2.Http("/tmp/httpcache")
+class FakeCache():
+    def get(self, key):
+        return None
+    def set(self, *args):
+        return None
+
+try:
+    from django.core.cache import cache
+    CACHE = cache
+except:
+    CACHE = FakeCache()
+
+HTTP = httplib2.Http("/tmp/httpcache")
 
 CACHE_TIME=600
 
 def ol_query(q):
-    resp, content = h.request("http://openlibrary.org/api/things?query=%s"%(urllib.quote(q)))
+    resp, content = HTTP.request("http://openlibrary.org/api/things?query=%s"%(urllib.quote(q)))
     return simplejson.loads(content)
 
 class LazyThing(dict):
@@ -18,7 +29,7 @@ class LazyThing(dict):
         self._populated = False
 
     def _populate(self):
-        cached = cache.get("ol_%s"%(self._key))
+        cached = CACHE.get("ol_%s"%(self._key))
         if cached != None:
             self._populate_from_value(cached)
         else:
@@ -31,10 +42,10 @@ class LazyThing(dict):
         self._populate_hook()
 
     def _populate_from_ol(self):
-        resp, content = h.request("http://openlibrary.org/api/get?key=%s" %(self._key), "GET")
+        resp, content = HTTP.request("http://openlibrary.org/api/get?key=%s" %(self._key), "GET")
         r = simplejson.loads(content)
         if r['status'] == 'ok':
-            cache.set("ol_%s"%(self._key), r['result'], CACHE_TIME)
+            CACHE.set("ol_%s"%(self._key), r['result'], CACHE_TIME)
             self._populate_from_value(r['result'])
 
     def _populate_hook(self):
@@ -44,6 +55,11 @@ class LazyThing(dict):
         if not(self._populated):
             self._populate()
         return super(LazyThing,self).__getitem__(key)
+
+    def keys(self):
+        if not(self._populated):
+            self._populate()
+        return super(LazyThing,self).keys()
 
 class ThingEdition(LazyThing):
     def _populate_hook(self):
@@ -82,6 +98,12 @@ class ThingAuthor(LazyThing):
 
     def __unicode__(self):
         return self['name']
+
+def search(keyword):
+    url = "http://openlibrary.org/api/search?q={\"query\":\"%s\"}"%(urllib.quote(keyword))
+    resp, content = HTTP.request(url)
+    results = simplejson.loads(content)
+    return [ ThingEdition(key) for key in results['result'] ]
 
 # {"name": "William Shakespeare", "entity_type": "person", "death_date": "1616", "wikipedia": "http://en.wikipedia.org/wiki/William_Shakespeare", "last_modified": {"type": "/type/datetime", "value": "2009-01-09T14:21:25.840373"}, "key": "/a/OL9388A", "birth_date": "1564", "personal_name": "William Shakespeare", "type": {"key": "/type/author"}, "id": 23567, "revision": 2}}
 
