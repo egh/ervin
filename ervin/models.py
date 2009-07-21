@@ -20,7 +20,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
 from noid import LocalMinter, NoidField
 from django.db.models import Q
-import re, os, md5, ervin.templatetags.ervin, isbn, libxml2, libxslt, ervin.conf,datetime
+import re, os, md5, ervin.templatetags.ervintags, isbn, libxml2, libxslt, ervin.conf,datetime
     
 class FreeformDateField(models.CharField):
     def get_internal_type(self):

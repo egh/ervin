@@ -15,7 +15,9 @@
 
 from django import template
 from django.template.defaultfilters import stringfilter
+from django.template import Library, Node
 from django.db.models.query import QuerySet
+from ervin.columnator import Columnator
 import re, django, datetime
 try:
     from functools import wraps
@@ -203,4 +205,36 @@ def freeformdate(value):
     elif type(value) == datetime.datetime:
         return format(value, "j F Y")
     else: return ""
+
+class ColumnatorNode(Node):
+    def __init__(self, var, column_count, column_var):
+        self._column_var = column_var
+        self._var = template.Variable(var)
+        self._column_count = column_count
+
+    def render(self, context):
+        try:
+            context[self._column_var] = Columnator(self._var.resolve(context), self._column_count)
+        except template.VariableDoesNotExist:
+            pass
+        return ''
         
+#{% build_columns var [columns] as column_var %}
+def make_columns(parser, token):
+    bits = token.split_contents()
+    if len(bits) != 4 and len(bits) != 5:
+        raise template.TemplateSyntaxError, "make_columns tag takes three or four arguments"
+    if len(bits) == 4:
+        if bits[2] != 'as':
+            raise template.TemplateSyntaxError, "second argument to the make_columns tag must be 'as' if column count is not present"
+        column_count = 5
+        column_var = bits[3]
+    if len(bits) == 5:
+        if bits[3] != 'as':
+            raise template.TemplateSyntaxError, "third argument to the make_columns tag must be 'as' if column count is present"
+        column_count = int(bits[2])
+        column_var = bits[4]
+    return ColumnatorNode(bits[1], column_count, column_var)
+    
+make_columns = register.tag(make_columns)
+

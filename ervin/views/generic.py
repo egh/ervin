@@ -162,13 +162,11 @@ def list_view(request, *args, **kwargs):
         page_n = int(request.GET.get('page','1'))
         page = GroupingPaginator(find_all(klass), 60, "%s_groups"%klass).page(page_n)
         t = loader.get_template(list_views[klass])
-        cols = make_columns(page.object_list, column_count)
         if (variable_names.has_key(klass)):
             variable_name = variable_names[klass]
         else: 
             variable_name = klass.__name__.lower()
-        c = Context({ "subject_cols" : cols,
-                      "page" : page,
+        c = Context({ "page" : page,
                       "subject_type" : klass.__name__.lower() })
         return HttpResponse(t.render(c))
 
