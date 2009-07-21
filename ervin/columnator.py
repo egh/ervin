@@ -17,7 +17,10 @@ class Columnator(object):
     def __init__(self, data, column_count=5):
         self.column_count = column_count
         self._data = data
-        l = data.count()
+        if type(self._data) == list:
+            l = len(data)
+        else:
+            l = data.count()
         self._remainder = l % self.column_count
         self._base = l / self.column_count
 
