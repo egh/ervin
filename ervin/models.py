@@ -81,10 +81,10 @@ class SubjectMixin(object):
 class BibSortMixin(object):
     def _sort_save_hook(self):
         key = None
-        title_key = ervin.templatetags.ervin.sort_friendly(self.title)
+        title_key = ervin.templatetags.ervintags.sort_friendly(self.title)
         author = self.first_author
         if author != None:
-            author_key = ervin.templatetags.ervin.sort_friendly(ervin.templatetags.ervin.inverted_name(author))
+            author_key = ervin.templatetags.ervintags.sort_friendly(ervin.templatetags.ervintags.inverted_name(author))
             key = "%s%s"%(author_key,title_key)
         else: key = title_key
         self.sort = re.sub("[\":,.'\[\]\(\)\?\&-]" ,'', key[:128].lower())
@@ -103,7 +103,7 @@ class Subject(models.Model):
       return cmp(unicode(self).lower(), unicode(other).lower())
 
     def save(self):
-        self.sort = ervin.templatetags.ervin.sort_friendly(unicode(self))[:128]
+        self.sort = ervin.templatetags.ervintags.sort_friendly(unicode(self))[:128]
         super(Subject, self).save()
 
     class Meta:
@@ -121,7 +121,7 @@ class Person(models.Model, SubjectMixin):
     def get_absolute_url(self): return "/%s"%(self.pk)
 
     def save(self):
-        self.sort = ervin.templatetags.ervin.sort_friendly(unicode(self))[:128]
+        self.sort = ervin.templatetags.ervintags.sort_friendly(unicode(self))[:128]
         super(Person, self).save()
         self._subject_save_hook()
         for w in self.authored.all():
@@ -152,7 +152,7 @@ class Concept(models.Model, SubjectMixin):
     def get_absolute_url(self): return "/%s"%(self.pk)
 
     def save(self):
-        self.sort = ervin.templatetags.ervin.sort_friendly(unicode(self))[:128]
+        self.sort = ervin.templatetags.ervintags.sort_friendly(unicode(self))[:128]
         super(Concept, self).save()
         self._subject_save_hook()
 
@@ -572,7 +572,7 @@ class Place(models.Model, SubjectMixin):
     def get_absolute_url(self): return "/%s"%(self.pk)
 
     def save(self):
-        self.sort = ervin.templatetags.ervin.sort_friendly(unicode(self))[:128]
+        self.sort = ervin.templatetags.ervintags.sort_friendly(unicode(self))[:128]
         super(Place, self).save()
         self._subject_save_hook()
 
@@ -593,7 +593,7 @@ class Organization(models.Model, SubjectMixin):
     def get_absolute_url(self): return "/%s"%(self.pk)
 
     def save(self):
-        self.sort = ervin.templatetags.ervin.sort_friendly(unicode(self))[:128]
+        self.sort = ervin.templatetags.ervintags.sort_friendly(unicode(self))[:128]
         super(Organization, self).save()
         self._subject_save_hook()
 
@@ -614,7 +614,7 @@ class Event(models.Model, SubjectMixin):
     def get_absolute_url(self): return "/%s"%(self.pk)
 
     def save(self):
-        self.sort = ervin.templatetags.ervin.sort_friendly(unicode(self))[:128]
+        self.sort = ervin.templatetags.ervintags.sort_friendly(unicode(self))[:128]
         super(Event, self).save()
         self._subject_save_hook()
 
@@ -635,7 +635,7 @@ class FrbrObject(models.Model, SubjectMixin):
     def get_absolute_url(self): return "/%s"%(self.pk)
 
     def save(self):
-        self.sort = ervin.templatetags.ervin.sort_friendly(unicode(self))[:128]
+        self.sort = ervin.templatetags.ervintags.sort_friendly(unicode(self))[:128]
         super(FrbrObject, self).save()
         self._subject_save_hook()
 
