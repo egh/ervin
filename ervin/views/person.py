@@ -34,10 +34,11 @@ def detail(person, request, *args,**kwargs):
       image_list = work_list.filter(form='image').distinct()
       works_by_list = work_list.filter(authors=person).exclude(form='image').distinct()
       works_about_list = work_list.filter(subjects=person.subject).exclude(form='image').distinct()
-      if person.olkey:
-         ol_edition_list = ThingAuthor(person.olkey).fulltext_editions()
-      else: ol_edition_list = None
-      
+      #if person.olkey:
+      #   ol_edition_list = ThingAuthor(person.olkey).fulltext_editions()
+      #else: ol_edition_list = None
+      ol_edition_list = None
+
       t = loader.get_template('ervin/person.html')
       c = Context({
             'subject_list'        : subject_list,
