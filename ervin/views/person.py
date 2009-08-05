@@ -19,7 +19,7 @@ from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.db.models import Q
 from django.http import HttpResponse
 from ervin.views import make_columns
-from ervin.ol import ThingAuthor
+from ervin.openlibrary import ThingAuthor
 
 def by_noid(request, *args, **kwargs):
    person = Person.objects.get(id=kwargs['noid'])

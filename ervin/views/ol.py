@@ -17,7 +17,7 @@ from django.template import Context, loader
 from ervin.models import *
 from django.http import HttpResponse,HttpResponseNotFound
 from django.core.exceptions import ObjectDoesNotExist
-from ervin.ol import ThingAuthor, ThingEdition
+from ervin.openlibrary import ThingAuthor, ThingEdition
 
 def author(request,*args,**kwargs):
     author = ThingAuthor(kwargs['olkey'])
