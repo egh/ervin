@@ -1,4 +1,4 @@
-{% load ervin %}
+{% load ervintags %}
 {% if person %}
   {{ work.work.authors.all|inverted_name_first_list_linked:person.pk|with_final_period }}
 {% else %}
