@@ -13,6 +13,6 @@
   {% endfor %}
 </ul>
 {% else %}
-<p>No subjects.</p>
+{% block empty_list %}<p>No subjects.</p>{% endblock %}
 {% endif %}
 {% endblock %}
