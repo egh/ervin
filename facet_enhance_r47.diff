@@ -1,0 +1,103 @@
+Index: utils.py
+===================================================================
+--- utils.py	(revision 47)
++++ utils.py	(working copy)
+@@ -44,19 +44,18 @@
+     Returns a list of facet links, allowing users to quickly drill into their
+     search results by fields which support faceting.
+     """
+-    (links, link) = ([], {})
+-    
++    facets = {}
+     for facet in results.facets:
+         base = get_base_url(request, ["page", facet.name])
+         base_sep = "?" in base and "&" or "?"
+         current_val = request.REQUEST.get(facet.name, None)
+         
+-        link = {
+-            "anchor": "All", "count": None, "level": "0", "href": base
+-        }
++        facets[facet.name] = {
++            'name'    : facet.name,
++            'base'    : base,
++            'links'   : [],
++            'current' : current_val }
+         
+-        links.append(link)
+-        
+         previous_level = 0
+         for value in facet.values:
+             indent = False
+@@ -70,20 +69,16 @@
+                 elif previous_level < value.level:
+                     indent = True
+                     
+-                link = {
+-                    "anchor": value.name, 
+-                    "count": value.count, 
+-                    "level": value.level,
+-                    "href": "%s%s%s=%s" % (base, base_sep, facet.name, clean),
+-                    "indent": indent,
+-                    "undent": undent,
+-                    "active": current_val == clean
+-                }
+-                
+-                links.append(link)
++                facets[facet.name]['links'].append({
++                        'anchor' : value.name,
++                        'count'  : value.count,
++                        'level'  : value.level,
++                        'href'   : "%s&%s=%s"%(base, facet.name, clean),
++                        'active' : (current_val == clean)
++                        })
+                 previous_level = value.level
++    return facets
+ 
+-    return links
+ 
+ def get_facet_date_links(request, results):
+     """
+@@ -176,4 +171,4 @@
+ def reindex(batch_size=None):
+     from solango.indexing import indexer
+     indexer.index_all(batch_size=batch_size)
+-    
+\ No newline at end of file
++    
+Index: templates/solango/search.html
+===================================================================
+--- templates/solango/search.html	(revision 47)
++++ templates/solango/search.html	(working copy)
+@@ -5,17 +5,21 @@
+ <div class="facets">
+ <ul class="linkType">
+  <li><a href="?">See All Results</a></li>
+-{% for link in facets %}
+-    
+-    {% if link.href %}
+-        <li><a class="Facet{{ link.level }} {% if link.active %}active{% endif %}"
+-            href="{{ link.href }}">{{ link.anchor }}</a> {% if link.count %} ({{ link.count }}) {% endif %}</li>
+-    {% else %}
+-        </ul>
+-        <ul class="linkType">
+-        <li><h3>{{ link }}</h3></li>
+-    {% endif %}
+-    
++</ul>
++
++{% for key, value in facets.items %}
++<ul class="linkType">
++  <li><h3>{{ key }}</h3></li>
++  {% if value.current %}
++  <li><a href="{{value.base}}">All</a></li>
++  {% endif %}
++  {% for link in value.links %}
++  <li><a class="facet{{ link.level }} {% if link.active %}active{% endif %}"
++         href="{{ link.href }}">{{ link.anchor }}</a> 
++    {% if link.count %} ({{ link.count }}) {% endif %}
++  </li>
++  {% endfor %}
++</ul>
+ {% endfor %}
+ {% for link in facet_dates %}
+     
