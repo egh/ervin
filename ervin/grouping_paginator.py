@@ -9,10 +9,10 @@ class GroupingPaginator(django.core.paginator.Paginator):
         self.object_list = object_list
         self.per_page = per_page
         self.allow_empty_first_page = allow_empty_first_page
-        self._groups = cache.get(key)
+        if key != None: self._groups = cache.get(key)
         if self._groups == None:
             self._groups = self._build_groups(self.object_list, self.per_page)
-            cache.set(key, self._groups, 600)
+            if key != None: cache.set(key, self._groups, 600)
 
     def group_names(self):
         return [ self._group_to_string(g) for g in self._groups ]
