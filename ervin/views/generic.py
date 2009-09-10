@@ -22,11 +22,6 @@ from ervin.views import make_columns
 import re, ervin.views.person, ervin.views.work, ervin.views.expression, ervin.views.onlineedition, ervin.views.physicaledition
 from ervin.grouping_paginator import GroupingPaginator
 
-def get_sections():
-    sections = list(Section.objects.all())
-    sections.sort(lambda a,b: cmp(a.slug,b.slug))
-    return sections
-
 stop_words_re = re.compile("(^the |^an |^a )")
 
 def get_sort_title(title):
@@ -160,7 +155,7 @@ def list_view(request, *args, **kwargs):
     klass = kwargs['class']
     if list_views.has_key(klass):
         page_n = int(request.GET.get('page','1'))
-        page = GroupingPaginator(find_all(klass), 60, "%s_groups"%klass).page(page_n)
+        page = GroupingPaginator(find_all(klass), 60, "%s_groups"%klass.__name__.lower()).page(page_n)
         t = loader.get_template(list_views[klass])
         if (variable_names.has_key(klass)):
             variable_name = variable_names[klass]
