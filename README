@@ -1,0 +1,93 @@
+Ervin
+=====
+
+Installing
+----------
+
+Requirements
+~~~~~~~~~~~~
+
+Django 1.0 or later. Not tested with Django 1.1 (soon!)
+
+Noid. http://search.cpan.org/dist/Noid/
+
+Solr & solango, for search.
+
+Django atompub, for feeds.
+
+All requirements are installed in the following steps.
+
+Steps
+~~~~~
+
+::
+
+ $ sudo perl -MCPAN -e "install Noid" # change sudo for your platform as necessary
+
+ $ mkdir my_project
+
+ $ cd my_project
+
+ $ mkdir code
+
+ $ cd code
+
+ $ bzr co https://code.launchpad.net/~ehetzner/ervin/trunk ervin
+
+ $ wget http://www.djangoproject.com/download/1.0.3/tarball/
+
+ $ tar xzvf Django-1.0.3.tar.gz
+
+ $ cd Django-1.0.3
+
+ $ patch -p0 <../ervin/django_1.0.3.diff
+
+ $ cd ..
+ 
+ $ svn co http://django-atompub.googlecode.com/svn/trunk/ django-atompub
+
+ $ cd .. # that is, to my_project
+
+ $ ln -s code/ervin/ervin ervin
+
+ $ ln -s code/Django-1.0.3/django django
+
+ $ ln -s code/django-atompub/atompub/ atompub
+
+ $ export PYTHONPATH=`pwd` # use equivalent in (t)csh
+
+ $ python django/bin/django-admin.py startproject my_project
+
+ $ cd my_project
+
+ $ noid dbcreate .reeeeek
+
+Use your editor to configure the database in ``settings.py``. Add
+``ervin`` and ``django.contrib.admin`` to ``INSTALLED_APPS``, e.g.::
+
+ INSTALLED_APPS = (
+     'django.contrib.auth',
+     'django.contrib.admin',
+     'django.contrib.contenttypes',
+     'django.contrib.sessions',
+     'django.contrib.sites',
+     'ervin'
+ )
+
+Edit ``urls.py`` appropriately. For instance::
+
+ from django.contrib import admin
+ admin.autodiscover()
+
+ urlpatterns = patterns('',
+     (r'^admin/(.*)', admin.site.root),
+     (r'', include('ervin.urls')),
+ )
+
+::
+
+ $ python manage.py syncdb
+
+ $ python manage.py runserver
+
+Visit http://localhost:8000/admin and begin adding data!
