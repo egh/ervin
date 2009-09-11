@@ -1,0 +1,26 @@
+--- django/forms/models.py.orig	2009-09-10 22:46:17.000000000 -0700
++++ django/forms/models.py	2009-09-10 22:47:14.000000000 -0700
+@@ -10,7 +10,7 @@
+ 
+ from util import ValidationError, ErrorList
+ from forms import BaseForm, get_declared_fields, NON_FIELD_ERRORS
+-from fields import Field, ChoiceField, IntegerField, EMPTY_VALUES
++from fields import Field, ChoiceField, CharField, IntegerField, EMPTY_VALUES
+ from widgets import Select, SelectMultiple, HiddenInput, MultipleHiddenInput
+ from widgets import media_property
+ from formsets import BaseFormSet, formset_factory, DELETION_FIELD_NAME
+@@ -645,10 +645,14 @@
+ 
+     def add_fields(self, form, index):
+         """Add a hidden field for the object's primary key."""
++        import ervin.noid
++
+         from django.db.models import AutoField
+         self._pk_field = pk = self.model._meta.pk
+         if pk.auto_created or isinstance(pk, AutoField):
+             form.fields[self._pk_field.name] = IntegerField(required=False, widget=HiddenInput)
++        elif isinstance(pk, ervin.noid.NoidField):
++            form.fields[self._pk_field.name] = CharField(required=False, widget=HiddenInput)
+         super(BaseModelFormSet, self).add_fields(form, index)
+ 
+ def modelformset_factory(model, form=ModelForm, formfield_callback=lambda f: f.formfield(),
