@@ -36,7 +36,7 @@ urlpatterns = patterns('ervin.views',
     (r'^physicaleditions$', 'generic.list_view', {'class' : ervin.models.PhysicalEdition }),
     (r'^unapi$', 'unapi.unapi'),
     (r'^doc/(?P<id>.*)$', 'page.by_id'),
-    (r'^search/', include('solango.urls')),
+#    (r'^search/', include('solango.urls')),
     (r'^(?P<noid>[a-z0-9-]+)$', 'generic.by_noid'),
     #redirect noids with a trailing slash
     (r'^(?P<noid>[a-z0-9-]+)/$',
