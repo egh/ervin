@@ -16,7 +16,10 @@ class GroupingPaginator(django.core.paginator.Paginator):
 
     def group_names(self):
         return [ self._group_to_string(g) for g in self._groups ]
-    
+
+    def has_other_pages(self):
+        return len(self._groups) > 1
+
     def _group_to_string(self, group):
         if len(group) == 1:
             return self._readable_char(group[0])
