@@ -124,5 +124,5 @@ class Page(django.core.paginator.Page):
     count = property(_get_count)
 
     def group_name(self):
-        return paginator.group_names()[number-1]
+        return self.paginator.group_names()[self.number-1]
     
