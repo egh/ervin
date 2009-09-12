@@ -219,7 +219,7 @@ class ColumnatorNode(Node):
             pass
         return ''
         
-#{% build_columns var [columns] as column_var %}
+#{% make_columns var [columns] as column_var %}
 def make_columns(parser, token):
     bits = token.split_contents()
     if len(bits) != 4 and len(bits) != 5:
