@@ -2,10 +2,16 @@ from django.core.cache import cache
 import django.core.paginator
 import re
 
-class GroupingPaginator(django.core.paginator.Paginator):
+class Paginator(django.core.paginator.Paginator):
+    def __init__(self, object_list, per_page, key=None, allow_empty_first_page=True, filter_func=None):
+        self.filter_func = filter_func
+        super(Paginator, self).__init__(object_list, per_page, key=None, allow_empty_first_page=True)
+        
+class GroupingPaginator(Paginator):
     _GROUP_START = [['0'],['1'],['2'],['3'],['4'],['5'],['6'],['7'],['8'],['9'],['a'],['b'],['c'],['d'],['e'],['f'],['g'],['h'],['i'],['j'],['k'],['l'],['m'],['n'],['o'],['p'],['q'],['r'],['s'],['t'],['u'],['v'],['w'],['x'],['y'],['z']]
 
-    def __init__(self, object_list, per_page, key=None, allow_empty_first_page=True):
+    def __init__(self, object_list, per_page, key=None, allow_empty_first_page=True, filter_func=None):
+        self.filter_func = filter_func
         self.object_list = object_list
         self.per_page = per_page
         self.allow_empty_first_page = allow_empty_first_page
@@ -16,6 +22,9 @@ class GroupingPaginator(django.core.paginator.Paginator):
 
     def group_names(self):
         return [ self._group_to_string(g) for g in self._groups ]
+
+    def group_range(self):
+        return zip(self.group_names(), range(self.count+1)[1:])
 
     def has_other_pages(self):
         return len(self._groups) > 1
@@ -92,10 +101,10 @@ class GroupingPaginator(django.core.paginator.Paginator):
         "Returns a Page object for the given 1-based page number."
         number = self.validate_number(number)
         if len(self._groups) == 0:
-            return Page([], number, self)
+            return GroupedPage([], number, self)
         else:
             page_object_list = self.object_list.filter(sort__iregex=self._group_to_re(self._groups[number-1]))
-            return Page(page_object_list, number, self)
+            return GroupedPage(page_object_list, number, self)
 
     def _get_num_pages(self):
         "Returns the total number of pages."
@@ -110,11 +119,29 @@ class GroupingPaginator(django.core.paginator.Paginator):
         return range(1, self.num_pages + 1)
     page_range = property(_get_page_range)
 
-class Page(django.core.paginator.Page):
-    def __init__(self, object_list, number, paginator):
-        self.object_list = object_list
-        self.number = number
-        self.paginator = paginator
+class Page (django.core.paginator.Page):
+    def __init__(self, object_list, number, paginator, filter_func=None):
+        super(Page, self).__init__(object_list, number, paginator)
+        self._orig_object_list = object_list
+        self._object_list = None
+        self.grouped = False
+        
+    def _get_object_list(self):
+        if self._object_list == None:
+            if (self.paginator.filter_func != None):
+                self._object_list = _orig_object_list
+            else:
+                self._object_list = filter(self.paginator.filter_func, self._orig_object_list)
+        return self._object_list
+
+    def _set_object_list(self, ignore):
+        pass
+    object_list = property(_get_object_list, _set_object_list)
+
+class GroupedPage(Page):
+    def __init__(self, object_list, number, paginator, filter_func=None):
+        super(GroupedPage, self).__init__(object_list, number, paginator, filter_func)
+        self.grouped = True
 
     def start_index(self):
         raise Exception("Not allowed.")
@@ -126,6 +153,9 @@ class Page(django.core.paginator.Page):
         return self.object_list.count()
     count = property(_get_count)
 
-    def group_name(self):
+    def _get_group(self):
         return self.paginator.group_names()[self.number-1]
+    group = property(_get_group)
     
+    def __unicode__(self):
+        return "Page %s of %s"%(self.group, self.paginator.group_names())
