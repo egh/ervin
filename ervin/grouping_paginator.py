@@ -3,10 +3,14 @@ import django.core.paginator
 import re
 
 class Paginator(django.core.paginator.Paginator):
-    def __init__(self, object_list, per_page, key=None, allow_empty_first_page=True, filter_func=None):
+    def __init__(self, object_list, per_page, orphans=0, allow_empty_first_page=True):
+        super(Paginator, self).__init__(object_list, per_page, orphans, allow_empty_first_page)
+
+    def page(self, number, filter_func=None):
+        "Returns a Page object for the given 1-based page number."
         self.filter_func = filter_func
-        super(Paginator, self).__init__(object_list, per_page, key=None, allow_empty_first_page=True)
-        
+        return super(Paginator, self).page(number)
+
 class GroupingPaginator(Paginator):
     _GROUP_START = [['0'],['1'],['2'],['3'],['4'],['5'],['6'],['7'],['8'],['9'],['a'],['b'],['c'],['d'],['e'],['f'],['g'],['h'],['i'],['j'],['k'],['l'],['m'],['n'],['o'],['p'],['q'],['r'],['s'],['t'],['u'],['v'],['w'],['x'],['y'],['z']]
 
