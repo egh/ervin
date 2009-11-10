@@ -16,16 +16,21 @@ HTTP = httplib2.Http("/tmp/httpcache")
 
 CACHE_TIME=600
 
+def ol_get(path):
+    url = "http://openlibrary.org%s"%(path)
+    resp, content = HTTP.request(url)
+    print url
+    if resp['status'] == '200':
+        return simplejson.loads(content)
+    else: 
+        return None
+
 def ol_query(q):
-    resp, content = HTTP.request("http://openlibrary.org/api/things?query=%s"%(urllib.quote(q)))
-    return simplejson.loads(content)
+    return ol_get("/query.json?query=%s"%(urllib.quote(q)))
 
 class LazyThing(dict):
     def __init__(self, key):
-        if not(key.startswith('/')): 
-            self._key = "/%s"%(key)
-        else:
-            self._key = key
+        self._key = key
         self._populated = False
 
     def _populate(self):
@@ -42,11 +47,10 @@ class LazyThing(dict):
         self._populate_hook()
 
     def _populate_from_ol(self):
-        resp, content = HTTP.request("http://openlibrary.org/api/get?key=%s" %(self._key), "GET")
-        r = simplejson.loads(content)
-        if r['status'] == 'ok':
-            CACHE.set("ol_%s"%(self._key), r['result'], CACHE_TIME)
-            self._populate_from_value(r['result'])
+        r = ol_get("/%s.json" %(self._key))
+        if r != None:
+            CACHE.set("ol_%s"%(self._key), r, CACHE_TIME)
+            self._populate_from_value(r)
 
     def _populate_hook(self):
         pass
@@ -76,22 +80,22 @@ class ThingEdition(LazyThing):
 class ThingLanguage(LazyThing):
     def __unicode__(self):
         return self['name']
+
     def __init__(self, key):
         return super(ThingLanguage,self).__init__(key)
 
 class ThingAuthor(LazyThing):
-    def editions(self):
-        r = ol_query("{\"type\":\"\\/type\\/edition\", \"authors\":\"%s\"}"%(str(self._key)))
-        if r['status'] == 'ok':
-            return [ ThingEdition(key) for key in r['result']]
+    def _editions(self, query):
+        results = ol_query(query)
+        if results and len(results) > 0:
+            return [ ThingEdition(result['key']) for result in results ]
         else: return None
+        
+    def editions(self):
+        return _editions("{\"type\":\"\\/type\\/edition\", \"authors\":\"/a/%s\"}"%(str(self._key)))
 
     def fulltext_editions(self):
-        r = ol_query("{\"type\":\"\\/type\\/edition\", \"authors\":\"%s\", \"ocaid~\":\"*\"}"%(str(self._key)))
-        if r['status'] == 'ok':
-            print r['result']
-            return [ ThingEdition(key) for key in r['result']]
-        else: return None
+        return _editions("{\"type\":\"\\/type\\/edition\", \"authors\":\"/a/%s\", \"ocaid~\":\"*\"}"%(str(self._key)))
 
     def __init__(self, key):
         return super(ThingAuthor,self).__init__(key)
