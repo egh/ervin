@@ -7,7 +7,7 @@ Installing
 Requirements
 ~~~~~~~~~~~~
 
-Django 1.0 or later. Not tested with Django 1.1 (soon!)
+Django 1.0 or later.
 
 Noid. http://search.cpan.org/dist/Noid/
 
@@ -20,47 +20,60 @@ All requirements are installed in the following steps.
 Steps
 ~~~~~
 
-::
+Preliminaries
+=============
+
+Install Django 1.1.1 in an appropriate way.
+
+Install Noid::
 
  $ sudo perl -MCPAN -e "install Noid" # change sudo for your platform as necessary
 
- $ mkdir my_project
+::
 
- $ cd my_project
+ $ export $PROJECT_DIR=... # fill in the blanks!
 
- $ mkdir code
+ $ cd `dirname $PROJECT_DIR` && django-admin.py startproject `basename $PROJECT_DIR`
 
- $ cd code
+ $ cd $PROJECT_DIR && mkdir packages && mkdir lib
 
- $ bzr co https://code.launchpad.net/~ehetzner/ervin/trunk ervin
+Install Ervin
+=============
 
- $ wget http://www.djangoproject.com/download/1.0.3/tarball/
+::
 
- $ tar xzvf Django-1.0.3.tar.gz
+ $ cd $PROJECT_DIR/packages && bzr co lp:~egh/ervin/trunk ervin
 
- $ cd Django-1.0.3
+Setup Noid
+==========
 
- $ patch -p0 <../ervin/django_1.0.3.diff
+::
 
- $ cd ..
- 
- $ svn co http://django-atompub.googlecode.com/svn/trunk/ django-atompub
+ $ cd $PROJECT_DIR && noid dbcreate .reeeeek
 
- $ cd .. # that is, to my_project
 
- $ ln -s code/ervin/ervin ervin
+Install django-atompub
+======================
 
- $ ln -s code/Django-1.0.3/django django
+::
 
- $ ln -s code/django-atompub/atompub/ atompub
+ $ cd $PROJECT_DIR/packages && svn co http://django-atompub.googlecode.com/svn/trunk/ django-atompub
 
- $ export PYTHONPATH=`pwd` # use equivalent in (t)csh
 
- $ python django/bin/django-admin.py startproject my_project
+Link up
+=======
 
- $ cd my_project
+ $ cd $PROJECT_DIR/lib
 
- $ noid dbcreate .reeeeek
+ $ ln -s ../packages/ervin/ervin
+
+ $ ln -s ../packages/django-atompub/atompub/
+
+To the beginning of ``settings.py``, add the following::
+
+  import os, sys
+
+  sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'lib'))
 
 Use your editor to configure the database in ``settings.py``. Add
 ``ervin`` and ``django.contrib.admin`` to ``INSTALLED_APPS``, e.g.::
@@ -76,13 +89,15 @@ Use your editor to configure the database in ``settings.py``. Add
 
 Edit ``urls.py`` appropriately. For instance::
 
- from django.contrib import admin
- admin.autodiscover()
+  from django.conf.urls.defaults import *
 
- urlpatterns = patterns('',
-     (r'^admin/(.*)', admin.site.root),
-     (r'', include('ervin.urls')),
- )
+  from django.contrib import admin
+  admin.autodiscover()
+
+  urlpatterns = patterns('',
+      (r'^admin/', include(admin.site.urls)),
+      (r'', include('ervin.urls')),
+  )
 
 ::
 
