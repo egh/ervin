@@ -165,11 +165,13 @@ class Concept(models.Model, SubjectMixin):
     class Meta:
         ordering=['name']
 
-WORK_FORMS = (('series', 'Serial'),
-              ('article', 'Article'),
-              ('monograph', 'Monograph'),
-              ('image', 'Image'))
-
+# Correspond with DCMI type vocabulary
+WORK_FORMS = (('Sound', 'Sound'),
+              ('Collection', 'Collection'),
+              ('MovingImage', 'Moving image'),
+              ('StillImage', 'Still image'),
+              ('Text', 'Text'))
+              
 class WorkWithContentManager(models.Manager):
     def get_query_set(self):
         return super(WorkWithContentManager, self).get_query_set().\
