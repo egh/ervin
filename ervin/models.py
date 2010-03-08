@@ -288,6 +288,10 @@ class Authorship(models.Model):
         self.work.save()
         # update sort key in work
 
+# See http://xml.coverpages.org/iso639a.html
+LANGUAGES=(('en', 'English'),
+           ('es', 'Spanish'))
+
 class Expression(models.Model, SubjectMixin,BibSortMixin):
     id = NoidField(primary_key=True)
     work = models.ForeignKey(Work)
@@ -298,6 +302,7 @@ class Expression(models.Model, SubjectMixin,BibSortMixin):
                                          related_name="translated",
                                          blank=True)
     sort = models.CharField(max_length=128,editable=False)
+    language = models.CharField(max_length=5, choices=LANGUAGES)
     
     def _first_author(self): 
         return self.work.first_author
