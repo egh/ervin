@@ -165,10 +165,17 @@ class Concept(models.Model, SubjectMixin):
     class Meta:
         ordering=['name']
 
-# Correspond with DCMI type vocabulary
-WORK_FORMS = (('Sound', 'Sound'),
-              ('Collection', 'Collection'),
+# From from DCMI Type vocabulary
+WORK_FORMS = (('Collection', 'Collection'),
+              #('Dataset', 'Dataset'),
+              #('Event', 'Event'),
+              #('Image', 'Image'),
+              #('InteractiveResource', 'Interactive resource'),
               ('MovingImage', 'Moving image'),
+              #('PhysicalObject', 'Physical object'),
+              #('Service', 'Service'),
+              #('Software', 'Software'),
+              #('Sound', 'Sound'),
               ('StillImage', 'Still image'),
               ('Text', 'Text'))
               
