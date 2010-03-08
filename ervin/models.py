@@ -23,6 +23,12 @@ from django.db.models import Q
 import re, os, md5, ervin.templatetags.ervintags, isbn, libxml2, libxslt, ervin.conf,datetime
     
 class FreeformDateField(models.CharField):
+    """A date field which for publication dates.
+
+    e.g., [1999],
+    [1999?], or 1999. Adds a sort field with the name
+    {field_name}_sort which should sort properly."""
+
     def get_internal_type(self):
         return models.CharField.__name__
     
@@ -52,6 +58,8 @@ class MyFileField(models.FileField):
         setattr(cls, 'save_%s_file' % self.name, lambda instance, filename, raw_contents, save=True: instance._save_FIELD_file(self, _make_filename(filename, raw_contents), raw_contents, save))
 
 class SubjectMixin(object):
+    """Class which handles updating subject headings."""
+
     def _subject(self):
         s = None
         try: s = Subject.objects.get (object_id=self.pk)
@@ -90,6 +98,8 @@ class BibSortMixin(object):
         self.sort = re.sub("[\":,.'\[\]\(\)\?\&-]" ,'', key[:128].lower())
 
 class Subject(models.Model):
+    """Class that represents a Subject that a group 1 entity can have."""
+    
     content_type = models.ForeignKey(ContentType)
     object_id = models.CharField(max_length=6,primary_key=True)
     content_object = generic.GenericForeignKey()
@@ -579,6 +589,8 @@ class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
         ordering = ['sort']
     
 class Place(models.Model, SubjectMixin):
+    """A place in the FRBR model."""
+
     id = NoidField(primary_key=True)
     name = models.CharField(max_length=200)
     sort = models.CharField(max_length=128,editable=False)
@@ -600,6 +612,8 @@ class Place(models.Model, SubjectMixin):
         ordering=['name']
 
 class Organization(models.Model, SubjectMixin):
+    """A corporate entity in the FRBR model."""
+
     id = NoidField(primary_key=True)
     name = models.CharField(max_length=200)
     sort = models.CharField(max_length=128,editable=False)
@@ -621,6 +635,8 @@ class Organization(models.Model, SubjectMixin):
         ordering=['name']
 
 class Event(models.Model, SubjectMixin):
+    """Event in the FRBR model."""
+
     id = NoidField(primary_key=True)
     name = models.CharField(max_length=200)
     sort = models.CharField(max_length=128,editable=False)
