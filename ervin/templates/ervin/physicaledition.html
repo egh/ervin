@@ -6,10 +6,10 @@
 <dl>
 <dt>Title:</dt> <dd>{{ edition.title }}</dd>
 
-{% if edition.authors %}
+{% if edition.creators %}
 <dt>Authors:</dt> <dd>
   <ul>
-  {% for person in edition.authors.all %}
+  {% for person in edition.creators.all %}
     <li>{{ person }}</li>
   {% endfor %}
   </ul>

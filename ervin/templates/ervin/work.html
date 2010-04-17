@@ -9,8 +9,8 @@
     <dt>Work authors</dt>
     <dd>
       <ul>
-        {% for author in work.authors.all %}
-        <li xmlns="dc:author">{{ author|inverted_name }}</li>
+        {% for creator in work.creators.all %}
+        <li xmlns="dc:creator">{{ creator|inverted_name }}</li>
         {% endfor %}
       </ul>
     </dd>

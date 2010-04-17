@@ -1,8 +1,8 @@
 {% load ervintags %}
 {% if person %}
-  {{ work.work.authors.all|inverted_name_first_list_linked:person.pk|with_final_period }}
+  {{ work.work.creators.all|inverted_name_first_list_linked:person.pk|with_final_period }}
 {% else %}
-  {{ work.work.authors.all|inverted_name_first_list_linked|with_final_period }}
+  {{ work.work.creators.all|inverted_name_first_list_linked|with_final_period }}
 {% endif %}
 <a href="{{work.work.get_absolute_url}}"><em>{{work.work.title}}</em></a>.
 {% if work.work.publisher %}

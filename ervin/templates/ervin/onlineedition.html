@@ -11,10 +11,10 @@
   <dl>
     <dt>Title:</dt> <dd property="dc:title">{{ edition.title }}</dd>
     
-    {% if edition.authors.all %}
+    {% if edition.creators.all %}
     <dt>Authors:</dt> <dd>
       <ul>
-        {% for person in edition.authors.all %}
+        {% for person in edition.creators.all %}
         <li property="dc:creator">{{ person }}</li>
         {% endfor %}
       </ul>

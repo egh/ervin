@@ -4,9 +4,9 @@
     xmlns:dc="http://purl.org/dc/elements/1.1/"
     xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
   <dc:title>{{ onlineedition.title }}</dc:title>
-  {% if onlineedition.authors.all %}
-  {% for author in onlineedition.authors.all %}
-  <dc:creator>{{ author }}</dc:creator>
+  {% if onlineedition.creator.all %}
+  {% for creator in onlineedition.creator.all %}
+  <dc:creator>{{ creator }}</dc:creator>
   {% endfor %}
   {% endif %}
   <dc:type>website</dc:type>

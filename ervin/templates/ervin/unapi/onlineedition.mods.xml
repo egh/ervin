@@ -7,11 +7,11 @@
     <titleInfo>
       <title>{{ onlineedition.title }}</title>
     </titleInfo>
-    {% if onlineedition.authors %}
-    {% for author in onlineedition.authors.all %}
+    {% if onlineedition.creators %}
+    {% for creator in onlineedition.creators.all %}
     <name type="personal">
-      <namePart type="family">{{ author.surname }}</namePart>
-      <namePart type="given">{{ author.forename }}</namePart>
+      <namePart type="family">{{ creator.surname }}</namePart>
+      <namePart type="given">{{ creator.forename }}</namePart>
     </name>
     {% endfor %}
     {% endif %}
