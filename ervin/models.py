@@ -125,7 +125,7 @@ class Person(models.Model, SubjectMixin):
     surname = models.CharField(max_length=200)
     forename = models.CharField(max_length=200)
     dates = models.CharField(max_length=20,blank=True)
-    alias_for = models.ForeignKey("self",blank=True,null=True, related_name="alias_set")
+    alias_for = models.ForeignKey("self", null=True, blank=True, related_name="alias_set")
     sort = models.CharField(max_length=128)
 
     def get_absolute_url(self): return "/%s"%(self.pk)
@@ -199,18 +199,17 @@ class Work(models.Model, SubjectMixin, BibSortMixin):
 
     # FRBR Attributes §4.2
     work_title = models.TextField(blank=True, db_column='title')
-    date = FreeformDateField(max_length=128, blank=True, null=True)
+    date = FreeformDateField(max_length=128, blank=True)
 
     # FRBR Relationships.
     # §5.2.2
     creators = models.ManyToManyField(Person, 
                                       through='Creatorship',
-                                      related_name='created',
-                                      blank=True)
+                                      related_name='created')
     # §5.2.3
     subjects = models.ManyToManyField(Subject, blank=True)
     # §5.3.1.1
-    part_of = models.ForeignKey("self", blank=True, null=True, related_name="parts")
+    part_of = models.ForeignKey("self", null=True, blank=True, related_name="parts")
 
     # non-FRBR.
     description = models.TextField(blank=True)
@@ -220,7 +219,7 @@ class Work(models.Model, SubjectMixin, BibSortMixin):
 
     # Sort fields
     sort = models.CharField(max_length=128, editable=False)
-    date_sort = models.CharField(max_length=128, blank=True, null=True, editable=False)
+    date_sort = models.CharField(max_length=128, blank=True, editable=False)
 
     objects = models.Manager()
     with_content = WorkWithContentManager()
@@ -320,8 +319,7 @@ class Expression(models.Model, SubjectMixin,BibSortMixin):
     translators = models.ManyToManyField(Person,
                                          #through="ExpressionTranslator"
                                          verbose_name="Translators",
-                                         related_name="translated",
-                                         blank=True)
+                                         related_name="translated")
     sort = models.CharField(max_length=128,editable=False)
     language = models.CharField(max_length=5, choices=LANGUAGES)
     
@@ -389,7 +387,7 @@ class OnlineEditionWithContentManager(models.Manager):
 
 class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
     id = NoidField(primary_key=True)
-    date = models.DateTimeField(null=True,blank=True)
+    date = models.DateTimeField(blank=True)
     expression = models.ForeignKey(Expression, verbose_name="Work")
     edition_title = models.TextField(max_length=200, editable=False, blank=True,db_column='title')
     #numbering = models.CharField("Numbering", max_length=128, blank=True)
@@ -524,8 +522,8 @@ class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
     id = NoidField(primary_key=True)
     olkey = models.CharField("Open Library Key", max_length=20, blank=True)
     edition_title = models.TextField("Title (leave blank if same as expression)", max_length=200, blank=True,db_column='title')
-    date = FreeformDateField(max_length=128,blank=True, null=True)
-    date_sort = models.CharField(max_length=128,blank=True,null=True,editable=False)
+    date = FreeformDateField(max_length=128,blank=True)
+    date_sort = models.CharField(max_length=128, blank=True, editable=False)
     publisher = models.CharField(max_length=100)
     #in_series = models.ForeignKey(Work,edit_inline=False,related_name="in_series",null=True,blank=True,limit_choices_to={'type': "series"})
     #isbn10 = models.CharField("ISBN-10",max_length=13,blank=True)
@@ -533,17 +531,15 @@ class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
         if isbn.isValid(self.isbn13): return isbn.toI10(self.isbn13)
         else: return None
     isbn13 = models.CharField("ISBN-13",max_length=16,blank=True)
-    description = models.CharField("Physical description",max_length=100,blank=True,null=True)
+    description = models.CharField("Physical description", max_length=100, blank=True)
     price_dollars = models.DecimalField('Price ($)',
                                         max_digits=5,
                                         decimal_places=2,
-                                        blank=True,
-                                        null=True)
+                                        blank=True)
     price_pounds = models.DecimalField('Price (£)',
                                        max_digits=5,
                                        decimal_places=2,
-                                       blank=True,
-                                       null=True)
+                                       blank=True)
     available_us = models.BooleanField()
     available_uk = models.BooleanField()
     forthcoming = models.BooleanField()
