@@ -196,20 +196,31 @@ class WorkWithContentManager(models.Manager):
 
 class Work(models.Model, SubjectMixin, BibSortMixin):
     id = NoidField(primary_key=True)
-    work_title = models.TextField(max_length=200,blank=True,db_column='title')
+
+    # FRBR Attributes §4.2
+    work_title = models.TextField(blank=True, db_column='title')
+    date = FreeformDateField(max_length=128, blank=True, null=True)
+
+    # FRBR Relationships.
+    # §5.2.2
     creators = models.ManyToManyField(Person, 
                                       through='Creatorship',
                                       related_name='created',
                                       blank=True)
-    subjects = models.ManyToManyField(Subject,blank=True)
+    # §5.2.3
+    subjects = models.ManyToManyField(Subject, blank=True)
+    # §5.3.1.1
+    part_of = models.ForeignKey("self", blank=True, null=True, related_name="parts")
+
+    # non-FRBR.
     description = models.TextField(blank=True)
     note = models.TextField(blank=True)
-    part_of = models.ForeignKey("self",blank=True,null=True,related_name="parts")
-    date = FreeformDateField(max_length=128,blank=True,null=True)
-    date_sort = models.CharField(max_length=128,blank=True,null=True,editable=False)
-    sort = models.CharField(max_length=128,editable=False)
     form = models.CharField(max_length=128, choices=WORK_FORMS)
     source = models.TextField(blank=True)
+
+    # Sort fields
+    sort = models.CharField(max_length=128, editable=False)
+    date_sort = models.CharField(max_length=128, blank=True, null=True, editable=False)
 
     objects = models.Manager()
     with_content = WorkWithContentManager()
