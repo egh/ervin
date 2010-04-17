@@ -68,7 +68,7 @@ class EditionFeed(Feed):
         else: return None
     
     def item_authors(self, ed):
-        return [ {'name': unicode(a)} for a in ed.authors.all() ]
+        return [ {'name': unicode(a)} for a in ed.creators.all() ]
         
         
 class RecentDocumentsFeed(EditionFeed):

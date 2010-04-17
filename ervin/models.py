@@ -90,10 +90,10 @@ class BibSortMixin(object):
     def _sort_save_hook(self):
         key = None
         title_key = ervin.templatetags.ervintags.sort_friendly(self.title)
-        author = self.first_author
-        if author != None:
-            author_key = ervin.templatetags.ervintags.sort_friendly(ervin.templatetags.ervintags.inverted_name(author))
-            key = "%s%s"%(author_key,title_key)
+        creator = self.first_creator
+        if creator != None:
+            creator_key = ervin.templatetags.ervintags.sort_friendly(ervin.templatetags.ervintags.inverted_name(creator))
+            key = "%s%s"%(creator_key,title_key)
         else: key = title_key
         self.sort = re.sub("[\":,.'\[\]\(\)\?\&-]" ,'', key[:128].lower())
 
@@ -134,7 +134,7 @@ class Person(models.Model, SubjectMixin):
         self.sort = ervin.templatetags.ervintags.sort_friendly(unicode(self))[:128]
         super(Person, self).save()
         self._subject_save_hook()
-        for w in self.authored.all():
+        for w in self.created.all():
             w.save()
 
     def delete(self):
@@ -197,10 +197,10 @@ class WorkWithContentManager(models.Manager):
 class Work(models.Model, SubjectMixin, BibSortMixin):
     id = NoidField(primary_key=True)
     work_title = models.TextField(max_length=200,blank=True,db_column='title')
-    authors = models.ManyToManyField(Person, 
-                                     through='Authorship',
-                                     related_name='authored',
-                                     blank=True)
+    creators = models.ManyToManyField(Person, 
+                                      through='Creatorship',
+                                      related_name='created',
+                                      blank=True)
     subjects = models.ManyToManyField(Subject,blank=True)
     description = models.TextField(blank=True)
     note = models.TextField(blank=True)
@@ -229,14 +229,14 @@ class Work(models.Model, SubjectMixin, BibSortMixin):
         return Subject.objects.filter(work__in=all_works).distinct()
     all_subjects = property(_all_subjects)
 
-    def _first_author(self): 
-        authors = self.authors.filter(authorship__primary=True).all()
-        if (authors.count() > 0): return authors[0]
+    def _first_creator(self): 
+        creators = self.creators.filter(creatorship__primary=True).all()
+        if (creators.count() > 0): return creators[0]
         else:
-            authors = self.authors.order_by('surname','forename').all()
-            if (authors.count() > 0): return authors[0]
+            creators = self.creators.order_by('surname','forename').all()
+            if (creators.count() > 0): return creators[0]
             else: return None
-    first_author = property(_first_author)
+    first_creator = property(_first_creator)
 
     def _title(self):
         return self.work_title
@@ -284,17 +284,17 @@ class Work(models.Model, SubjectMixin, BibSortMixin):
     class Meta:
         ordering=['sort']
 
-class Authorship(models.Model):
+class Creatorship(models.Model):
     person = models.ForeignKey(Person)
     work = models.ForeignKey(Work)
     primary = models.BooleanField(verbose_name="Primary?")
 
     class Meta:
-        db_table = 'ervin_work_authors'
-        verbose_name = "Author"
+        db_table = 'ervin_work_creators'
+        verbose_name = "Creator"
 
     def save(self):
-        super(Authorship, self).save() 
+        super(Creatorship, self).save() 
         self.work.save()
         # update sort key in work
 
@@ -314,9 +314,9 @@ class Expression(models.Model, SubjectMixin,BibSortMixin):
     sort = models.CharField(max_length=128,editable=False)
     language = models.CharField(max_length=5, choices=LANGUAGES)
     
-    def _first_author(self): 
-        return self.work.first_author
-    first_author = property(_first_author)
+    def _first_creator(self): 
+        return self.work.first_creator
+    first_creator = property(_first_creator)
 
     def _editions(self):
         return list(self.onlineedition_set.all()) + list(self.physicaledition_set.all())    
@@ -338,9 +338,9 @@ class Expression(models.Model, SubjectMixin,BibSortMixin):
         return self.onlineedition or self.physicaledition
     edition = property(_edition)
 
-    def _authors(self):
-        return self.work.authors
-    authors = property(_authors)
+    def _creators(self):
+        return self.work.creators
+    creators = property(_creators)
 
     def _subjects(self):
         return self.work.subjects
@@ -387,9 +387,9 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
     objects = models.Manager()
     with_content = OnlineEditionWithContentManager()
 
-    def _first_author(self): 
-        return self.work.first_author
-    first_author = property(_first_author)
+    def _first_creator(self): 
+        return self.work.first_creator
+    first_creator = property(_first_creator)
 
     def _html(self): return self._get_by_mimetype(r'text/html')
     html = property(_html)
@@ -454,9 +454,9 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
             return self.expression.title
     title = property(_title)
 
-    def _authors(self):
-        return self.work.authors
-    authors = property(_authors)
+    def _creators(self):
+        return self.work.creators
+    creators = property(_creators)
 
     def _subjects(self):
         return self.work.subjects
@@ -544,9 +544,9 @@ class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
         return (self.available_uk or self.available_us)
     available = property(_available)
 
-    def _first_author(self): 
-        return self.work.first_author
-    first_author = property(_first_author)
+    def _first_creator(self): 
+        return self.work.first_creator
+    first_creator = property(_first_creator)
         
     def _work(self): return self.expression.work
     work = property(_work)
@@ -558,8 +558,8 @@ class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
             return self.expression.title
     title = property(_title)
 
-    def _authors(self): return self.work.authors
-    authors = property(_authors)
+    def _creators(self): return self.work.creators
+    creators = property(_creators)
 
     def _subjects(self): return self.work.subjects
     subjects = property(_subjects)

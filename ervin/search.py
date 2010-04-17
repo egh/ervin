@@ -35,8 +35,8 @@ class MultiValuedCharField(MultiValuedField, solango.fields.CharField):
 
 class EditionDocument(solango.SearchDocument):
     title = solango.fields.CharField(copy=True)
-    author = MultiValuedTextField(multi_valued=True,copy=True)
-    author_facet = MultiValuedCharField(multi_valued=True,stored=False)
+    creator = MultiValuedTextField(multi_valued=True,copy=True)
+    creator_facet = MultiValuedCharField(multi_valued=True,stored=False)
     translator = MultiValuedTextField(multi_valued=True,copy=True)
     mysort = solango.fields.CharField(copy=False,indexed=True,stored=False)
     subject = MultiValuedTextField(multi_valued=True,copy=True)
@@ -45,14 +45,14 @@ class EditionDocument(solango.SearchDocument):
     def transform_title(self,instance):
         return instance.title
 
-    def transform_author(self, instance):
-        return [ unicode(a) for a in instance.authors.all() ]
+    def transform_creator(self, instance):
+        return [ unicode(a) for a in instance.creators.all() ]
 
     def transform_translator(self, instance):
-        return [ unicode(a) for a in instance.authors.all() ]
+        return [ unicode(a) for a in instance.translators.all() ]
 
-    def transform_author_facet(self, instance):
-        return [ unicode(a) for a in instance.authors.all() ] + [ unicode(a) for a in instance.translators.all() ]
+    def transform_creator_facet(self, instance):
+        return [ unicode(a) for a in instance.creators.all() ] + [ unicode(a) for a in instance.translators.all() ]
 
     def transform_subject(self, instance):
         return [ unicode(a) for a in instance.subjects.all() ]

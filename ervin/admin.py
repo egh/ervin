@@ -37,8 +37,8 @@ class RemoteContentInlineAdmin(admin.StackedInline):
     model=RemoteContent
     extra = 1
 
-class AuthorshipInlineAdmin(admin.TabularInline):
-    model = Authorship
+class CreatorshipInlineAdmin(admin.TabularInline):
+    model = Creatorship
     extra = 1
 
 class AliasInlineAdmin(admin.TabularInline):
@@ -53,7 +53,14 @@ class ExpressionInlineAdmin(admin.StackedInline):
     filter_horizontal=['translators']
     extra = 1
 
+class WorkModelForm(forms.ModelForm):
+    work_title = forms.CharField(
+        widget=forms.Textarea(attrs={'cols': 100, 'rows': 1}))
+    class Meta:
+        model = Work
+
 class WorkAdmin(admin.ModelAdmin):
+    form = WorkModelForm
     search_fields = ['sort']
     fieldsets = [
         [None, {
@@ -69,7 +76,7 @@ class WorkAdmin(admin.ModelAdmin):
         }],
     ]
     filter_horizontal=['subjects']
-    inlines = [AuthorshipInlineAdmin, ExpressionInlineAdmin]
+    inlines = [CreatorshipInlineAdmin, ExpressionInlineAdmin]
     raw_id_fields = ['part_of']
 
 class OnlineEditionAdmin(admin.ModelAdmin):
