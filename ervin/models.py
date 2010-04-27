@@ -60,12 +60,12 @@ class MyFileField(models.FileField):
 class SubjectMixin(object):
     """Class which handles updating subject headings."""
 
-    def _subject(self):
+    @property
+    def subject(self):
         s = None
         try: s = Subject.objects.get (object_id=self.pk)
         except Subject.DoesNotExist: s = self.create_subject()
         return s
-    subject = property(_subject)
 
     def _subject_delete_hook(self):
         s = Subject.objects.get(object_id=self.pk)
@@ -82,10 +82,10 @@ class SubjectMixin(object):
         try: Subject.objects.get(object_id=self.pk)
         except Subject.DoesNotExist: self.create_subject()
 
-    def _works_about(self):
+    @property
+    def works_about(self):
         return Work.objects.filter(subjects=self.subject)
-    works_about = property(_works_about)
-
+    
 class BibSortMixin(object):
     def _sort_save_hook(self):
         key = None
@@ -224,50 +224,51 @@ class Work(models.Model, SubjectMixin, BibSortMixin):
     objects = models.Manager()
     with_content = WorkWithContentManager()
 
-    def _work(self):
-        return self
-    work = property(_work)
-
-    def _expression(self):
+    @property
+    def work(self): return self
+    
+    @property
+    def expression(self):
         if self.expression_set.count() > 0:
             return self.expression_set.all()[0]
         else: return None
-    expression = property(_expression)
 
-    def _all_subjects(self):
+    @property
+    def all_subjects(self):
         all_works = [self] + list(self.parts.all())
         return Subject.objects.filter(work__in=all_works).distinct()
-    all_subjects = property(_all_subjects)
 
-    def _first_creator(self): 
-        creators = self.creators.filter(creatorship__primary=True).all()
-        if (creators.count() > 0): return creators[0]
+    @property
+    def first_creator(self):
+        ordered = self.creators.order_by('surname','forename')
+        if ordered.count() == 0:
+            return None
         else:
-            creators = self.creators.order_by('surname','forename').all()
-            if (creators.count() > 0): return creators[0]
-            else: return None
-    first_creator = property(_first_creator)
+            filtered = ordered.filter(creatorship__primary=True)
+            if filtered.count() > 0:
+                return filtered[0]
+            else:
+                return ordered[0]
 
-    def _title(self):
-        return self.work_title
-    title = property(_title)
+    @property
+    def title(self): return self.work_title
     
-    def _is_online(self):
+    @property
+    def is_online(self):
         all_works = [self] + list(self.parts.all())
         return OnlineEdition.objects.filter(expression__work__in=all_works).count() > 0
-    is_online = property(_is_online)
 
-    def _is_in_series(self):
+    @property
+    def is_in_series(self):
         return self.has_part_of and self.part_of.form == 'series'
-    is_in_series = property(_is_in_series)
 
-    def _is_subpart(self):
+    @property
+    def is_subpart(self):
         return self.has_part_of and self.part_of.form != 'series'
-    is_subpart = property(_is_subpart)
 
-    def _has_part_of(self):
+    @property
+    def has_part_of(self):
         return self.part_of != None
-    has_part_of = property(_has_part_of)
 
     def get_absolute_url(self): return "/%s"%(self.pk)
 
@@ -323,44 +324,42 @@ class Expression(models.Model, SubjectMixin,BibSortMixin):
     sort = models.CharField(max_length=128,editable=False)
     language = models.CharField(max_length=5, choices=LANGUAGES)
     
-    def _first_creator(self): 
+    @property
+    def first_creator(self): 
         return self.work.first_creator
-    first_creator = property(_first_creator)
 
-    def _editions(self):
+    @property
+    def editions(self):
         return list(self.onlineedition_set.all()) + list(self.physicaledition_set.all())    
-    editions = property(_editions)
 
-    def _onlineedition(self):
+    @property
+    def onlineedition(self):
         if self.onlineedition_set.count() > 0:
             return self.onlineedition_set.all()[0]
         else: return None
-    onlineedition = property(_onlineedition)
 
-    def _physicaledition(self):
+    @property
+    def physicaledition(self):
         if self.physicaledition_set.count() > 0:
             return self.physicaledition_set.all()[0]
         else: return None
-    physicaledition = property(_physicaledition)
     
-    def _edition(self):
+    @property
+    def edition(self):
         return self.onlineedition or self.physicaledition
-    edition = property(_edition)
 
-    def _creators(self):
-        return self.work.creators
-    creators = property(_creators)
+    @property
+    def creators(self): return self.work.creators
 
-    def _subjects(self):
-        return self.work.subjects
-    subjects = property(_subjects)
+    @property
+    def subjects(self): return self.work.subjects
 
-    def _title(self):
+    @property
+    def title(self):
         if self.expression_title != None and self.expression_title != '':
             return self.expression_title
         else:
             return self.work.title
-    title = property(_title)
 
     def get_absolute_url(self): return "/%s"%(self.pk)
 
@@ -396,19 +395,20 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
     objects = models.Manager()
     with_content = OnlineEditionWithContentManager()
 
-    def _first_creator(self): 
+    @property
+    def first_creator(self): 
         return self.work.first_creator
-    first_creator = property(_first_creator)
 
-    def _html(self): return self._get_by_mimetype(r'text/html')
-    html = property(_html)
+    @property
+    def html(self): return self._get_by_mimetype(r'text/html')
 
     try:
         _style = libxslt.parseStylesheetDoc(libxml2.parseFile(ervin.conf.HTML_PROCESS_XSLT_FILE))
     except:
         _style = None
 
-    def _processed_html(self):
+    @property
+    def processed_html(self):
         if (self._style == None): 
             return self.html.data
         else:
@@ -421,67 +421,59 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
                 return retval
             except:
                 return self.html.data
-    processed_html = property(_processed_html)
     
-    def _pdf(self): return self._get_by_mimetype(r'application/pdf')
-    pdf = property(_pdf)
+    @property
+    def pdf(self): return self._get_by_mimetype(r'application/pdf')
 
-    def _image(self): 
+    @property
+    def image(self): 
         image = self._get_by_mimetype(r'image/.*')
         if image.name == 'cover': 
             return None
         else:
             return image
-    image = property(_image)
     
-    def _is_image(self):
+    @property
+    def is_image(self):
         return (self._get_by_mimetype(r'image/.*') != None) and \
             (self._get_by_mimetype(r'text/.*') == None) and \
             (self._get_by_mimetype(r'application/.*') == None)
-    is_image = property(_is_image)
 
-    def _content(self):
+    @property
+    def content(self):
         return (list(self.content_db.all()) + list(self.content_file.all()))
-    content = property(_content)
 
-    def _multiple_contents(self): 
+    @property
+    def multiple_contents(self): 
         return ((self.content_db.count() + self.content_file.count()) > 1)
-    multiple_contents = property(_multiple_contents)
 
-    def _work(self):
-        return self.expression.work
-    work = property(_work)
+    @property
+    def work(self): return self.expression.work
 
-    def _x(self):
-        return str(type(self))
-    x = property(_x)
+    @property
+    def x(self): return str(type(self))
 
-    def _title(self):
+    @property
+    def title(self):
         if self.edition_title != None and self.edition_title != '':
             return self.edition_title
         else:
             return self.expression.title
-    title = property(_title)
 
-    def _creators(self):
-        return self.work.creators
-    creators = property(_creators)
+    @property
+    def creators(self): return self.work.creators
 
-    def _subjects(self):
-        return self.work.subjects
-    subjects = property(_subjects)
+    @property
+    def subjects(self): return self.work.subjects
 
-    def _parts(self):
-        return self.work.parts
-    parts = property(_parts)
+    @property
+    def parts(self): return self.work.parts
 
-    def _items(self):
-        return list(self.remoteitem_set.all())
-    items = property(_items)
+    @property
+    def items(self): return list(self.remoteitem_set.all())
 
-    def _translators(self):
-        return self.expression.translators
-    translators = property(_translators)
+    @property
+    def translators(self): return self.expression.translators
 
     def _get_by_mimetype(self, mimetype):
         for c in self.content:
@@ -547,39 +539,37 @@ class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
     sort = models.CharField(max_length=128,editable=False)
     expression = models.ForeignKey(Expression)
 
-    def _available(self):
-        return (self.available_uk or self.available_us)
-    available = property(_available)
+    @property
+    def available(self): return (self.available_uk or self.available_us)
 
-    def _first_creator(self): 
-        return self.work.first_creator
-    first_creator = property(_first_creator)
+    @property
+    def first_creator(self): return self.work.first_creator
         
-    def _work(self): return self.expression.work
-    work = property(_work)
+    @property
+    def work(self): return self.expression.work
 
-    def _title(self):
+    @property
+    def title(self):
         if self.edition_title != None and self.edition_title != '':
             return self.edition_title
         else:
             return self.expression.title
-    title = property(_title)
 
-    def _creators(self): return self.work.creators
-    creators = property(_creators)
+    @property
+    def creators(self): return self.work.creators
 
-    def _subjects(self): return self.work.subjects
-    subjects = property(_subjects)
+    @property
+    def subjects(self): return self.work.subjects
 
-    def _parts(self): return self.work.parts
-    parts = property(_parts)
+    @property
+    def parts(self): return self.work.parts
 
-    def _items(self): return None
-    items = property(_items)
+    @property
+    def items(self): return None
 
-    def _translators(self):
+    @property
+    def translators(self):
         return self.expression.translators
-    translators = property(_translators)
 
     def __unicode__(self):
         return "%s(%s)"%(self._title(), unicode(self.date))
@@ -724,9 +714,9 @@ class FileContent(models.Model):
     filename = models.FileField(upload_to="data")
     mimetype = models.CharField(max_length=100,editable=False)
 
-    def _size(self):
+    @property
+    def size(self):
         return (os.path.getsize(str(self.filename.path)))
-    size = property(_size)
 
     def get_ext(self):
         if mime2ext_map.has_key(self.mimetype):
