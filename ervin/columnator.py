@@ -14,6 +14,12 @@
 #along with Ervin.  If not, see <http://www.gnu.org/licenses/>.
 
 class Columnator(object):
+    """
+    A class to turn lists of data into iterable columns.
+    
+    Iterate over the object to get the columns.
+    """
+
     def __init__(self, data, column_count=5):
         self.column_count = column_count
         self._data = data
