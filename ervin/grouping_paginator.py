@@ -82,9 +82,9 @@ class GroupingPaginator(Paginator):
                         finished = True
         return groups
 
-    def _get_count(self):
+    @property
+    def count(self):
         return len(self._groups)
-    count = property(_get_count)
 
     def validate_number(self, number):
         "Validates the given 1-based page number."
@@ -110,18 +110,18 @@ class GroupingPaginator(Paginator):
             page_object_list = self.object_list.filter(sort__iregex=self._group_to_re(self._groups[number-1]))
             return GroupedPage(page_object_list, number, self)
 
-    def _get_num_pages(self):
+    @property
+    def num_pages(self):
         "Returns the total number of pages."
         return len(self._groups)
-    num_pages = property(_get_num_pages)
-
-    def _get_page_range(self):
+    
+    @property
+    def page_range(self):
         """
         Returns a 1-based range of pages for iterating through within
         a template for loop.
         """
         return range(1, self.num_pages + 1)
-    page_range = property(_get_page_range)
 
 class Page (django.core.paginator.Page):
     def __init__(self, object_list, number, paginator, filter_func=None):
@@ -153,13 +153,13 @@ class GroupedPage(Page):
     def end_index(self):
         raise Exception("Not allowed.")
 
-    def _get_count(self):
+    @property
+    def count(self):
         return self.object_list.count()
-    count = property(_get_count)
 
-    def _get_group(self):
+    @property
+    def group(self):
         return self.paginator.group_names()[self.number-1]
-    group = property(_get_group)
     
     def __unicode__(self):
         return "Page %s of %s"%(self.group, self.paginator.group_names())
