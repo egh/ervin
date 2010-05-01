@@ -19,13 +19,7 @@ from ervin.views.generic import *
 from django.http import HttpResponse
 from django.core.paginator import Paginator
 
-type_map = { 'pdf' : 'application/pdf',
-             'html' : 'text/html',
-             'htm' : 'text/htm' }
-
 def detail(ed, request, *args,**kwargs):
-    if kwargs.has_key('ext') and type.has_key(kwargs['ext']):
-        type = type_map[kwargs['ext']]
     t = None
     if ed.work.form == 'StillImage':
         t = loader.get_template('ervin/onlineedition_image.html')
