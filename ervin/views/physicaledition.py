@@ -18,8 +18,6 @@ from ervin.models import *
 from django.http import HttpResponse
 
 def detail(ed, request, *args,**kwargs):
-    if kwargs.has_key('ext') and type.has_key(kwargs['ext']):
-        type = type_map[kwargs['ext']]
     t = loader.get_template('ervin/physicaledition.html')
     c = Context({ 'entity' : ed})
     return HttpResponse(t.render(c))
