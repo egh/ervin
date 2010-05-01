@@ -4,7 +4,23 @@
 {% block content %}
 
 <dl>
-<dt>Surname</dt> <dd>{{ person.surname }}</dd>
-<dt>Forename</dt> <dd>{{ person.forename }}</dd>
+  <dt>Surname</dt> <dd>{{ person.surname }}</dd>
+  <dt>Forename</dt> <dd>{{ person.forename }}</dd>
+  {% if person.dates %}
+  <dt>Dates</dt> <dd>{{ person.dates }}</dd>
+  {% endif %}
 </dl>
+
+{% if person.alias_set.all %}
+<h2>Aliases</h2>
+<ul>
+{% for alias in person.alias_set.all %}
+  <li>
+    <dt>Surname</dt> <dd>{{ alias.surname }}</dd>
+    <dt>Forename</dt> <dd>{{ alias.forename }}</dd>
+  </li>
+{% endfor %}
+</ul>
+{% endif %}
+
 {% endblock %}
