@@ -30,7 +30,7 @@ def detail(work, request, *args, **kwargs):
     else:
 	t = loader.get_template('ervin/work.html')
 	c = Context({
-                "work": work
+                "entity": work
                 })
     	return HttpResponse(t.render(c))
 

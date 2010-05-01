@@ -31,6 +31,6 @@ def detail(expression, request, *args, **kwargs):
     else:
 	t = loader.get_template('ervin/expression.html')
 	c = Context({
-          'expression': expression
+          'entity': expression
         })
     	return HttpResponse(t.render(c))

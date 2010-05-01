@@ -1,53 +1,8 @@
-{% extends "ervin/base.html" %}
+{% extends "ervin/g1_entity.html" %}
 {% load ervintags %}
 {% block html_title %}Online edition: {{ edition.title }}{% endblock %}
-{% block content %}
 
-<div about="http://example.org/{{ edition.get_absolute_url }}" >
-  <a about="http://example.org/{{ edition.get_absolute_url }}"
-     rel="frbr:embodimentOf" href="http://example.org{{edition.expression.get_absolute_url}}" />
-
-  <abbr class="unapi-id" title="{{ edition.pk }}"/>
-  <dl>
-    <dt>Title:</dt> <dd property="dc:title">{{ edition.title }}</dd>
-    
-    {% if edition.creators.all %}
-    <dt>Authors:</dt> <dd>
-      <ul>
-        {% for person in edition.creators.all %}
-        <li property="dc:creator">{{ person }}</li>
-        {% endfor %}
-      </ul>
-    </dd>
-    {% endif %}
-    
-    {% if edition.subjects %}
-    <dt>Subjects:</dt> <dd>
-      <ul>
-        {% for subject in edition.subjects.all %}
-        <li>{{ subject }}</li>
-        {% endfor %}
-      </ul>
-    </dd>
-    {% endif %}
-  </dl>
-</div>
-
-{# data #}
-
-{% if contents %}
-<dt>
-{% for name,versions in contents.items %}
-<dt>{{ name }}</dt>
-<dd>
-{% for v in versions %}
-{% ifequal v.mimetype 'application/pdf' %}
-<p><a href="{{v.get_absolute_url}}">View PDF</a></p>
-{% endifequal %}
-{% endfor %}
-
-</dd>
-</dt>
-{% endfor %}
-{% endif %}
+{% block rest %}
+<abbr class="unapi-id" title="{{ edition.pk }}"/>
+{% block edition_content %}{% endblock %}
 {% endblock %}

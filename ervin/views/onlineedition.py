@@ -26,8 +26,12 @@ type_map = { 'pdf' : 'application/pdf',
 def detail(ed, request, *args,**kwargs):
     if kwargs.has_key('ext') and type.has_key(kwargs['ext']):
         type = type_map[kwargs['ext']]
-    t = loader.get_template('ervin/onlineedition.html')
-    c = Context({ 'edition' : ed})
+    t = None
+    if ed.work.form == 'StillImage':
+        t = loader.get_template('ervin/onlineedition_image.html')
+    else:
+        t = loader.get_template('ervin/onlineedition.html')
+    c = Context({ 'entity' : ed})
     if len(ed.content_remote.all()) == 0 and len(ed.content_db.all()) == 1 and len(ed.content_file.all()) == 0:
         c['data'] = ed.content_db.all()[0].data
     else:

@@ -1,0 +1,6 @@
+{% extends "ervin/onlineedition.html" %}
+{% load ervintags %}
+
+{% block edition_content %}
+<p><img src="{{ entity.image.get_absolute_url}}" /></p>
+{% endblock %}

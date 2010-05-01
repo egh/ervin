@@ -1,10 +1,2 @@
-{% extends "ervin/base.html" %}
+{% extends "ervin/g1_entity.html" %}
 {% load ervintags %}
-{% block html_title %}{{expresion.work.title}}{% endblock %}
-{% block content %}
-
-<dl>
-<dt>Work title</dt><dd>{{ expression.work.title }}</dd>
-<dt>Work authors</dt><dd>{{ expression.work.creators.all|inverted_name_first_list}}</dd>
-</dl>
-{% endblock %}

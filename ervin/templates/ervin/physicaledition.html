@@ -1,30 +1,6 @@
-{% extends "ervin/base.html" %}
+{% extends "ervin/g1_entity.html" %}
 {% load ervintags %}
 {% block html_title %}Physical edition: {{ edition.title }}{% endblock %}
-{% block content %}
+{% block rest %}
 <abbr class="unapi-id" title="{{ edition.pk }}"/>
-<dl>
-<dt>Title:</dt> <dd>{{ edition.title }}</dd>
-
-{% if edition.creators %}
-<dt>Authors:</dt> <dd>
-  <ul>
-  {% for person in edition.creators.all %}
-    <li>{{ person }}</li>
-  {% endfor %}
-  </ul>
-</dd>
-{% endif %}
-
-{% if edition.subjects %}
-<dt>Subjects:</dt> <dd>
-  <ul>
-  {% for subject in edition.subjects.all %}
-    <li>{{ subject }}</li>
-  {% endfor %}
-  </ul>
-</dd>
-{% endif %}
-</dl>
-
-{% endblock %}
+{% endblock rest %}
