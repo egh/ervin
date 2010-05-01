@@ -5,8 +5,7 @@
 <p>Multiple expressions</p>
 <ul>
   {% for expression in entity.expression_set.all %}
-  <li><a href="{{expression.get_absolute_url}}">{{ expression}}</a></li>
+  <li><a href="{{expression.get_absolute_url}}">{{ expression }}</a></li>
   {% endfor %}
 </ul>
 {% endblock %}
-
