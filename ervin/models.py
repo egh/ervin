@@ -228,7 +228,7 @@ class Work(models.Model, SubjectMixin, BibSortMixin):
     def work(self): return self
     
     @property
-    def expression(self):
+    def first_expression(self):
         if self.expression_set.count() > 0:
             return self.expression_set.all()[0]
         else: return None
@@ -323,7 +323,11 @@ class Expression(models.Model, SubjectMixin,BibSortMixin):
                                          related_name="translated")
     sort = models.CharField(max_length=128,editable=False)
     language = models.CharField(max_length=5, choices=LANGUAGES)
-    
+
+    @property
+    def expression(self):
+        return self
+
     @property
     def first_creator(self): 
         return self.work.first_creator
