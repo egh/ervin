@@ -1,6 +1,11 @@
 {% extends "ervin/base.html" %}
 {% load ervintags %}
 {% block html_title %}{{person}}{% endblock %}
+
+{% block content_header %}
+<h1>Person</h1>
+{% endblock content_header %}
+
 {% block content %}
 
 <dl>
