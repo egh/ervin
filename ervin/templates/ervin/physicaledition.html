@@ -1,6 +1,12 @@
 {% extends "ervin/g1_entity.html" %}
 {% load ervintags %}
+
 {% block html_title %}Physical edition: {{ edition.title }}{% endblock %}
+
+{% block content_header %}
+<h1>Physical edition</h1>
+{% endblock content_header %}
+
 {% block rest %}
 <abbr class="unapi-id" title="{{ edition.pk }}"/>
 {% endblock rest %}
