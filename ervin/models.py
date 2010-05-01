@@ -527,10 +527,12 @@ class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
     price_dollars = models.DecimalField('Price ($)',
                                         max_digits=5,
                                         decimal_places=2,
+                                        null=True,
                                         blank=True)
     price_pounds = models.DecimalField('Price (£)',
                                        max_digits=5,
                                        decimal_places=2,
+                                       null=True,
                                        blank=True)
     available_us = models.BooleanField()
     available_uk = models.BooleanField()
@@ -572,7 +574,7 @@ class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
         return self.expression.translators
 
     def __unicode__(self):
-        return "%s(%s)"%(self._title(), unicode(self.date))
+        return "%s(%s)"%(self.title, unicode(self.date))
 
     def get_absolute_url(self): return "/%s"%(self.pk)
 
