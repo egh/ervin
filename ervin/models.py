@@ -318,6 +318,7 @@ class Expression(models.Model, SubjectMixin,BibSortMixin):
     work = models.ForeignKey(Work)
     expression_title = models.CharField(max_length=200, verbose_name="Translation title", blank=True, db_column='title')
     translators = models.ManyToManyField(Person,
+                                         blank=True,
                                          #through="ExpressionTranslator"
                                          verbose_name="Translators",
                                          related_name="translated")
