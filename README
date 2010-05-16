@@ -106,3 +106,22 @@ Edit ``urls.py`` appropriately. For instance::
  $ python manage.py runserver
 
 Visit http://localhost:8000/admin and begin adding data!
+
+Search
+======
+
+Install::
+
+::
+
+ $ cd $PROJECT_DIR/packages && svn co http://django-solr-search.googlecode.com/svn/trunk/ django-solr-search
+
+ $ cd $PROJECT_DIR/lib && ln -s ../packages/django-solr-search/solango/ .
+
+Add ``solango`` to ``INSTALLED_APPS``::
+
+  INSTALLED_APPS = (
+    ...
+    'solango'
+  )
+
