@@ -65,3 +65,11 @@ class NoidField(models.CharField):
             value = self.minter.mint()
             setattr(model_instance, self.attname, value)
         return value
+    
+    def formfield(self, **kwargs):
+        return None
+
+    def contribute_to_class(self, cls, name):
+        super(NoidField, self).contribute_to_class(cls, name)
+        cls._meta.has_auto_field = True
+        cls._meta.auto_field = self
