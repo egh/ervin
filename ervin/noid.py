@@ -55,8 +55,12 @@ class NoidField(models.CharField):
     def __init__(self, *args, **kwargs):
         kwargs['max_length'] = kwargs.get('max_length', 6)
         kwargs['noid_dir'] = kwargs.get('noid_dir', ervin.conf.NOID_DIR)
+        kwargs['internal_noid_dir'] = kwargs.get('internal_noid_dir', 
+                                                 ervin.conf.INTERNAL_NOID_DIR)
         self.minter = LocalMinter(kwargs['noid_dir'])
+        self.internal_minter = LocalMinter(kwargs['internal_noid_dir'])
         del(kwargs['noid_dir'])
+        del(kwargs['internal_noid_dir'])
         models.CharField.__init__(self, *args, **kwargs)
 
     def pre_save(self, model_instance, add):

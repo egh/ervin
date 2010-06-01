@@ -154,6 +154,12 @@ class Person(models.Model, SubjectMixin):
     class Meta:
         ordering=['surname','forename']
         
+class PersonSameAsUri(models.Model):
+    uri    = models.URLField()
+    person = models.ForeignKey(Person, related_name='same_as_uri_set')
+
+    def __unicode__(self): return unicode(self.uri)
+
 class Concept(models.Model, SubjectMixin):
     id = NoidField(primary_key=True)
     name = models.CharField(max_length=200)
@@ -315,7 +321,7 @@ LANGUAGES=(('en', 'English'),
 
 class Expression(models.Model, SubjectMixin,BibSortMixin):
     id = NoidField(primary_key=True)
-    work = models.ForeignKey(Work)
+    work = models.ForeignKey(Work) # TODO change to realization_of
     expression_title = models.CharField(max_length=200, verbose_name="Translation title", blank=True, db_column='title')
     translators = models.ManyToManyField(Person,
                                          blank=True,
@@ -595,9 +601,9 @@ class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
 class Place(models.Model, SubjectMixin):
     """A place in the FRBR model."""
 
-    id = NoidField(primary_key=True)
-    name = models.CharField(max_length=200)
-    sort = models.CharField(max_length=128,editable=False)
+    id           = NoidField(primary_key=True)
+    name         = models.CharField(max_length=200)
+    sort         = models.CharField(max_length=128, editable=False)
 
     def get_absolute_url(self): return "/%s"%(self.pk)
 
@@ -614,6 +620,12 @@ class Place(models.Model, SubjectMixin):
 
     class Meta:
         ordering=['name']
+
+class PlaceSameAsUri(models.Model):
+    uri   = models.URLField()
+    place = models.ForeignKey(Place, related_name='same_as_uri_set')
+
+    def __unicode__(self): return unicode(self.uri)
 
 class Organization(models.Model, SubjectMixin):
     """A corporate entity in the FRBR model."""

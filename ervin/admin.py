@@ -19,6 +19,8 @@ from django import forms
 from django.db.models import get_model
 from ervin.models import *
 from ervin.forms import DbContentAdminModelForm, PageAdminModelForm
+from django.contrib import admin
+from django.contrib.contenttypes import generic
 
 class RemoteContentInlineAdmin(admin.StackedInline):
     model=RemoteContent
@@ -100,20 +102,30 @@ class ExpressionAdmin(admin.ModelAdmin):
     model = Expression
     search_fields = ['sort']
 
+class PersonSameAsUriInline(admin.TabularInline):
+    model = PersonSameAsUri
+
 class PersonAdmin(admin.ModelAdmin):
     model = Person
     search_fields = ['surname', 'forename']
-    inlines=[AliasInlineAdmin]
+    inlines=[AliasInlineAdmin, PersonSameAsUriInline]
     fields = ('forename', 'surname', 'dates', 'olkey')
-    
+
+class PlaceSameAsUriInline(admin.TabularInline):
+    model = PlaceSameAsUri
+
+class PlaceAdmin(admin.ModelAdmin):
+    inlines=[PlaceSameAsUriInline]
+
+
 admin.site.register(Concept)
-admin.site.register(Expression,ExpressionAdmin)
+admin.site.register(Expression, ExpressionAdmin)
 admin.site.register(Event)
 admin.site.register(FileContent)
-admin.site.register(OnlineEdition,OnlineEditionAdmin)
+admin.site.register(OnlineEdition, OnlineEditionAdmin)
 admin.site.register(Organization)
 admin.site.register(Page, PageAdmin)
 admin.site.register(Person, PersonAdmin)
-admin.site.register(PhysicalEdition,PhysicalEditionAdmin)
-admin.site.register(Place)
+admin.site.register(PhysicalEdition, PhysicalEditionAdmin)
+admin.site.register(Place, PlaceAdmin)
 admin.site.register(Work, WorkAdmin)
