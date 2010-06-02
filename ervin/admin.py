@@ -118,12 +118,18 @@ class PlaceAdmin(admin.ModelAdmin):
     inlines=[PlaceSameAsUriInline]
 
 
+class OrganizationSameAsUriInline(admin.TabularInline):
+    model = OrganizationSameAsUri
+
+class OrganizationAdmin(admin.ModelAdmin):
+    inlines=[OrganizationSameAsUriInline]
+
 admin.site.register(Concept)
 admin.site.register(Expression, ExpressionAdmin)
 admin.site.register(Event)
 admin.site.register(FileContent)
 admin.site.register(OnlineEdition, OnlineEditionAdmin)
-admin.site.register(Organization)
+admin.site.register(Organization, OrganizationAdmin)
 admin.site.register(Page, PageAdmin)
 admin.site.register(Person, PersonAdmin)
 admin.site.register(PhysicalEdition, PhysicalEditionAdmin)

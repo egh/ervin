@@ -650,6 +650,12 @@ class Organization(models.Model, SubjectMixin):
     class Meta:
         ordering=['name']
 
+class OrganizationSameAsUri(models.Model):
+    uri          = models.URLField()
+    organization = models.ForeignKey(Organization, related_name='same_as_uri_set')
+
+    def __unicode__(self): return unicode(self.uri)
+
 class Event(models.Model, SubjectMixin):
     """Event in the FRBR model."""
 
