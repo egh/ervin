@@ -22,16 +22,20 @@ from django.conf import settings
 class Command(NoArgsCommand):
     help = "Update places from upstream sources."
 
-    def_lang = getattr(settings, 'LANGUAGE_CODE')[0:2]
-    prefLabel_ref = rdflib.URIRef("http://www.w3.org/2004/02/skos/core#prefLabel")
-    concept_ref = rdflib.URIRef("http://www.w3.org/2004/02/skos/core#Concept")
-    type_ref = rdflib.URIRef("http://www.w3.org/1999/02/22-rdf-syntax-ns#type")
+    def_lang        = getattr(settings, "LANGUAGE_CODE")[0:2]
+    prefLabel_ref   = rdflib.URIRef("http://www.w3.org/2004/02/skos/core#prefLabel")
+    concept_ref     = rdflib.URIRef("http://www.w3.org/2004/02/skos/core#Concept")
+    type_ref        = rdflib.URIRef("http://www.w3.org/1999/02/22-rdf-syntax-ns#type")
+    geoname_feature = rdflib.URIRef("http://www.geonames.org/ontology#Feature")
+    geoname_name    = rdflib.URIRef("http://www.geonames.org/ontology#name")
+    geoname_re      = re.compile(r'^http://www.geonames.org/[0-9]+/$')
 
     def handle_noargs(self, **options):
         for place in Place.objects.all():
             # Behavior is undefined for multiple sameas URIs
             for same_as in place.same_as_uri_set.all():
-                ref = rdflib.URIRef(same_as.uri)
+                u = same_as.uri
+                ref = rdflib.URIRef(u)
                 g = Graph()
                 g.parse(ref)
                 if self.concept_ref in g.objects(ref, self.type_ref):
@@ -39,4 +43,7 @@ class Command(NoArgsCommand):
                         if o.language == self.def_lang:
                             place.name = o
                             place.save()
-
+                if self.geoname_feature in g.objects(ref, self.type_ref):
+                    for o in g.objects(ref, self.geoname_name):
+                        place.name = o
+                        place.save()
