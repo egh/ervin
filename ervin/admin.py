@@ -117,14 +117,19 @@ class PlaceSameAsUriInline(admin.TabularInline):
 class PlaceAdmin(admin.ModelAdmin):
     inlines=[PlaceSameAsUriInline]
 
-
 class OrganizationSameAsUriInline(admin.TabularInline):
     model = OrganizationSameAsUri
 
 class OrganizationAdmin(admin.ModelAdmin):
     inlines=[OrganizationSameAsUriInline]
 
-admin.site.register(Concept)
+class ConceptSameAsUriInline(admin.TabularInline):
+    model = ConceptSameAsUri
+
+class ConceptAdmin(admin.ModelAdmin):
+    inlines=[ConceptSameAsUriInline]
+
+admin.site.register(Concept, ConceptAdmin)
 admin.site.register(Expression, ExpressionAdmin)
 admin.site.register(Event)
 admin.site.register(FileContent)

@@ -181,6 +181,12 @@ class Concept(models.Model, SubjectMixin):
     class Meta:
         ordering=['name']
 
+class ConceptSameAsUri(models.Model):
+    uri     = models.URLField()
+    concept = models.ForeignKey(Concept, related_name='same_as_uri_set')
+
+    def __unicode__(self): return unicode(self.uri)
+
 # From from DCMI Type vocabulary
 WORK_FORMS = (('Collection', 'Collection'),
               #('Dataset', 'Dataset'),
