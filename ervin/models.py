@@ -162,6 +162,8 @@ class PersonSameAsUri(models.Model):
 
 class Concept(models.Model, SubjectMixin):
     id = NoidField(primary_key=True)
+    
+    # §4.8.1 Term for the concept
     name = models.CharField(max_length=200)
     sort = models.CharField(max_length=128,editable=False)
 
@@ -606,8 +608,9 @@ class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
     
 class Place(models.Model, SubjectMixin):
     """A place in the FRBR model."""
-
     id           = NoidField(primary_key=True)
+
+    # §4.11.1 Term for the place
     name         = models.CharField(max_length=200)
     sort         = models.CharField(max_length=128, editable=False)
 
@@ -664,8 +667,9 @@ class OrganizationSameAsUri(models.Model):
 
 class Event(models.Model, SubjectMixin):
     """Event in the FRBR model."""
-
     id = NoidField(primary_key=True)
+
+    # §4.10.1 Term for the event
     name = models.CharField(max_length=200)
     sort = models.CharField(max_length=128,editable=False)
 
@@ -685,8 +689,16 @@ class Event(models.Model, SubjectMixin):
     class Meta:
         ordering=['name']
 
+class EventSameAsUri(models.Model):
+    uri   = models.URLField()
+    event = models.ForeignKey(Event, related_name='same_as_uri_set')
+
+    def __unicode__(self): return unicode(self.uri)
+
 class FrbrObject(models.Model, SubjectMixin):
     id = NoidField(primary_key=True)
+
+    # §4.9.1 Term for the object
     name = models.CharField(max_length=200)
     sort = models.CharField(max_length=128,editable=False)
 
@@ -706,6 +718,12 @@ class FrbrObject(models.Model, SubjectMixin):
     class Meta:
         verbose_name = "Object"
         ordering=['name']
+
+class FrbrObjectSameAsUri(models.Model):
+    uri         = models.URLField()
+    frbr_object = models.ForeignKey(FrbrObject, related_name='same_as_uri_set')
+
+    def __unicode__(self): return unicode(self.uri)
 
 class RemoteContent(models.Model):
     id = NoidField(primary_key=True)

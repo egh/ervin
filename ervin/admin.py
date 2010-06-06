@@ -129,10 +129,23 @@ class ConceptSameAsUriInline(admin.TabularInline):
 class ConceptAdmin(admin.ModelAdmin):
     inlines=[ConceptSameAsUriInline]
 
+class FrbrObjectSameAsUriInline(admin.TabularInline):
+    model = FrbrObjectSameAsUri
+
+class FrbrObjectAdmin(admin.ModelAdmin):
+    inlines=[FrbrObjectSameAsUriInline]
+
+class EventSameAsUriInline(admin.TabularInline):
+    model = EventSameAsUri
+
+class EventAdmin(admin.ModelAdmin):
+    inlines=[EventSameAsUriInline]
+
 admin.site.register(Concept, ConceptAdmin)
 admin.site.register(Expression, ExpressionAdmin)
-admin.site.register(Event)
+admin.site.register(Event, EventAdmin)
 admin.site.register(FileContent)
+admin.site.register(FrbrObject, FrbrObjectAdmin)
 admin.site.register(OnlineEdition, OnlineEditionAdmin)
 admin.site.register(Organization, OrganizationAdmin)
 admin.site.register(Page, PageAdmin)
