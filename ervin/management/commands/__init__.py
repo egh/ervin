@@ -12,3 +12,18 @@
 
 #You should have received a copy of the GNU General Public License
 #along with Ervin.  If not, see <http://www.gnu.org/licenses/>.
+
+from django.core.management.base import NoArgsCommand
+from rdflib import Namespace
+
+class Base(NoArgsCommand):
+    rdf_ns  = Namespace("http://www.w3.org/1999/02/22-rdf-syntax-ns#")
+    skos_ns = Namespace("http://www.w3.org/2004/02/skos/core#")
+    dct_ns  = Namespace("http://purl.org/dc/terms/")
+    bibo_ns = Namespace("http://purl.org/ontology/bibo/")
+
+    def maybe_set(self, o, prop, value):
+        if value != None:
+            print "setting %s.%s = %s"%(o, prop, value)
+            setattr(o, prop, value)
+            
