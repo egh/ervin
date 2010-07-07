@@ -605,6 +605,12 @@ class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
 
     class Meta:
         ordering = ['sort']
+
+class PhysicalEditionSameAsUri(models.Model):
+    uri              = models.URLField()
+    physical_edition = models.ForeignKey(PhysicalEdition, related_name='same_as_uri_set')
+
+    def __unicode__(self): return unicode(self.uri)
     
 class Place(models.Model, SubjectMixin):
     """A place in the FRBR model."""

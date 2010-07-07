@@ -88,10 +88,14 @@ class OnlineEditionAdmin(admin.ModelAdmin):
     inlines=[DbContentInlineAdmin, FileContentInlineAdmin,RemoteContentInlineAdmin]
     list_display = ('__unicode__','date')
 
+class PhysicalEditionSameAsUriInline(admin.TabularInline):
+    model = PhysicalEditionSameAsUri
+
 class PhysicalEditionAdmin(admin.ModelAdmin):
     model = PhysicalEdition
     search_fields = ['sort']
     raw_id_fields = ['expression']    
+    inlines=[PhysicalEditionSameAsUriInline]
 
 class PageAdmin(admin.ModelAdmin):
     model = Page
