@@ -24,6 +24,5 @@ class Base(NoArgsCommand):
 
     def maybe_set(self, o, prop, value):
         if value != None:
-            print "setting %s.%s = %s"%(o, prop, value)
             setattr(o, prop, value)
             
