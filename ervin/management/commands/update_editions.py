@@ -14,9 +14,10 @@
 #along with Ervin.  If not, see <http://www.gnu.org/licenses/>.
 
 from ervin.management.commands import Base 
-from ervin.models import PhysicalEdition
+from ervin.models import PhysicalEdition, Person, Creatorship
 from rdflib import URIRef
 from rdflib.Graph import Graph
+from rdflib.Collection import Collection
 import ervin.isbn
 
 class Command(Base):
@@ -41,6 +42,18 @@ class Command(Base):
                         ed.isbn13 = isbn13
                     elif isbn10:
                         ed.isbn13 = ervin.isbn.toI13(isbn10)
+
+                    authorList = g.value(ref, self.bibo_ns['authorList'], None)
+                    if authorList:
+                        c = Collection(g, authorList)
+                        for a in c:
+                            persons = Person.objects.filter(same_as_uri_set__uri=str(a))
+                            if persons.count() == 0:
+                                # add person here...
+                                pass
+                            else:
+                                Creatorship(work=work, person=persons[0]).save()
+                                
                     work.save()
                     ed.save()
                     
