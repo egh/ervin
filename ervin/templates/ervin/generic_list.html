@@ -1,40 +1,12 @@
-{% extends "ervin/base.html" %}
+{% extends "ervin/base_navigate.html" %}
 
 {% load ervintags %}
 
 {% block html_title %}Subjects{% endblock %}
 
-{% block content %}
-<div class="grid_16">
-  <h2 id="page-heading">{% block title %}Subjects{% endblock %}</h2>
-</div>
+{% block title %}Subjects{% endblock %}
 
-<div class="grid_4">
-  <div class="box">
-    <h2>Navigate</h2>
-    <div class="block">
-      <h6>Group 1</h6>
-      <ul>
-        <li><a href="/works">Works</a></li>
-        <!-- <li><a href="/expressions">Expressions</a></li>
-        <li><a href="/editions">Editions</a></li>
-        <li><a href="/items">Items</a></li> -->
-      </ul>
-      <h6>Group 2</h6>
-      <ul>
-        <li><a href="/organizations">Organizations (Corporate bodies)</a></li>
-        <li><a href="/persons">Persons</a></li>
-      </ul>
-      <h6>Group 3</h6>
-      <ul>
-        <li><a href="/concepts">Concepts</a></li>
-        <li><a href="/events">Events</a></li>
-        <li><a href="/objects">Objects</a></li>
-        <li><a href="/places">Places</a></li>
-      </ul>
-    </div>
-  </div>
-</div>
+{% block main_content %}
 <div class="grid_12">
   <div class="box">
     <div class="block">
@@ -50,4 +22,4 @@
     </div>
   </div>
 </div>
-{% endblock %}
+{% endblock main_content %}
