@@ -117,7 +117,7 @@ class PersonAdmin(admin.ModelAdmin):
     model = Person
     search_fields = ['surname', 'forename']
     inlines=[AliasInlineAdmin, PersonSameAsUriInline]
-    fields = ('forename', 'surname', 'dates', 'olkey')
+    fields = ('forename', 'surname', 'dates')
 
 class PlaceSameAsUriInline(admin.TabularInline):
     model = PlaceSameAsUri

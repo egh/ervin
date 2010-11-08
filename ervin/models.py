@@ -121,7 +121,6 @@ class Subject(models.Model):
 
 class Person(models.Model, SubjectMixin):
     id = NoidField(primary_key=True)
-    olkey = models.CharField("Open Library Key", max_length=20, blank=True)
     surname = models.CharField(max_length=200)
     forename = models.CharField(max_length=200)
     dates = models.CharField(max_length=20,blank=True)
@@ -537,7 +536,6 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
     
 class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
     id = NoidField(primary_key=True)
-    olkey = models.CharField("Open Library Key", max_length=20, blank=True)
     edition_title = models.TextField("Title (leave blank if same as expression)", max_length=200, blank=True, db_column='title')
     date = FreeformDateField(max_length=128,blank=True)
     date_sort = models.CharField(max_length=128, blank=True, editable=False)
