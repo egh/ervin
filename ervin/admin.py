@@ -81,9 +81,8 @@ class WorkAdmin(admin.ModelAdmin):
         }],
     ]
     filter_horizontal=['subjects']
-    inlines = [CreatorshipInlineAdmin, ExpressionInlineAdmin]
+    inlines = [CreatorshipInlineAdmin, ExpressionInlineAdmin, WorkSameAsUriInline]
     raw_id_fields = ['part_of']
-    inlines=[WorkSameAsUriInline]
 
 class OnlineEditionAdmin(admin.ModelAdmin):
     model = OnlineEdition
