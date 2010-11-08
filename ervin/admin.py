@@ -61,6 +61,9 @@ class WorkModelForm(forms.ModelForm):
     class Meta:
         model = Work
 
+class WorkSameAsUriInline(admin.TabularInline):
+    model = WorkSameAsUri
+
 class WorkAdmin(admin.ModelAdmin):
     form = WorkModelForm
     search_fields = ['sort']
@@ -80,6 +83,7 @@ class WorkAdmin(admin.ModelAdmin):
     filter_horizontal=['subjects']
     inlines = [CreatorshipInlineAdmin, ExpressionInlineAdmin]
     raw_id_fields = ['part_of']
+    inlines=[WorkSameAsUriInline]
 
 class OnlineEditionAdmin(admin.ModelAdmin):
     model = OnlineEdition

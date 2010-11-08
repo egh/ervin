@@ -63,7 +63,7 @@ class SubjectMixin(object):
     @property
     def subject(self):
         s = None
-        try: s = Subject.objects.get (object_id=self.pk)
+        try: s = Subject.objects.get(object_id=self.pk)
         except Subject.DoesNotExist: s = self.create_subject()
         return s
 
@@ -309,6 +309,12 @@ class Work(models.Model, SubjectMixin, BibSortMixin):
     class Meta:
         ordering=['sort']
 
+class WorkSameAsUri(models.Model):
+    uri     = models.URLField()
+    concept = models.ForeignKey(Work, related_name='same_as_uri_set')
+
+    def __unicode__(self): return unicode(self.uri)
+
 class Creatorship(models.Model):
     person = models.ForeignKey(Person)
     work = models.ForeignKey(Work)
@@ -532,10 +538,10 @@ class OnlineEdition(models.Model, SubjectMixin,BibSortMixin):
 class PhysicalEdition(models.Model, SubjectMixin,BibSortMixin):
     id = NoidField(primary_key=True)
     olkey = models.CharField("Open Library Key", max_length=20, blank=True)
-    edition_title = models.TextField("Title (leave blank if same as expression)", max_length=200, blank=True,db_column='title')
+    edition_title = models.TextField("Title (leave blank if same as expression)", max_length=200, blank=True, db_column='title')
     date = FreeformDateField(max_length=128,blank=True)
     date_sort = models.CharField(max_length=128, blank=True, editable=False)
-    publisher = models.CharField(max_length=100)
+    publisher = models.CharField(max_length=100, blank=True)
     #in_series = models.ForeignKey(Work,edit_inline=False,related_name="in_series",null=True,blank=True,limit_choices_to={'type': "series"})
     #isbn10 = models.CharField("ISBN-10",max_length=13,blank=True)
     def _isbn10(self): 
