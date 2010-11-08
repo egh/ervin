@@ -18,7 +18,7 @@ from ervin.models import PhysicalEdition, Person, Creatorship
 from rdflib import URIRef
 from rdflib.Graph import Graph
 from rdflib.Collection import Collection
-import ervin.isbn
+import ervin.isbn, re
 
 class Command(Base):
     help = "Update editions (and works) from upstream sources."
@@ -28,21 +28,20 @@ class Command(Base):
             work = ed.work
             # Behavior is undefined for multiple sameas URIs
             for same_as in ed.same_as_uri_set.all():
-                ref = URIRef(same_as.uri)
                 g = Graph()
-                g.parse(ref)
+                g.parse(same_as.uri)
+                ref = URIRef(re.sub(r"/$", "", str(same_as.uri)))
                 if same_as.uri.startswith("http://openlibrary.org/books/"):
-                    self.maybe_set(work, 'work_title',
-                                   g.value(ref, self.dct_ns['title'], None))
-                    self.maybe_set(ed, 'date',
-                                   g.value(ref, self.dct_ns['issued'], None))
+                    self.set_attributes(g, ed, ref,
+                                        [('date', self.dct_ns['issued']),
+                                         ('edition_title', self.dct_ns['title']),
+                                         ('publisher', self.dct_ns['publisher'])])
                     isbn10 = g.value(ref, self.bibo_ns['isbn10'], None)
                     isbn13 = g.value(ref, self.bibo_ns['isbn13'], None)
                     if isbn13:
                         ed.isbn13 = isbn13
                     elif isbn10:
                         ed.isbn13 = ervin.isbn.toI13(isbn10)
-
                     authorList = g.value(ref, self.bibo_ns['authorList'], None)
                     if authorList:
                         c = Collection(g, authorList)
@@ -53,7 +52,5 @@ class Command(Base):
                                 pass
                             else:
                                 Creatorship(work=work, person=persons[0]).save()
-                                
-                    work.save()
                     ed.save()
                     

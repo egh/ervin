@@ -26,3 +26,7 @@ class Base(NoArgsCommand):
         if value != None:
             setattr(o, prop, value)
             
+    def set_attributes(self, graph, what, ref, pairs):
+        for (attr, pred,) in pairs:
+            self.maybe_set(what, attr,
+                           graph.value(ref, pred, None))
