@@ -1,7 +1,5 @@
-{% extends "ervin/subject_list.html" %}
+{% extends "ervin/generic_list.html" %}
 
-{% load ervintags %}
-
-{% block html_title %}Work{% endblock %}
-
-{% block title %}Work{% endblock %}
+{% block html_title %}Works{% endblock %}
+{% block title %}Works{% endblock %}
+{% block empty_list %}<p>No works.</p>{% endblock %}

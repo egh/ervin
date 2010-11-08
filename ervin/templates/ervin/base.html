@@ -11,10 +11,25 @@
     <title>{% block html_title %}Ervin{% endblock %}</title>
     <link rel="unapi-server" type="application/xml"
           title="unAPI" href="/unapi" />
+    <link rel="stylesheet" type="text/css" media="all" href="/css/reset.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/css/text.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/css/960.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/css/grid.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/css/layout.css" />
+    <link rel="stylesheet" type="text/css" media="all" href="/css/nav.css" />
+    <link rel="stylesheet" type="text/css" href="../../../css/grid.css" media="screen" />
   </head>
   <body>
-    {% block content_header %}{% endblock %}
-    {% block content %}{% endblock %}
-    {% block content_footer %}{% endblock %}
-  </body>
+    <div class="container_16">
+      <div class="grid_16">
+        <h1 id="branding">
+          <a href="/">Welcome to Ervin</a>
+        </h1>
+      </div>
+      <div class="clear"></div>
+      {% block content_header %}{% endblock %}
+      {% block content %}{% endblock %}
+      {% block content_footer %}{% endblock %}
+    </div>
+</body>
 </html>

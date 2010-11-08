@@ -3,23 +3,51 @@
 {% block html_title %}{{person}}{% endblock %}
 {% block content %}
 
-<h1>It worked!</h1>
+<div class="grid_16">
+  <h2 id="page-heading">It worked!</h2>
+</div>
 
-<p>Welcome to your new installation of Ervin - the CMS for
-perfectionists with metadata!</p>
+<div class="grid_16">
+  <p>Welcome to your new installation of Ervin - the CMS for
+  perfectionists with metadata!</p>
+</div>
 
-<ul>
-<h1>Group 1</h1>
-<li><a href="/works">Works</a></li>
+<div class="clear"></div>
 
-<h1>Group 2</h1>
-<li><a href="/organizations">Organization</a></li>
-<li><a href="/persons">Persons</a></li>
+<div class="grid_4">
+  <div class="box">
+    <h2>Group 1</h2>
+    <div class="block">
+      <ul>
+        <li><a href="/works">Works</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
 
-<h1>Group 3</h1>
-<li><a href="/concepts">Concepts</a></li>
-<li><a href="/events">Events</a></li>
-<li><a href="/objects">Objects</a></li>
-<li><a href="/places">Places</a></li>
-</ul>
+<div class="grid_4">
+  <div class="box">
+    <h2>Group 2</h2>
+    <div class="block">
+      <ul>
+        <li><a href="/organizations">Organization</a></li>
+        <li><a href="/persons">Persons</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="grid_4">
+  <div class="box">
+    <h2>Group 3</h2>
+    <div class="block">
+      <ul>
+        <li><a href="/concepts">Concepts</a></li>
+        <li><a href="/events">Events</a></li>
+        <li><a href="/objects">Objects</a></li>
+        <li><a href="/places">Places</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
 {% endblock %}

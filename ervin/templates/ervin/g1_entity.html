@@ -3,30 +3,36 @@
 {% block html_title %}{{entity.title}}{% endblock %}
 {% block content %}
 
-<div about="{{entity.get_absolute_url}}" >
-  <dl>
-    <dt>Title</dt>
-    <dd property="dc:title">{{ entity.title }}</dd>
-    <dt>Creators</dt>
-    <dd>
-      <ul>
-        {% for creator in entity.creators.all %}
-        <li xmlns="dc:creator">{{ creator|inverted_name }}</li>
-        {% endfor %}
-      </ul>
-    </dd>
-    {% if entity.subjects %}
-    <dt>Subjects:</dt>
-    <dd>
-      <ul>
-        {% for subject in entity.subjects.all %}
-        <li>{{ subject }}</li>
-        {% endfor %}
-      </ul>
-    </dd>
-    {% endif %}
-  </dl>
-  {% block rest %}{% endblock %}
+<div class="grid_4">
+  <div class="box">
+    <h2>Design Process</h2>
+    <div class="block">
+      <div about="{{entity.get_absolute_url}}" >
+        <dl>
+          <dt>Title</dt>
+          <dd property="dc:title">{{ entity.title }}</dd>
+          <dt>Creators</dt>
+          <dd>
+            <ul>
+              {% for creator in entity.creators.all %}
+              <li xmlns="dc:creator">{{ creator|inverted_name }}</li>
+              {% endfor %}
+            </ul>
+          </dd>
+          {% if entity.subjects %}
+          <dt>Subjects:</dt>
+          <dd>
+            <ul>
+              {% for subject in entity.subjects.all %}
+              <li>{{ subject }}</li>
+              {% endfor %}
+            </ul>
+          </dd>
+          {% endif %}
+        </dl>
+        {% block rest %}{% endblock %}
+      </div>
+    </div>
+  </div>
 </div>
-
 {% endblock content %}
