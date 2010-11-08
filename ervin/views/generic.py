@@ -15,6 +15,7 @@
 
 from django.template import Context, loader
 from ervin.models import *
+from django.conf import settings
 from django.http import HttpResponse,HttpResponseNotFound
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.cache import cache
@@ -23,6 +24,7 @@ import re, ervin.views.person, ervin.views.work, ervin.views.expression, ervin.v
 from ervin.grouping_paginator import GroupingPaginator
 
 stop_words_re = re.compile("(^the |^an |^a )")
+show_empty_subjects = getattr(settings, 'ERVIN_SHOW_EMPTY_SUBJECTS', True)
 
 def get_sort_title(title):
     return stop_words_re.sub("",title.lower())
@@ -59,7 +61,7 @@ def find_one(*args, **kwargs):
 def find_all(klass, q=None):
     if q == None:
         q = klass.objects.all()
-    if (klass == FrbrObject) or (klass == Concept) or (klass == Event) or (klass == Place):
+    if not(show_empty_subjects) and ((klass == FrbrObject) or (klass == Concept) or (klass == Event) or (klass == Place)):
         # for "group 3" only return where we have a positive subject count
         ids = [ x.pk for x in q if x.subject.work_set.count() == 0]
         return q.exclude(id__in=ids)
