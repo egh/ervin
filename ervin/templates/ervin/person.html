@@ -1,31 +1,25 @@
-{% extends "ervin/base.html" %}
+{% extends "ervin/base_navigate.html" %}
 {% load ervintags %}
 {% block html_title %}{{person}}{% endblock %}
 
-{% block content_header %}
-<h1>Person</h1>
-{% endblock content_header %}
+{% block title %}
+{{ person }}
+{% endblock title %}
 
-{% block content %}
+{% block main_content %}
 
-<dl>
-  <dt>Surname</dt> <dd>{{ person.surname }}</dd>
-  <dt>Forename</dt> <dd>{{ person.forename }}</dd>
-  {% if person.dates %}
-  <dt>Dates</dt> <dd>{{ person.dates }}</dd>
-  {% endif %}
-</dl>
-
-{% if person.alias_set.all %}
-<h2>Aliases</h2>
-<ul>
-{% for alias in person.alias_set.all %}
-  <li>
-    <dt>Surname</dt> <dd>{{ alias.surname }}</dd>
-    <dt>Forename</dt> <dd>{{ alias.forename }}</dd>
-  </li>
-{% endfor %}
-</ul>
+{% if person.created.all %}
+<div class="grid_12">
+  <div class="box">
+    <h2>Works by</h2>
+    <div class="block">
+      <ul>
+        {% for work in person.created.all %}
+        <li>{{ work }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
 {% endif %}
-
-{% endblock %}
+{% endblock main_content %}
