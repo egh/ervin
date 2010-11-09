@@ -224,12 +224,6 @@ class Work(models.Model, SubjectMixin, BibSortMixin):
     # §5.3.1.1
     part_of = models.ForeignKey("self", null=True, blank=True, related_name="parts")
 
-    # non-FRBR.
-    description = models.TextField(blank=True)
-    note = models.TextField(blank=True)
-    form = models.CharField(max_length=128, choices=WORK_FORMS)
-    source = models.TextField(blank=True)
-
     # Sort fields
     sort = models.CharField(max_length=128, editable=False)
     date_sort = models.CharField(max_length=128, blank=True, editable=False)
@@ -335,14 +329,23 @@ LANGUAGES=(('en', 'English'),
 class Expression(models.Model, SubjectMixin,BibSortMixin):
     id = NoidField(primary_key=True)
     work = models.ForeignKey(Work) # TODO change to realization_of
+
+    # FRBR Attributes 
+    # §4.3.1
     expression_title = models.CharField(max_length=200, verbose_name="Translation title", blank=True, db_column='title')
+    # §4.3.2
+    form = models.CharField(max_length=128, choices=WORK_FORMS)
+    # §4.3.4
+    language = models.CharField(max_length=5, blank=True, choices=LANGUAGES)    
+    # §4.3.9
+    description = models.TextField(blank=True)
+
     translators = models.ManyToManyField(Person,
                                          blank=True,
                                          #through="ExpressionTranslator"
                                          verbose_name="Translators",
                                          related_name="translated")
     sort = models.CharField(max_length=128,editable=False)
-    language = models.CharField(max_length=5, choices=LANGUAGES)
 
     @property
     def expression(self):

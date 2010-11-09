@@ -69,15 +69,11 @@ class WorkAdmin(admin.ModelAdmin):
     search_fields = ['sort']
     fieldsets = [
         [None, {
-            'fields': ['work_title','date','form','part_of'],
+            'fields': ['work_title','date','part_of'],
         }],
         ['Subjects', {
             'classes': ['collapse'],
             'fields': ['subjects'],
-        }],
-        ['More', {
-            'classes': ['collapse'],
-            'fields': ['description','note','source'],
         }],
     ]
     filter_horizontal=['subjects']
