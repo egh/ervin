@@ -144,6 +144,7 @@ def by_noid(request,*args,**kwargs):
             else:
                 variable_name = klass.__name__.lower()
             c = Context({ variable_name : o,
+                          'what' : o,
                           'work_list' : works })
             return HttpResponse(t.render(c))
         else:
