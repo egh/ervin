@@ -334,7 +334,7 @@ class Expression(models.Model, SubjectMixin,BibSortMixin):
     # §4.3.1
     expression_title = models.CharField(max_length=200, verbose_name="Translation title", blank=True, db_column='title')
     # §4.3.2
-    form = models.CharField(max_length=128, choices=WORK_FORMS)
+    form = models.CharField(max_length=128, choices=WORK_FORMS, blank=True)
     # §4.3.4
     language = models.CharField(max_length=5, blank=True, choices=LANGUAGES)    
     # §4.3.9
