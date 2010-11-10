@@ -1,11 +1,11 @@
-{% extends "ervin/base.html" %}
+{% extends "ervin/base_navigate.html" %}
 {% load ervintags %}
-{% block html_title %}{{entity.title}}{% endblock %}
-{% block content %}
+{% block html_title %}{{ entity.title }}{% endblock %}
+{% block title %}{{ entity.title }}{% endblock %}
 
-<div class="grid_4">
+{% block main_content %}
+<div class="grid_8">
   <div class="box">
-    <h2>Design Process</h2>
     <div class="block">
       <div about="{{entity.get_absolute_url}}" >
         <dl>
@@ -19,20 +19,27 @@
               {% endfor %}
             </ul>
           </dd>
-          {% if entity.subjects %}
-          <dt>Subjects:</dt>
-          <dd>
-            <ul>
-              {% for subject in entity.subjects.all %}
-              <li>{{ subject }}</li>
-              {% endfor %}
-            </ul>
-          </dd>
-          {% endif %}
         </dl>
-        {% block rest %}{% endblock %}
       </div>
+      {% block rest %}{% endblock %}
     </div>
   </div>
 </div>
-{% endblock content %}
+
+<div class="grid_4">
+  <div class="box">
+    <h2>Subjects</h2>
+    <div class="block">
+      {% if entity.subjects.all %}
+      <ul>
+        {% for subject in entity.subjects.all %}
+        <li>{{ subject }}</li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p>None.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock main_content %}
