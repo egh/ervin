@@ -110,6 +110,7 @@ views = {
     FileContent : showfile }
           
 list_views = { Work : 'ervin/work_list.html',
+               Expression : 'ervin/expression_list.html',
                OnlineEdition : 'ervin/onlineedition_list.html',
                PhysicalEdition : 'ervin/physicaledition_list.html',
                
