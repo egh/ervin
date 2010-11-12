@@ -105,6 +105,10 @@ class Subject(models.Model):
     content_object = generic.GenericForeignKey()
     sort = models.CharField(max_length=128)
 
+    @property
+    def expressions(self):
+        return Expression.objects.filter(work__subjects=self)
+
     def get_absolute_url(self): return "/%s"%(self.object_id)
 
     def __unicode__(self): return unicode(self.content_object)
