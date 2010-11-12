@@ -15,11 +15,9 @@
 
 from django.template import Context, loader
 from ervin.models import *
-from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 from django.db.models import Q
 from django.http import HttpResponse
-from ervin.views import make_columns
-from ervin.openlibrary import ThingAuthor
 
 def by_noid(request, *args, **kwargs):
    person = Person.objects.get(id=kwargs['noid'])
@@ -29,23 +27,18 @@ def detail(person, request, *args,**kwargs):
    if person.alias_for:
       return HttpResponseRedirect(person.alias_for.get_absolute_url())
    else:
-      work_list = Work.objects.filter(Q(creators=person) | Q(subjects=person.subject))
-      subject_list = Subject.objects.filter(work__in=work_list).distinct()
-      image_list = work_list.filter(form='image').distinct()
-      works_by_list = work_list.filter(creators=person).exclude(form='image').distinct()
-      works_about_list = work_list.filter(subjects=person.subject).exclude(form='image').distinct()
-      #if person.olkey:
-      #   ol_edition_list = ThingAuthor(person.olkey).fulltext_editions()
-      #else: ol_edition_list = None
-      ol_edition_list = None
+      expression_list = Expression.objects.filter(Q(work__creators=person) | Q(work__subjects=person.subject))
+      subject_list = Subject.objects.filter(work__in=expression_list).distinct()
+      image_list = expression_list.filter(form='image').distinct()
+      expressions_by_list = expression_list.filter(work__creators=person).exclude(form='image').distinct()
+      expressions_about_list = expression_list.filter(work__subjects=person.subject).exclude(form='image').distinct()
 
       t = loader.get_template('ervin/person.html')
       c = Context({
-            'subject_list'        : subject_list,
-            'person'              : person,
-            'image_list'          : image_list,
-            'works_by_list'       : works_by_list,
-            'works_about_list'    : works_about_list,
-            'ol_list'             : ol_edition_list,
+            'subject_list'           : subject_list,
+            'person'                 : person,
+            'image_list'             : image_list,
+            'expressions_by_list'    : expressions_by_list,
+            'expressions_about_list' : expressions_about_list
             })
       return HttpResponse(t.render(c))
