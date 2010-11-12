@@ -21,7 +21,8 @@ from django.core.paginator import Paginator
 
 def detail(ed, request, *args,**kwargs):
     t = None
-    if ed.work.form == 'StillImage':
+    if ed.expression.form == 'StillImage':
+        print ed.expression.form
         t = loader.get_template('ervin/onlineedition_image.html')
     else:
         t = loader.get_template('ervin/onlineedition.html')
