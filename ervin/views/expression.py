@@ -31,6 +31,8 @@ def detail(expression, request, *args, **kwargs):
     else:
 	t = loader.get_template('ervin/expression.html')
 	c = Context({
+          'image_parts' : expression.work.parts.filter(expression__form='image').distinct(),
+          'non_image_parts' : expression.work.parts.exclude(expression__form='image').distinct(),
           'entity': expression
         })
     	return HttpResponse(t.render(c))
