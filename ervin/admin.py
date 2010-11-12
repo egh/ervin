@@ -24,28 +24,28 @@ from django.contrib.contenttypes import generic
 
 class RemoteContentInlineAdmin(admin.StackedInline):
     model=RemoteContent
-    extra = 1
+    extra = 0
 
 class DbContentInlineAdmin(admin.StackedInline):
     model=DbContent
-    extra = 1
+    extra = 0
     form = DbContentAdminModelForm
 
 class FileContentInlineAdmin(admin.StackedInline):
     model=FileContent
-    extra = 1
+    extra = 0
 
 class RemoteContentInlineAdmin(admin.StackedInline):
     model=RemoteContent
-    extra = 1
+    extra = 0
 
 class CreatorshipInlineAdmin(admin.TabularInline):
     model = Creatorship
-    extra = 1
+    extra = 0
 
 class AliasInlineAdmin(admin.TabularInline):
     model = Person
-    extra = 1
+    extra = 0
     fields = ('forename', 'surname')
     verbose_name = "Alias"
     verbose_name_plural = "Aliases"
@@ -53,7 +53,7 @@ class AliasInlineAdmin(admin.TabularInline):
 class ExpressionInlineAdmin(admin.StackedInline):
     model = Expression
     filter_horizontal=['translators']
-    extra = 1
+    extra = 0
 
 class WorkModelForm(forms.ModelForm):
     work_title = forms.CharField(
@@ -63,6 +63,7 @@ class WorkModelForm(forms.ModelForm):
 
 class WorkSameAsUriInline(admin.TabularInline):
     model = WorkSameAsUri
+    extra = 0
 
 class WorkAdmin(admin.ModelAdmin):
     form = WorkModelForm
@@ -107,6 +108,7 @@ class ExpressionAdmin(admin.ModelAdmin):
 
 class PersonSameAsUriInline(admin.TabularInline):
     model = PersonSameAsUri
+    extra = 0
 
 class PersonAdmin(admin.ModelAdmin):
     model = Person
@@ -116,6 +118,7 @@ class PersonAdmin(admin.ModelAdmin):
 
 class PlaceSameAsUriInline(admin.TabularInline):
     model = PlaceSameAsUri
+    extra = 0
 
 class PlaceAdmin(admin.ModelAdmin):
     inlines=[PlaceSameAsUriInline]
@@ -128,18 +131,21 @@ class OrganizationAdmin(admin.ModelAdmin):
 
 class ConceptSameAsUriInline(admin.TabularInline):
     model = ConceptSameAsUri
+    extra = 0
 
 class ConceptAdmin(admin.ModelAdmin):
     inlines=[ConceptSameAsUriInline]
 
 class FrbrObjectSameAsUriInline(admin.TabularInline):
     model = FrbrObjectSameAsUri
+    extra = 0
 
 class FrbrObjectAdmin(admin.ModelAdmin):
     inlines=[FrbrObjectSameAsUriInline]
 
 class EventSameAsUriInline(admin.TabularInline):
     model = EventSameAsUri
+    extra = 0
 
 class EventAdmin(admin.ModelAdmin):
     inlines=[EventSameAsUriInline]
