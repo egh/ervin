@@ -7,73 +7,63 @@ Installing
 Requirements
 ~~~~~~~~~~~~
 
-Django 1.0 or later.
-
 Noid. http://search.cpan.org/dist/Noid/
-
-Solr & solango, for search.
-
-Django atompub, for feeds.
-
-All requirements are installed in the following steps.
 
 Steps
 ~~~~~
+::
 
-Preliminaries
-=============
+  ERVIN_VENV=$HOME/ervin-demo
 
-Install Django 1.1.1 in an appropriate way.
+  virtualenv --distribute --no-site-packages $ERVIN_VENV
+
+  cd $ERVIN_VENV
+
+  source bin/activate
+
+  pip install Django==1.3.1
+
+  pip install MySQL-python==1.2.3
+
+  pip install distribute==0.6.15
+
+  pip install httplib2==0.6.0
+
+  pip install python-memcached==1.47
+
+  pip install simplejson==2.1.5
+
+  pip install smartypants==1.6.0.3
+
+  pip install sorl-thumbnail==11.05.1
+
+  pip install wsgiref==0.1.2
+
+  pip install ftp://xmlsoft.org/libxml2/python/libxml2-python-2.6.9.tar.gz
+
+  cd /tmp && svn checkout http://django-solr-search.googlecode.com/svn/trunk/ \
+    django-solr-search-read-only && cd django-solr-search-read-only && \
+    python setup.py install
+
+  cd $ERVIN_VENV/lib/python*/site-packages/ && \
+    svn co http://django-atompub.googlecode.com/svn/trunk/atompub/ 
+
+  cd /tmp && bzr clone lp:ervin && cd ervin && python setup.py install
 
 Install Noid::
 
  $ sudo perl -MCPAN -e "install Noid" # change sudo for your platform as necessary
 
-::
-
- $ export $PROJECT_DIR=... # fill in the blanks!
-
- $ cd `dirname $PROJECT_DIR` && django-admin.py startproject `basename $PROJECT_DIR`
-
- $ cd $PROJECT_DIR && mkdir packages && mkdir lib
-
-Install Ervin
+Start project
 =============
 
 ::
 
- $ cd $PROJECT_DIR/packages && bzr co lp:~egh/ervin/trunk ervin
+  cd $ERVIN_VENV
 
-Setup Noid
-==========
+  django-admin.py startproject ervintest
 
-::
-
- $ cd $PROJECT_DIR && noid dbcreate .reeeeek
-
-
-Install django-atompub
-======================
-
-::
-
- $ cd $PROJECT_DIR/packages && svn co http://django-atompub.googlecode.com/svn/trunk/ django-atompub
-
-
-Link up
-=======
-
- $ cd $PROJECT_DIR/lib
-
- $ ln -s ../packages/ervin/ervin
-
- $ ln -s ../packages/django-atompub/atompub/
-
-To the beginning of ``settings.py``, add the following::
-
-  import os, sys
-
-  sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'lib'))
+  cd ervintest
 
 Use your editor to configure the database in ``settings.py``. Add
 ``ervin`` and ``django.contrib.admin`` to ``INSTALLED_APPS``, e.g.::
@@ -99,29 +89,18 @@ Edit ``urls.py`` appropriately. For instance::
       (r'', include('ervin.urls')),
   )
 
+Setup the database & run the server::
+
+  python $ERVIN_VENV/ervintest/manage.py syncdb
+
+  python $ERVIN_VENV/ervintest/manage.py runserver
+
+Setup Noid
+==========
+
 ::
 
- $ python manage.py syncdb
-
- $ python manage.py runserver
+  cd $ERVIN_VENV/ervintest/ && noid dbcreate .reeeeek
 
 Visit http://localhost:8000/admin and begin adding data!
-
-Search
-======
-
-Install::
-
-::
-
- $ cd $PROJECT_DIR/packages && svn co http://django-solr-search.googlecode.com/svn/trunk/ django-solr-search
-
- $ cd $PROJECT_DIR/lib && ln -s ../packages/django-solr-search/solango/ .
-
-Add ``solango`` to ``INSTALLED_APPS``::
-
-  INSTALLED_APPS = (
-    ...
-    'solango'
-  )
 
